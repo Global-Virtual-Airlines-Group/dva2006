@@ -40,6 +40,12 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
+			<name>multipleDays</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>tableClass</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
@@ -118,6 +124,12 @@
 		</attribute>
 		<attribute>
 			<name>showDaysOfWeek</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>multipleDays</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Boolean</type>
