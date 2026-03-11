@@ -120,6 +120,10 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 		return _label;
 	}
 	
+	public boolean hasTimes() {
+		return (_startDate != null) && (_endDate != null);
+	}
+	
 	/**
 	 * Returns whether a date/time is contained within this range. 
 	 * @param dt the date/time
@@ -127,6 +131,16 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 */
 	public boolean contains(Instant dt) {
 		return (dt == null) ? false : (!dt.isBefore(_startDate) && !dt.isAfter(_endDate));
+	}
+	
+	/**
+	 * Returns whether any portion of a TimeSpan is contained within this range.
+	 * @param ts the TimeSpan
+	 * @return TRUE if there is overlap with the TimeSpan, otherwise FALSE
+	 */
+	public boolean contains(TimeSpan ts) {
+		if (!hasTimes() || !ts.hasTimes()) return false;
+		return contains(ts.getStartTime()) || contains(ts.getEndTime()) || (ts.getStartTime().isBefore(_startDate) && ts.getEndTime().isAfter(_endDate));
 	}
 	
 	/**
