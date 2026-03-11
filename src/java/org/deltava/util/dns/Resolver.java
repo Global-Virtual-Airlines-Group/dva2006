@@ -22,7 +22,7 @@ public class Resolver {
 	private static final Logger log = LogManager.getLogger(Resolver.class);
 	
 	private static final BlockingQueue<Runnable> _work = new ArrayBlockingQueue<Runnable>(24);
-	private static final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 4, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
+	private static final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 6, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
 	
 	private static final AtomicLong _hits = new AtomicLong();
 	private static final AtomicLong _reqs = new AtomicLong();
