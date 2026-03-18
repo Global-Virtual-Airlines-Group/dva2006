@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import jakarta.servlet.jsp.*;
@@ -6,7 +6,7 @@ import jakarta.servlet.jsp.*;
 /**
  * A JSP tag to format file sizes. 
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 10.3
  */
 
@@ -27,9 +27,10 @@ public class FileSizeFormatTag extends IntegerFormatTag {
      */
 	@Override
     public void setValue(Long value) {
-		double l10 = Math.log10(value.doubleValue());
+		final Long v = (value == null) ? Long.valueOf(0) : value;
+		double l10 = Math.log10(v.doubleValue());
     	_unit = Math.max(0, Math.min((int)Math.round((l10 / 3) - 1), UNITS.length - 1));
-        super.setValue(Long.valueOf(Math.round(value.longValue() / Math.pow(10, (_unit * 3)))));
+        super.setValue(Long.valueOf(Math.round(v.longValue() / Math.pow(10, (_unit * 3)))));
     }
 	
 	@Override
@@ -38,11 +39,6 @@ public class FileSizeFormatTag extends IntegerFormatTag {
 		super.release();
 	}
     
-    /**
-     * Formats the number and writes it to the JSP output writer.
-     * @return TagSupport.EVAL_PAGE
-     * @throws JspException if an error occurs
-     */
 	@Override
     public int doEndTag() throws JspException {
 		fmtNoDecimals();
