@@ -23,6 +23,10 @@ class ResolverWorker implements Callable<String> {
 	
 	private final String _addr;
 	
+	/**
+	 * Creates the worker.
+	 * @param addr the address to resolve
+	 */
 	ResolverWorker(String addr) {
 		super();
 		_addr = addr;
@@ -41,8 +45,7 @@ class ResolverWorker implements Callable<String> {
 			_cache.add(new DNSEntry(_addr, _addr));
 		} finally {
 			long ms = tt.stop();
-			if (ms > 5100)
-				log.warn("Slow reverse DNS resolution for {} - {}ms", _addr, Long.valueOf(ms));
+			log.log((ms > 10500) ? Level.WARN : Level.INFO, "Slow reverse DNS resolution for {} - {}ms", _addr, Long.valueOf(ms));
 		}
 		
 		return _addr;
