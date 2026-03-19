@@ -23,7 +23,6 @@ import org.deltava.taskman.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
-import org.deltava.util.dns.Resolver;
 import org.deltava.util.jmx.*;
 import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.*;
@@ -251,12 +250,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			}
 		}
 		
-		// Start DNS resolver
-		Resolver.start();
-		JMXResolver rsolv = new JMXResolver(code);
-		JMXUtils.register("org.gvagroup:type=DNSResolver,name=" + code, rsolv);
-		SharedWorker.register(new JMXRefreshTask(rsolv, 60000));
-		
 		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
 		spawnDaemon(new IPCDaemon());
@@ -269,7 +262,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		log.warn("Shutting Down {}", code);
 
 		// Shut down the extra threads
-		Resolver.stop();
 		Collection<Thread> dt = new ArrayList<Thread>(_daemons.keySet());
 		_daemons.clear();
 		ThreadUtils.kill(dt, 500);
