@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import org.gvagroup.tomcat.SharedTask;
@@ -6,7 +6,7 @@ import org.gvagroup.tomcat.SharedTask;
 /**
  * A shared task to auotmatically refresh JMX statistics. 
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 10.2
  */
 
@@ -50,5 +50,10 @@ public class JMXRefreshTask implements SharedTask {
 	@Override
 	public String toString() {
 		return _jmx.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
 	}
 }
