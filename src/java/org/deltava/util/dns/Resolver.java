@@ -18,25 +18,20 @@ import org.deltava.util.cache.*;
 
 public class Resolver {
 	
-	private static final Cache<DNSEntry> _cache = CacheManager.get(DNSEntry.class, "ReverseDNS");
+	private final Cache<DNSEntry> _cache = CacheManager.get(DNSEntry.class, "ReverseDNS");
 	private static final Logger log = LogManager.getLogger(Resolver.class);
 	
 	private static final BlockingQueue<Runnable> _work = new ArrayBlockingQueue<Runnable>(24);
-	private static final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 6, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
+	private final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 6, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
 	
-	private static final AtomicLong _hits = new AtomicLong();
-	private static final AtomicLong _reqs = new AtomicLong();
-	private static final AtomicLong _errs = new AtomicLong();
-	
-	// static class
-	private Resolver() {
-		super();
-	}
+	private final AtomicLong _hits = new AtomicLong();
+	private final AtomicLong _reqs = new AtomicLong();
+	private final AtomicLong _errs = new AtomicLong();
 	
 	/**
 	 * Starts the executor pool.
 	 */
-	public static void start() {
+	public void start() {
 		_exec.allowCoreThreadTimeOut(true);
 		_exec.prestartCoreThread();
 		log.info("Started - {} threads", Integer.valueOf(_exec.getMaximumPoolSize()));
@@ -46,7 +41,7 @@ public class Resolver {
 	 * Returns the number of currently active resolver threads.
 	 * @return the number of threads
 	 */
-	public static int getThreadCount() {
+	public int getThreadCount() {
 		return _exec.getActiveCount();
 	}
 	
@@ -55,7 +50,7 @@ public class Resolver {
 	 * the aggregate across all cache consumers, so this class maintains its own counter.
 	 * @return the number of cache hits
 	 */
-	public static long getHits() {
+	public long getHits() {
 		return _hits.longValue();
 	}
 	
@@ -64,7 +59,7 @@ public class Resolver {
 	 * the aggregate across all cache consumers, so this class maintains its own counter.
 	 * @return the number of cache requests
 	 */
-	public static long getRequests() {
+	public long getRequests() {
 		return _reqs.longValue();
 	}
 	
@@ -73,7 +68,7 @@ public class Resolver {
 	 * the aggregate across all cache consumers, so this class maintains its own counter.
 	 * @return the number of rejected requests 
 	 */
-	public static long getRejected() {
+	public long getRejected() {
 		return _errs.longValue();
 	}
 	
@@ -81,15 +76,14 @@ public class Resolver {
 	 * Returns the cache hit ratio.
 	 * @return the ratio from 0 to 1
 	 */
-	public static float getHitRate() {
+	public float getHitRate() {
 		return (getRequests() == 0) ? 0 : getHits() * 1f / getRequests();
 	}
 	
 	/**
 	 * Shuts down the executor pool.
 	 */
-	public static void stop() {
-		log.info("Stopping");
+	public void stop() {
 		_exec.shutdownNow();
 		log.info("Stopped - {} hits, {} requests ( {} )", Long.valueOf(getHits()), Long.valueOf(getRequests()), StringUtils.format(getHitRate(), "##0.00%"));
 		log.info("Maximum threads - {}, Queue Full = {}", Integer.valueOf(_exec.getLargestPoolSize()), Long.valueOf(getRejected()));
@@ -101,7 +95,7 @@ public class Resolver {
 	 * @param wait the maximum time to wait in milliseconds
 	 * @return the host name, or the IP address if it cannot be resolved or times out
 	 */
-	public static String resolve(String addr, int wait) {
+	public String resolve(String addr, int wait) {
 		
 		// Check the cache
 		_reqs.incrementAndGet();

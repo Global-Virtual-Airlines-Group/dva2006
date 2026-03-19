@@ -13,6 +13,7 @@ import org.deltava.util.dns.Resolver;
 public class JMXResolver implements ResolverMXBean, JMXRefresh {
 	
 	private final String _code;
+	private final Resolver _solv;
 	
 	private long _reqs;
 	private long _hits;
@@ -24,11 +25,13 @@ public class JMXResolver implements ResolverMXBean, JMXRefresh {
 
 	/**
 	 * Creates the bean.
-	 * @param code the application code 
+	 * @param code the application code
+	 * @param solv the DNS resolver 
 	 */
-	public JMXResolver(String code) {
+	public JMXResolver(String code, Resolver solv) {
 		super();
 		_code = code;
+		_solv = solv;
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class JMXResolver implements ResolverMXBean, JMXRefresh {
 
 	@Override
 	public Integer getThreads() {
-		return Integer.valueOf(Resolver.getThreadCount());
+		return Integer.valueOf(_solv.getThreadCount());
 	}
 
 	@Override
@@ -63,9 +66,9 @@ public class JMXResolver implements ResolverMXBean, JMXRefresh {
 
 	@Override
 	public synchronized void update() {
-		long hits = Resolver.getHits();
-		long reqs = Resolver.getRequests();
-		long errors = Resolver.getRejected();
+		long hits = _solv.getHits();
+		long reqs = _solv.getRequests();
+		long errors = _solv.getRejected();
 		
 		_reqs = Math.max(0, reqs - _prevReqs);
 		_hits = Math.max(0, hits - _prevHits);

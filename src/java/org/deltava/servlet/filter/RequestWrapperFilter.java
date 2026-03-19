@@ -8,6 +8,11 @@ import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 import org.deltava.util.dns.Resolver;
+import org.deltava.util.jmx.JMXRefreshTask;
+import org.deltava.util.jmx.JMXResolver;
+import org.deltava.util.jmx.JMXUtils;
+import org.deltava.util.system.SystemData;
+import org.gvagroup.tomcat.SharedWorker;
 
 /**
  * A servlet filter to wrap HTTP servlet requests with a custom wrapper. This filter will also extract cookies into servlet request attributes.
@@ -19,10 +24,19 @@ import org.deltava.util.dns.Resolver;
 public class RequestWrapperFilter extends HttpFilter {
     
     private static final Logger log = LogManager.getLogger(RequestWrapperFilter.class);
+    
+    private final Resolver _solv = new Resolver();
 
     @Override
     public void init(FilterConfig cfg) throws ServletException {
         log.info("Started");
+        final String code = SystemData.get("airline.code");
+        
+		// Start DNS resolver
+        _solv.start();
+		JMXResolver rsolv = new JMXResolver(code, _solv);
+		JMXUtils.register("org.gvagroup:type=DNSResolver,name=" + code, rsolv);
+		SharedWorker.register(new JMXRefreshTask(rsolv, 60000));
     }
 
     /**
@@ -41,7 +55,7 @@ public class RequestWrapperFilter extends HttpFilter {
     	if (req.getRemoteAddr().equals(remoteHost)) {
     		String hostHdr = req.getHeader("X-Forwarded-Host");	
     		if ((hostHdr == null) || hostHdr.equals(req.getRemoteAddr())) {
-    			String hostName = Resolver.resolve(req.getRemoteAddr(), 250);
+    			String hostName = _solv.resolve(req.getRemoteAddr(), 250);
     			if (!hostName.equals(req.getRemoteAddr()))
     				remoteHost = hostName;
     		}
@@ -62,6 +76,7 @@ public class RequestWrapperFilter extends HttpFilter {
 
     @Override
     public void destroy() {
+    	_solv.stop();
         log.info("Stopped");
     }
 }
