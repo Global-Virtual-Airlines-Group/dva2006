@@ -45,7 +45,8 @@ class ResolverWorker implements Callable<String> {
 			_cache.add(new DNSEntry(_addr, _addr));
 		} finally {
 			long ms = tt.stop();
-			log.log((ms > 10500) ? Level.WARN : Level.INFO, "Slow reverse DNS resolution for {} - {}ms", _addr, Long.valueOf(ms));
+			if (ms > 2200)
+				log.log((ms > 10500) ? Level.WARN : Level.INFO, "Slow reverse DNS resolution for {} - {}ms", _addr, Long.valueOf(ms));
 		}
 		
 		return _addr;
