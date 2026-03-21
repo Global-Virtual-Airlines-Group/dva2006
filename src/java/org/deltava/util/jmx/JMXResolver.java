@@ -55,6 +55,11 @@ public class JMXResolver implements ResolverMXBean, JMXRefresh {
 	}
 	
 	@Override
+	public Long getMisses() {
+		return Long.valueOf(_reqs - _hits);
+	}
+	
+	@Override
 	public Long getRejected() {
 		return Long.valueOf(_errors);
 	}

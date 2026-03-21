@@ -35,6 +35,12 @@ public interface ResolverMXBean {
 	public Long getHits();
 	
 	/**
+	 * Returns the number of unsuccessful requests made to this resolver.
+	 * @return the number of misses
+	 */
+	public Long getMisses();
+	
+	/**
 	 * Returns the number of rejected requests made to this resolve.
 	 * @return the number of rejected requests
 	 */
