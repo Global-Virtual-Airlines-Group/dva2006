@@ -205,10 +205,11 @@ table.form td.eliteStatus {
 </tr>
 </c:if>
 <c:if test="${access.canAdjustEvents}">
-<c:if test="${fn:isOnline(pirep) && (empty event) && (!empty possibleEvents)}">
+<c:if test="${fn:isOnline(pirep) && (empty event) && hasPossibleEvents}">
 <tr>
  <td class="label">Online Event</td>
- <td class="data"><el:combo name="onlineEvent" size="1" firstEntry="-" options="${possibleEvents}" /> <el:cmdbutton url="updevent" post="true" link="${pirep}" label="UPDATE ONLINE EVENT" /></td>
+ <td class="data"><c:if test="${!empty possibleEvents}"><el:combo name="onlineEvent" size="1" firstEntry="-" options="${possibleEvents}" /> <el:cmdbutton url="updevent" post="true" link="${pirep}" label="UPDATE ONLINE EVENT" /><c:if test="${!empty possibleEventMsgs}"><br></c:if></c:if>
+<c:if test="${!empty possibleEventMsgs}"><span class="small ita"><c:forEach var="msg" items="${possibleEventMsgs}" varStatus="peStatus">${msg}<c:if test="${!peStatus.last}"><br></c:if></c:forEach></span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${(empty tour) && (!empty possibleTours)}">
