@@ -16,7 +16,6 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="fileSaver" />
-<content:captcha action="logbook" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
