@@ -252,7 +252,7 @@ public class FlightSubmissionHelper {
 		
 		// Check if it's an Online Event flight
 		GetEvent evdao = new GetEvent(_c);
-		EventFlightHelper efr = new EventFlightHelper(_fr);
+		EventFlightHelper efr = new EventFlightHelper(_fr, false);
 		if ((_fr.getDatabaseID(DatabaseID.EVENT) == 0) && (_fr.getNetwork() != null)) {
 			List<Event> events = evdao.getPossibleEvents(_fr, _db);
 			events.removeIf(e -> !efr.matches(e));
