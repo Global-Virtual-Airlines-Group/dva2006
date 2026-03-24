@@ -264,6 +264,7 @@ golgotha.maps.acars.loadConfig = function() {
 	const f = document.forms[0];
 	const cfg = golgotha.maps.acars.cfg;
 	cfg.showProgress = f.showProgress.checked;
+	cfg.showRoute = f.showRoute.checked;
 	cfg.autoRefresh = f.autoRefresh.checked;
 	cfg.zoomToPilot = f.zoomToPilot.checked;
 	cfg.showInfo = f.showInfo.checked;

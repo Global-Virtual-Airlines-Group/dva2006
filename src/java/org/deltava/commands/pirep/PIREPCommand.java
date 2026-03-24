@@ -15,6 +15,7 @@ import org.deltava.beans.academy.Status;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.econ.FlightEliteScore;
+import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
@@ -556,8 +557,14 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// If we're online and not on an event, list possible event
-			if (ac.getCanAdjustEvents() && Attribute.isOnline(fr.getAttributes()) && (fr.getDatabaseID(DatabaseID.EVENT) == 0))
-				ctx.setAttribute("possibleEvents", evdao.getPossibleEvents(fr, SystemData.get("airline.code")), REQUEST);
+			if (ac.getCanAdjustEvents() && Attribute.isOnline(fr.getAttributes()) && (fr.getDatabaseID(DatabaseID.EVENT) == 0)) {
+				EventFlightHelper efr = new EventFlightHelper(fr, true);
+				List<Event> events = evdao.getPossibleEvents(fr, ctx.getDB());
+				events.removeIf(e -> !efr.matches(e));
+				ctx.setAttribute("hasPossibleEvents", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("possibleEvents", events, REQUEST);
+				ctx.setAttribute("possibleEventMsgs", efr.getMessages(), REQUEST);
+			}
 			
 			// Get the elite status if applicable
 			if (SystemData.getBoolean("econ.elite.enabled")) {

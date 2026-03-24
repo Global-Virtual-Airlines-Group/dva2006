@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.flight.*;
 /**
  * A utility class to determine what Online Events a flight may have participated in. 
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 9.0
  */
 
@@ -19,16 +19,20 @@ import org.deltava.beans.flight.*;
 public class EventFlightHelper {
 
 	private final FlightReport _fr;
+	private final boolean _negativeMsgs;
+	
 	private int _timeBuffer = 30;
 	private final Collection<String> _msgs = new ArrayList<String>();
 	
 	/**
 	 * Initializes the Helper.
 	 * @param fr a Flight Report
+	 * @param negativeMsgsOnly TRUE to only store exclusion messages, otherwise FALSE
 	 */
-	public EventFlightHelper(FlightReport fr) {
+	public EventFlightHelper(FlightReport fr, boolean negativeMsgsOnly) {
 		super();
 		_fr = fr;
+		_negativeMsgs = negativeMsgsOnly;
 	}
 	
 	/**
@@ -69,7 +73,7 @@ public class EventFlightHelper {
 			if (!ttOK) {
 				Duration td = Duration.between(e.getStartTime(), ffr.getTakeoffTime());
 				_msgs.add(String.format("Takeoff time %d minutes %s Online Event started", Long.valueOf(td.toMinutes()), td.isNegative() ? "before" : "after"));	
-			} else
+			} else if (!_negativeMsgs)
 				_msgs.add("Takeoff during Online Event");
 			
 			boolean ltOK = ffr.getLandingTime().isAfter(e.getStartTime()) && ffr.getLandingTime().isBefore(e.getEndTime());
@@ -77,7 +81,7 @@ public class EventFlightHelper {
 			if (!ltOK) {
 				Duration ld = Duration.between(e.getEndTime(), ffr.getLandingTime());
 				_msgs.add(String.format("Landing time %d minutes %s Online Event ended", Long.valueOf(ld.toMinutes()), ld.isNegative() ? "before" : "after"));
-			} else
+			} else if (!_negativeMsgs)
 				_msgs.add("Landing during Online Event");
 			
 			return ttOK && (ltOK || ltGrace);
