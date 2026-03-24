@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -146,8 +146,12 @@ public class GetEvent extends DAO {
 			}
 			else
 				ps.setTimestamp(5, createTimestamp(fr.getSubmittedOn()));
-				
-			return execute(ps);
+			
+			// Load Event and routes
+			List<Event> results = execute(ps);
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
+			loadRoutes(eMap);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
