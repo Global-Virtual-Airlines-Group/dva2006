@@ -41,10 +41,10 @@ golgotha.local.setChart = function(combo) {
 <tr>
 <c:choose>
 <c:when test="${isPDF}">
- <td colspan="2"><object width="100%" data="/charts/${fileName}" type="application/pdf"></object></td>
+ <td colspan="2"><object width="100%" data="/dbimg/charts/${fileName}" type="application/pdf"></object></td>
 </c:when>
 <c:otherwise>
- <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${fileName}" class="noborder" /></td>
+ <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/dbimg/charts/${fileName}" class="noborder" /></td>
 </c:otherwise>
 </c:choose>
 </tr>
