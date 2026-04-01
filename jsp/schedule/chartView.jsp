@@ -28,7 +28,7 @@ golgotha.local.setChart = function(combo) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="fileName" value="${chart.hexID}.${fn:lower(chart.imgType)}" scope="page" />
+<c:set var="fileName" value="${chart.hexID}.${fn:lower(chart.imgFormat)}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
