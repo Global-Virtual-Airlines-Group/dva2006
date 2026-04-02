@@ -8,6 +8,7 @@ golgotha.maps.oceanic.copyRoute = function() {
 	t.select();
 	navigator.clipboard.writeText(t.value);
 	t.remove();
+	golgotha.form.showDialogMessage('Track waypoints copied to Clipboard', {timeout:1750, className:'sec bld', closeby:'any'});
 	return true;
 };
 
