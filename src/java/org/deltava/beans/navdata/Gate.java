@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 5.1
  */
 
@@ -20,6 +20,7 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 	private GateType _type = GateType.GATE;
 	private int _useCount;
 	
+	private Simulator _sim = Simulator.UNKNOWN;
 	private GateZone _zone = GateZone.DOMESTIC;
 	private final Collection<Airline> _airlines = new TreeSet<Airline>();
 
@@ -46,6 +47,7 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 		_number = g._number;
 		_useCount = usage;
 		_zone = g._zone;
+		_sim = g._sim;
 		_type = g._type;
 		_airlines.addAll(g._airlines);
 	}
@@ -96,6 +98,14 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 	 */
 	public GateZone getZone() {
 		return _zone;
+	}
+	
+	/**
+	 * Returns the Simulator associated with this Gate data.
+	 * @return the Simulator
+	 */
+	public Simulator getSimulator() {
+		return _sim;
 	}
 	
 	@Override
@@ -183,6 +193,14 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 	 */
 	public void setZone(GateZone z) {
 		_zone = z;
+	}
+	
+	/**
+	 * Updates the Simulator associated with this Gate data.
+	 * @param sim the Simulator
+	 */
+	public void setSimulator(Simulator sim) {
+		_sim = sim;
 	}
 	
 	@Override

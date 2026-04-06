@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import org.deltava.beans.Simulator;
@@ -7,13 +7,12 @@ import org.deltava.beans.navdata.Gate;
 /**
  * A bean to storage legacy Gate names and mappings to current Gate locations. 
  * @author Luke
- * @version 10.5
+ * @version 12.5
  * @since 10.5
  */
 
 class LegacyGate extends Gate {
 	
-	private final Simulator _sim;
 	private String _oldName;
 
 	/**
@@ -25,16 +24,8 @@ class LegacyGate extends Gate {
 	 */
 	LegacyGate(double lat, double lng, Simulator sim, String oldName) {
 		super(lat, lng);
-		_sim = sim;
+		setSimulator(sim);
 		_oldName = oldName;
-	}
-
-	/**
-	 * Returns the legacy Simulator for this Gate.
-	 * @return the Simulator
-	 */
-	public Simulator getSimulator() {
-		return _sim;
 	}
 
 	/**
