@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2018, 2019, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Gate data. 
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 6.3
  */
 
@@ -37,10 +37,11 @@ public class SetGates extends DAO {
 			startTransaction();
 			
 			// Clear gates
-			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.GATE_AIRLINES WHERE (ICAO=?) AND (NAME=?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.GATE_AIRLINES WHERE (ICAO=?) AND (NAME=?) AND (SIM=?)")) {
 				for (Gate g : gates) {
 					ps.setString(1, g.getCode());
 					ps.setString(2, g.getName());
+					ps.setInt(3, g.getSimulator().getCode());
 					ps.addBatch();
 				}
 			
@@ -49,13 +50,14 @@ public class SetGates extends DAO {
 			
 			// Write gate data
 			int totalWrites = gates.stream().filter(g -> !g.getAirlines().isEmpty()).mapToInt(g -> g.getAirlines().size()).sum();
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, ZONE) VALUES (?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, SIM, AIRLINE, ZONE) VALUES (?, ?, ?, ?, ?)")) {
 				for (Gate g : gates) {
 					ps.setString(1, g.getCode());
 					ps.setString(2, g.getName());
-					ps.setInt(4, g.getZone().ordinal());
+					ps.setInt(3, g.getSimulator().getCode());
+					ps.setInt(5, g.getZone().ordinal());
 					for (Airline a : g.getAirlines()) {
-						ps.setString(3, a.getCode());
+						ps.setString(4, a.getCode());
 						ps.addBatch();
 					}
 				}
