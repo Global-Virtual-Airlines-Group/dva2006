@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2019, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 6.3
  */
 
@@ -38,7 +38,7 @@ public class GateService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Get the airport(s)
+		// Get the airport / simulator
 		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
 			return SC_NOT_FOUND;

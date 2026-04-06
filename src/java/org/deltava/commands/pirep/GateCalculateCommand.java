@@ -18,7 +18,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate the gates used.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 5.1
  */
 
@@ -66,7 +66,7 @@ public class GateCalculateCommand extends AbstractCommand {
 			// Get the closest departure gate
 			GetGates gdao = new GetGates(con);
 			SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-			dGates.addAll(gdao.getGates(afr.getAirportD()));
+			dGates.addAll(gdao.getGates(afr.getAirportD(), afr.getSimulator()));
 			Gate gD = dGates.isEmpty() ? null : dGates.first();
 			if ((gD != null) && !gD.equals(info.getGateD())) {
 				isUpdated = true;
@@ -75,7 +75,7 @@ public class GateCalculateCommand extends AbstractCommand {
 			
 			// Get the closest arrival gate
 			SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-			aGates.addAll(gdao.getGates(afr.getAirportA()));
+			aGates.addAll(gdao.getGates(afr.getAirportA(), afr.getSimulator()));
 			Gate gA = aGates.isEmpty() ? null : aGates.first();
 			if  ((gA != null) && !gA.equals(info.getGateA())) {
 				isUpdated = true;

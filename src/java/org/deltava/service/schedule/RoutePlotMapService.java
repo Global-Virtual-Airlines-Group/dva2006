@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.io.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 12.1
+ * @version 12.5
  * @since 1.0
  */
 
@@ -69,6 +69,9 @@ public class RoutePlotMapService extends MapPlotService {
 		dr.setAirportA(SystemData.getAirport(req.optString("airportA")));
 		dr.setAirportL(SystemData.getAirport(req.optString("airportL")));
 		
+		// Get the Simulator
+		Simulator sim = Simulator.fromName(req.optString("simVersion", "UNKNOWN"), Simulator.UNKNOWN);
+		
 		Aircraft a = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -98,14 +101,14 @@ public class RoutePlotMapService extends MapPlotService {
 			GateHelper gh = new GateHelper(dr, dr.getAirline(), req.optBoolean("allGates") ? Integer.MAX_VALUE : 8, false);
 			List<String> wps = StringUtils.split(route, " ");
 			if (dr.getAirportD() != null) {
-				gh.addDepartureGates(gdao.getGates(dr.getAirportD()), gdao.getUsage(dr, true, ctx.getDB()));
+				gh.addDepartureGates(gdao.getGates(dr.getAirportD(), sim), gdao.getUsage(dr, true, ctx.getDB()));
 				gates.addAll(gh.getDepartureGates());
 				String rwy = req.optString("runway", "");
 				if (rwy.indexOf(' ') > 0)
 					rwy = rwy.substring(rwy.indexOf(' ') + 1);
 				
 				// Get the departure gate
-				Gate gateD = gdao.getGate(dr.getAirportD(), req.optString("gateD"));
+				Gate gateD = gdao.getGate(dr.getAirportD(), sim, req.optString("gateD"));
 				if (gateD != null)
 					routePoints.add(gateD);
 				else
@@ -195,7 +198,7 @@ public class RoutePlotMapService extends MapPlotService {
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
-				gh.addArrivalGates(gdao.getGates(dr.getAirportA()), gdao.getUsage(dr, false, ctx.getDB()));
+				gh.addArrivalGates(gdao.getGates(dr.getAirportA(), sim), gdao.getUsage(dr, false, ctx.getDB()));
 				gates.addAll(gh.getArrivalGates());
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA(), TerminalRoute.Type.STAR));
 				tRoutes.addAll(stars);

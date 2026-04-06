@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.0
  */
 
@@ -370,14 +370,14 @@ public class FlightSubmissionHelper {
 		// Get the closest departure gate - Filter gates that are too far away from the start/end point
 		GetGates gdao = new GetGates(_c);
 		SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-		dGates.addAll(gdao.getGates(_fr.getAirportD()));
+		dGates.addAll(gdao.getGates(_fr.getAirportD(), _fr.getSimulator()));
 		_info.setGateD(dGates.stream().filter(g -> (g.distanceFeet(ffr.getStartLocation()) < 500)).findFirst().orElse(null));
 		if (_info.getGateD() == null)
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("No Gate found within %d feet of starting location", Integer.valueOf(MAX_GATE_DISTANCE)));
 		
 		// Get the closest arrival gate
 		SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-		aGates.addAll(gdao.getGates(_fr.getAirportA()));
+		aGates.addAll(gdao.getGates(_fr.getAirportA(), _fr.getSimulator()));
 		_info.setGateA(aGates.stream().filter(g -> (g.distanceFeet(ffr.getEndLocation()) < 500)).findFirst().orElse(null));
 		if (_info.getGateA() == null)
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("No Gate found within %d feet of shutdown location", Integer.valueOf(MAX_GATE_DISTANCE)));

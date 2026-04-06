@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to refresh SimBrief briefing packages. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.3
  */
 
@@ -102,8 +102,8 @@ public class PackageRefreshService extends WebService {
 			if (!fr.hasGates() && (fr.getSimulator() != Simulator.UNKNOWN)) {
 				GetGates gdao = new GetGates(con);
 				GateHelper gh = new GateHelper(fr, 5, true);
-				gh.addDepartureGates(gdao.getGates(fr.getAirportD()), gdao.getUsage(fr, true, ctx.getDB()));
-				gh.addArrivalGates(gdao.getGates(fr.getAirportA()), gdao.getUsage(fr, false, ctx.getDB()));
+				gh.addDepartureGates(gdao.getGates(fr.getAirportD(), fr.getSimulator()), gdao.getUsage(fr, true, ctx.getDB()));
+				gh.addArrivalGates(gdao.getGates(fr.getAirportA(), fr.getSimulator()), gdao.getUsage(fr, false, ctx.getDB()));
 					
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();

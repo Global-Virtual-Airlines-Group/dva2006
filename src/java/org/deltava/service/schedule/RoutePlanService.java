@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 2.2
  */
 
@@ -77,8 +77,8 @@ public class RoutePlanService extends WebService {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
 			GetGates gdao = new GetGates(con);
-			Gate gD = gdao.getGate(aD, ctx.getParameter("gateD"));
-			Gate gA = gdao.getGate(aA, ctx.getParameter("gateA"));
+			Gate gD = gdao.getGate(aD, sim, ctx.getParameter("gateD"));
+			Gate gA = gdao.getGate(aA, sim, ctx.getParameter("gateA"));
 			
 			// Load the departure gate
 			if (fpgen instanceof MSFSGenerator fsgen)

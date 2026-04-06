@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 11.6
+ * @version 12.5
  * @since 1.0
  */
 
@@ -67,8 +67,8 @@ public class RoutePlotCommand extends AbstractCommand {
 				
 				// Load gates
 				GetGates gdao = new GetGates(con);
-				Gate gD = gdao.getGate(dfr.getAirportD(), dfr.getGateD());
-				Gate gA = gdao.getGate(dfr.getAirportA(), dfr.getGateA());
+				Gate gD = gdao.getGate(dfr.getAirportD(), dfr.getSimulator(), dfr.getGateD());
+				Gate gA = gdao.getGate(dfr.getAirportA(), dfr.getSimulator(), dfr.getGateA());
 				ctx.setAttribute("gatesD", CollectionUtils.nonNull(gD), REQUEST);
 				ctx.setAttribute("gatesA", CollectionUtils.nonNull(gA), REQUEST);
 				
@@ -86,6 +86,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				GetRunwayUsage rwdao = new GetRunwayUsage(con);
 				RunwayUsage dru = rwdao.getPopularRunways(dfr, true);
 				RunwayUsage aru = rwdao.getPopularRunways(dfr, false);
+				// TODO: Should we not check the sim here as well?
 				List<RunwayUse> dr = dru.apply(navdao.getRunways(dfr.getAirportD(), Simulator.P3Dv4));
 				List<RunwayUse> ar = aru.apply(navdao.getRunways(dfr.getAirportA(), Simulator.P3Dv4));
 				rh.addRunways(dr, ar);

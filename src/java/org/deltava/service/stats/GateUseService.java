@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Gate usage statistics.
  * @author Luke
- * @version 11.0
+ * @version 12.5
  * @since 10.6
  */
 
@@ -47,7 +47,7 @@ public class GateUseService extends WebService {
 		jo.put("airport", JSONUtils.format(a));
 		try {
 			GetGates gdao = new GetGates(ctx.getConnection());
-			List<Gate> gates = gdao.getGates(a);
+			List<Gate> gates = gdao.getGates(a); // TODO: Do you care about the sim?
 			Collection<Airline> assignedAirlines = gates.stream().flatMap(g -> g.getAirlines().stream()).collect(Collectors.toSet());
 			
 			// Get usage

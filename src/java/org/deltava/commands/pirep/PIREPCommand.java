@@ -42,7 +42,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -902,8 +902,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				Gate gD = null; Gate gA = null;
 				if (fr instanceof DraftFlightReport dfr) {
 					GetGates gdao = new GetGates(con);
-					gD = gdao.getGate(fr.getAirportD(), dfr.getGateD());
-					gA = gdao.getGate(fr.getAirportA(), dfr.getGateA());
+					gD = gdao.getGate(fr.getAirportD(), dfr.getSimulator(), dfr.getGateD());
+					gA = gdao.getGate(fr.getAirportA(), dfr.getSimulator(), dfr.getGateA());
 				}
 
 				// Build the route

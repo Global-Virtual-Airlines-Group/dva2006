@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to check for a generated SimBrief flight plan.
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 10.3
  */
 
@@ -81,8 +81,8 @@ public class URLCheckService extends WebService {
 			if (!dfr.hasGates()) {
 				GetGates gdao = new GetGates(con);
 				GateHelper gh = new GateHelper(dfr, 5, true);
-				gh.addDepartureGates(gdao.getGates(dfr.getAirportD()), gdao.getUsage(dfr, true, ctx.getDB()));
-				gh.addArrivalGates(gdao.getGates(dfr.getAirportA()), gdao.getUsage(dfr, false, ctx.getDB()));
+				gh.addDepartureGates(gdao.getGates(dfr.getAirportD(), dfr.getSimulator()), gdao.getUsage(dfr, true, ctx.getDB()));
+				gh.addArrivalGates(gdao.getGates(dfr.getAirportA(), dfr.getSimulator()), gdao.getUsage(dfr, false, ctx.getDB()));
 				
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();

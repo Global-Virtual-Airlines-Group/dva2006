@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -9,6 +9,7 @@ import org.json.*;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to update preferred Gate data. 
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 6.3
  */
 
@@ -40,7 +41,8 @@ public class GateUpdateService extends WebService {
 		if (!ctx.isUserInRole("Schedule") && !ctx.isUserInRole("Operations"))
 			return SC_FORBIDDEN;
 		
-		// Get the airport
+		// Get the airport / simulator
+		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.UNKNOWN);
 		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
 			return SC_NOT_FOUND;
