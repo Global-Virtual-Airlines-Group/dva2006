@@ -52,7 +52,7 @@ public class GateUpdateService extends WebService {
 			
 			Connection con = ctx.getConnection();
 			GetGates gdao = new GetGates(con);
-			Map<String, Gate> gm = CollectionUtils.createMap(gdao.getGates(a), Gate::getName);
+			Map<String, Gate> gm = CollectionUtils.createMap(gdao.getGates(a, sim), Gate::getName);
 			
 			// Update based on data
 			Collection<Gate> updGates = new HashSet<Gate>(); 

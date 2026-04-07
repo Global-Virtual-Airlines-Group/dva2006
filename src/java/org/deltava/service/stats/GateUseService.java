@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.json.*;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.Gate;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.GateUsage;
@@ -47,7 +48,7 @@ public class GateUseService extends WebService {
 		jo.put("airport", JSONUtils.format(a));
 		try {
 			GetGates gdao = new GetGates(ctx.getConnection());
-			List<Gate> gates = gdao.getGates(a); // TODO: Do you care about the sim?
+			List<Gate> gates = gdao.getGates(a, Simulator.UNKNOWN); // TODO: Do you care about the sim?
 			Collection<Airline> assignedAirlines = gates.stream().flatMap(g -> g.getAirlines().stream()).collect(Collectors.toSet());
 			
 			// Get usage

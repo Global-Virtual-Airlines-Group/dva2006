@@ -8,7 +8,7 @@ import java.sql.Connection;
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
-
+import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
@@ -39,6 +39,7 @@ public class GateService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the airport / simulator
+		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.UNKNOWN);
 		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
 			return SC_NOT_FOUND;
@@ -49,7 +50,7 @@ public class GateService extends WebService {
 			
 			// Load Gates
 			GetGates gdao = new GetGates(con);
-			gates.addAll(gdao.getGates(a));
+			gates.addAll(gdao.getGates(a, sim));
 			
 			// Load airlines
 			GetRawSchedule rsdao = new GetRawSchedule(con);
