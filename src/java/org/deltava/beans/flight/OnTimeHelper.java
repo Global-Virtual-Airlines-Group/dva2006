@@ -1,4 +1,4 @@
-// Copyright 2018, 2019, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 8.4
  */
 
@@ -23,7 +23,7 @@ public class OnTimeHelper {
 	
 	private static final Logger log = LogManager.getLogger(OnTimeHelper.class);
 
-	private final Collection<ScheduleEntry> _flights = new ArrayList<ScheduleEntry>();
+	private final SequencedCollection<ScheduleEntry> _flights = new ArrayList<ScheduleEntry>();
 	private int _depToleranceMinutes = 60;
 	
 	private ScheduleEntry _entry;
@@ -77,8 +77,8 @@ public class OnTimeHelper {
 	}
 	
 	/**
-	 * Adds a Draft Flight Report to calculate timeliness. This is used for situations where a Flight Assignment was generated on a different
-	 * day and the schedule no longer contains the same flights. 
+	 * Adds a Draft Flight Report to calculate timeliness. This is used for situations where a Flight Assignment was generated on a different day and
+	 * the schedule no longer contains the same flights. This will be added at the start of the list of flights to take precedence over shceudle entries.
 	 * @param dfr a DraftFlightReport
 	 */
 	public void add(DraftFlightReport dfr) {
@@ -90,7 +90,7 @@ public class OnTimeHelper {
 		se.setTimeD(dfr.getTimeD().toLocalDateTime());
 		se.setTimeA(dfr.getTimeA().toLocalDateTime());
 		se.setSource(ScheduleSource.DRAFT);
-		_flights.add(se);
+		_flights.addFirst(se);
 	}
 	
 	/**
