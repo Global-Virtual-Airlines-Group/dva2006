@@ -1,4 +1,4 @@
-// Copyright 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.time.LocalDate;
@@ -6,7 +6,7 @@ import java.time.LocalDate;
 /**
  * A bean to store yearly totals with rollover amounts.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 11.1
  */
 
@@ -47,6 +47,11 @@ public class RolloverYearlyTotal extends YearlyTotal {
 	@Override
 	public int getPoints() {
 		return super.getPoints() + _roPts;
+	}
+	
+	@Override
+	public boolean hasRollover() {
+		return (_roLegs > 0) || (_roDistance > 0) || (_roPts > 0);
 	}
 	
 	/**

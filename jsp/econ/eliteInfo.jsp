@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" buffer="24kb" autoFlush="true" %>
+<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" buffer="32kb" autoFlush="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -164,12 +164,14 @@ span.rmbar {
 </tr>
 <c:forEach var="yr" items="${totals.keySet()}">
 <c:set var="total" value="${totals[yr]}" scope="page" /><c:set var="upds" value="${statusUpdates[yr]}" scope="page" />
+<c:if test="${total.hasRollover()}"><c:set var="roTotal" value="${total.rollover}" scope="page" /></c:if>
 <c:set var="lvls" value="${levels[yr]}" scope="page" />
 <c:set var="yearMax" value="${maxStatus[yr].level}" scope="page" />
 <c:if test="${(yr ne currentYear) && (!empty upds)}">
 <tr>
  <td class="label top" style="background-color:#${yearMax.hexColor};" title="Year-end ${yr} status: ${yearMax.name}">${yr} Results</td>
- <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${total.points}" />&nbsp;${elitePoints}</span><br>
+ <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${total.points}" />&nbsp;${elitePoints}</span>
+<c:if test="${!roTotal.isZero()}"> <span class="small ita">(Rolled over <fmt:int value="${roTotal.legs}" /> flight legs, <fmt:int value="${roTotal.distance}" />&nbsp;${eliteDistance})</span></c:if><br>
 <br>
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
 <fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;

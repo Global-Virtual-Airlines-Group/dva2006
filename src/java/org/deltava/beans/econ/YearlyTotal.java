@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store yearly Pilot Elite status totals.
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 9.2
  */
 
@@ -52,6 +52,15 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	 */
 	public int getYear() {
 		return _year;
+	}
+	
+	/**
+	 * Returns whether this year's totals include rollovers from the previous year.
+	 * @return FALSE
+	 */
+	@SuppressWarnings("static-method")
+	public boolean hasRollover() {
+		return false;
 	}
 	
 	/**
