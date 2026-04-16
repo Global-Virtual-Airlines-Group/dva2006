@@ -78,11 +78,11 @@ span.rmbar {
  <c:if test="${currentStatus.isLifetime}"> - Based on lifetime <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if><br>
  <hr>
  ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${ct.points}" />&nbsp;${elitePoints}</span>
- <c:if test="${pending.legs > 0}"><br>Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
- <c:if test="${((ro.legs > 0) || (ro.distance > 0))}">
+ <c:if test="${pending.hasLegs()}"><br>Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
+ <c:if test="${!ro.isZero()}">
  <br>
- Rolled over from <span class="pri bld">${currentYear - 1}</span>: <c:if test="${ro.legs > 0}"><fmt:int value="${ro.legs}" className="bld" /> flight legs<c:if test="${ro.distance > 0}">, </c:if></c:if>
-<c:if test="${ro.distance > 0}"><span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></c:if></td>
+ Rolled over from <span class="pri bld">${currentYear - 1}</span>: <c:if test="${ro.hasLegs()}"><fmt:int value="${ro.legs}" className="bld" /> flight legs<c:if test="${ro.hasDistance()}">, </c:if></c:if>
+<c:if test="${ro.hasDistance()}"><span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></c:if></td>
 </tr>
 <c:if test="${!empty eliteTDName && !totalMileage.isZero()}">
 <tr>
@@ -171,7 +171,8 @@ span.rmbar {
 <tr>
  <td class="label top" style="background-color:#${yearMax.hexColor};" title="Year-end ${yr} status: ${yearMax.name}">${yr} Results</td>
  <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${total.points}" />&nbsp;${elitePoints}</span>
-<c:if test="${!roTotal.isZero()}"> <span class="small ita">(Rolled over <fmt:int value="${roTotal.legs}" /> flight legs, <fmt:int value="${roTotal.distance}" />&nbsp;${eliteDistance})</span></c:if><br>
+<c:if test="${!roTotal.isZero()}"> <span class="small ita">(Rolled over <c:if test="${roTotal.hasLegs()}"><fmt:int value="${roTotal.legs}" /> flight legs</c:if><c:if test="${roTotal.hasLegs() && roTotal.hasDistance()}">, </c:if>
+<c:if test="${roTotal.hasDistance()}"><fmt:int value="${roTotal.distance}" />&nbsp;${eliteDistance}</c:if>)</span></c:if><br>
 <br>
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
 <fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;
