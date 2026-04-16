@@ -1,10 +1,10 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 /**
  * An interface to describe beans that store Elite program totals.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 9.2
  */
 
@@ -34,6 +34,31 @@ public interface EliteTotals {
 	 */
 	default boolean isZero() {
 		return (getLegs() == 0) && (getDistance() == 0) && (getPoints() == 0);
+	}
+	
+	/**
+	 * Returns if the number of flight lges is greater than zero. 
+	 * @return TRUE if the number of legs is greater than zero, otherwise FALSE
+	 */
+	default boolean hasLegs() {
+		return (getLegs() > 0);
+	}
+
+	/**
+	 * Returns if the distance flown is greater than zero. 
+	 * @return TRUE if the distance is greater than zero, otherwise FALSE
+	 */
+
+	default boolean hasDistance() {
+		return (getDistance() > 0);
+	}
+	
+	/**
+	 * Returns if the number of Elite points is greater than zero. 
+	 * @return TRUE if the number of points is greater than zero, otherwise FALSE
+	 */
+	default boolean hasPoints() {
+		return (getPoints() > 0);
 	}
 	
 	/**
