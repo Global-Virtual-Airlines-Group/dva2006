@@ -95,9 +95,9 @@ td.requal-${lvl.name} {
  <td class="bld">${pilot.pilotCode}</td>
  <td class="sec bld">${pilot.rank.name}</td>
  <td class="pri bld">${pilot.equipmentType}</td>
- <td <c:if test="${((nl.legs > 0) && (yd.legs < 1))}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><el:cmd url="logbook" link="${pilot}" className="bld"><fmt:int value="${yt.legs - ro.legs}" /></el:cmd><c:if test="${ro.legs > 0}">&nbsp;<span class="small ita" title="Rollover Legs">(<fmt:int value="${ro.legs}" />)</span></c:if></td>
- <td <c:if test="${((nl.distance > 0) && (yd.distance < 1))}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int value="${yt.distance - ro.distance}" /><c:if test="${ro.distance > 0}">&nbsp;<span class="small ita" title="Rollover ${distUnit}">(<fmt:int value="${ro.distance}" />)</span></c:if></td>
- <td <c:if test="${(nl.points > 0) && (yd.points < 1)}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int className="sec" value="${yt.points - ro.points}" /> <c:if test="${ro.points > 0}">&nbsp;<span class="small ita">(<fmt:int value="${ro.points}" />)</span></c:if></td>
+ <td <c:if test="${nl.hasLegs() && !yd.hasLegs()}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><el:cmd url="logbook" link="${pilot}" className="bld"><fmt:int value="${yt.legs - ro.legs}" /></el:cmd><c:if test="${ro.legs > 0}">&nbsp;<span class="small ita" title="Rollover Legs">(<fmt:int value="${ro.legs}" />)</span></c:if></td>
+ <td <c:if test="${nl.hasDistance() && !yd.hasDistance()}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int value="${yt.distance - ro.distance}" /><c:if test="${ro.distance > 0}">&nbsp;<span class="small ita" title="Rollover ${distUnit}">(<fmt:int value="${ro.distance}" />)</span></c:if></td>
+ <td <c:if test="${nl.hasPoints() && !yd.hasPoints()}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int className="sec" value="${yt.points - ro.points}" /> <c:if test="${ro.points > 0}">&nbsp;<span class="small ita">(<fmt:int value="${ro.points}" />)</span></c:if></td>
 </tr>
 </c:forEach>
 </c:forEach>
