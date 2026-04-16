@@ -65,7 +65,7 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 <c:forEach var="lvlName" items="${oldLevels.keySet()}">
 <c:set var="ol" value="${oldLevels[lvlName]}" scope="page" />
 <c:set var="nl" value="${newLevels[lvlName]}" scope="page" />
-<c:if test="${ol.legs > 0}">
+<c:if test="${ol.hasLegs()}">
 <tr>
  <td class="label top">${lvlName}</td>
  <td class="data"><span class="pri bld">${ol.year}</span> - <fmt:int value="${ol.legs}" className="bld" /> flight legs, <fmt:int value="${ol.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${ol.points}" />&nbsp;${pointUnit}<br>

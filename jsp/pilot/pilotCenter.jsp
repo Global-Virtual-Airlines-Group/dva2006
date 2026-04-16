@@ -195,7 +195,7 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
  <c:if test="${!empty nyLevel}">
  <br><br>Status in the <content:airline />&nbsp;${eliteName} program requires annual requalification. You have completed enough flights in ${eliteYear} for <fmt:elite level="${nyLevel}" className="bld" nameOnly="true" /> status.
  <c:if test="${nyDowngrade}"> <span class="sec bld">Your status will be downgraded at the end of the year.</span></c:if></c:if>
- <c:if test="${((currentEliteRO.legs > 0) || (currentEliteRO.distance > 0))}">
+ <c:if test="${!currentEliteRO.isZero()}">
 <br>
 Rolled over from <span class="pri bld">${eliteYear - 1}</span>: <fmt:int value="${currentEliteRO.legs}" className="bld" /> flight legs, <span class="ter bld"><fmt:int value="${currentEliteRO.distance}" />&nbsp;${eliteDistance}</span></c:if> 
 <c:if test="${nextEliteLevel.isVisible}"><br>
