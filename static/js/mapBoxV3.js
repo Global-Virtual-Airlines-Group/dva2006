@@ -148,7 +148,7 @@ mapboxgl.Map.prototype.addLine = function(l, data) {
 	if (data)
 		l.source = data;
 	else if ((typeof l.source == 'string') && (this.getSource(l.source) == null))
-		l.source = eval(l.source);
+		l.source = golgotha.util.getVar(l.source);
 
 	this.addLayer(golgotha.maps.util.isShape(l) ? l.getLayer() : l);
 	golgotha.maps.displayedLayers.push(l);
