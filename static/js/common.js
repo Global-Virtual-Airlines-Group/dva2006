@@ -1,6 +1,6 @@
 const golgotha = {event:{},util:{},form:{isSubmitted:false,invalidDomains:[]},local:{},nav:{sideMenu:false},charts:{},sort:{lastSort:{},data:{}}};
 golgotha.nav.touch = ("ontouchend" in document);
-golgotha.util.getTimestamp = function(ms) { const d = new Date(); return d.getTime() - (d.getTime() % ms); };
+golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.util.darkMode = false; // (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 golgotha.event.beacon = function() { if (gtag) gtag('event', arguments); };
 golgotha.event.stop = function(e) { if (e) { e.stopPropagation(); e.preventDefault(); } return false; };
@@ -501,6 +501,17 @@ golgotha.util.isExpanded = function(className) {
 	const rows = golgotha.util.getElementsByClass(className);
 	if (rows.length == 0) return false;
 	return (rows[0].style.display == '');
+};
+
+golgotha.util.getVar = function(id) {
+	const tkns = id.split('.');
+	let o = window[tkns[0]];
+	for (var x = 1; ((o) && (x < tkns.length)); x++) {
+		const tkn = tkns[x];
+		o = o[tkn];
+	}	
+
+	return o;	
 };
 
 golgotha.nav.toggleMenu = function(e, force) {
