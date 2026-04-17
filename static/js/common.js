@@ -1,6 +1,6 @@
 const golgotha = {event:{},util:{},form:{isSubmitted:false,invalidDomains:[]},local:{},nav:{sideMenu:false},charts:{},sort:{lastSort:{},data:{}}};
 golgotha.nav.touch = ("ontouchend" in document);
-golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
+golgotha.util.getTimestamp = function(ms) { const d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.util.darkMode = false; // (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 golgotha.event.beacon = function() { if (gtag) gtag('event', arguments); };
 golgotha.event.stop = function(e) { if (e) { e.stopPropagation(); e.preventDefault(); } return false; };
