@@ -505,7 +505,7 @@ golgotha.util.isExpanded = function(className) {
 
 golgotha.util.getVar = function(id) {
 	const tkns = id.split('.');
-	let o = window[tkns[0]];
+	let o = (tkns[0] == 'golgotha') ? golgotha : window[tkns[0]];
 	for (var x = 1; ((o) && (x < tkns.length)); x++) {
 		const tkn = tkns[x];
 		o = o[tkn];
