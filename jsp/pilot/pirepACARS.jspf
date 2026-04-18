@@ -306,8 +306,8 @@
 <c:set var="outsideSD" value="${Math.abs(pirep.landingScore - rlStats.averageScore) > rlStats.scoreSD}" scope="page" />
 <tr class="acarsData">
  <td class="label">Landing Score</td>
- <td class="data"><span class="bld"><fmt:landscore value="${pirep.landingScore}" />
-<c:if test="${!empty rlStats}"> - <fmt:landdesc score="${pirep.landingScore}" stats="${rlStats}" className="ita caps" /> (<fmt:dec value="${rlStats.averageScore}" /> +/- <fmt:dec value="${rlStats.scoreSD}" />)</c:if></td>
+ <td class="data"><fmt:landscore value="${pirep.landingScore}" className="bld" />
+<c:if test="${!empty rlStats}"> - <fmt:landdesc score="${pirep.landingScore}" stats="${rlStats}" className="ita caps bld" /> (<fmt:dec value="${rlStats.averageScore}" /> +/- <fmt:dec value="${rlStats.scoreSD}" />)</c:if></td>
 </tr>
 <tr class="acarsData">
  <td class="label top">Flight Score</td>
