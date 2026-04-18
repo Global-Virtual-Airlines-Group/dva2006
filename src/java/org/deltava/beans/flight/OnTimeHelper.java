@@ -24,7 +24,7 @@ public class OnTimeHelper {
 	private static final Logger log = LogManager.getLogger(OnTimeHelper.class);
 
 	private final SequencedCollection<ScheduleEntry> _flights = new ArrayList<ScheduleEntry>();
-	private int _depToleranceMinutes = 60;
+	private final int _depToleranceMinutes = 60;
 	
 	private ScheduleEntry _entry;
 	
@@ -90,15 +90,10 @@ public class OnTimeHelper {
 		se.setTimeD(dfr.getTimeD().toLocalDateTime());
 		se.setTimeA(dfr.getTimeA().toLocalDateTime());
 		se.setSource(ScheduleSource.DRAFT);
-		_flights.addFirst(se);
-	}
-	
-	/**
-	 * Sets the tolerance for finding a possible departure flight. 
-	 * @param minutes the tolerance in minutes
-	 */
-	public void setDepartureTolerance(int minutes) {
-		_depToleranceMinutes = Math.max(1,  minutes);
+		
+		// You want to only add these if there isn't a flight that matches the route and time
+		if (!_flights.stream().anyMatch(fl -> routeTimeMatch(se, fl)))
+			_flights.addFirst(se);
 	}
 	
 	private ScheduleEntry getClosestScheduleEntry(FlightTimes ft) {
@@ -190,5 +185,15 @@ public class OnTimeHelper {
 		
 		buf.append(')');
 		return buf.toString();
+	}
+	
+	/*
+	 * Helper method to determine whether we need to add a draft entry to the list, or there is an existing schedule entry that can be used.
+	 */
+	private static boolean routeTimeMatch(ScheduleEntry dfr, ScheduleEntry se) {
+		if (!dfr.matches(se)) return false;
+		Duration dd = Duration.between(dfr.getTimeD().toLocalTime(), se.getTimeD().toLocalTime());
+		Duration da = Duration.between(dfr.getTimeA().toLocalTime(), se.getTimeA().toLocalTime());
+		return (dd.toMinutes() < 5) && (da.toMinutes() < 5);
 	}
 }
