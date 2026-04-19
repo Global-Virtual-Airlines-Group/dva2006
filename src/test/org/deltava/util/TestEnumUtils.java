@@ -1,5 +1,7 @@
 package org.deltava.util;
 
+import java.util.Iterator;
+
 import junit.framework.TestCase;
 
 public class TestEnumUtils extends TestCase {
@@ -22,5 +24,14 @@ public class TestEnumUtils extends TestCase {
 		assertEquals(E.SECOND, EnumUtils.max(E.FIRST, E.SECOND));
 		assertEquals(E.THIRD, EnumUtils.max(E.SECOND, E.THIRD));
 		assertEquals(E.THIRD, EnumUtils.max(E.THIRD, E.THIRD));
+	}
+	
+	@SuppressWarnings("static-method")
+	public void testIterator() {
+		Iterator<E> i = EnumUtils.iterator(E.class);
+		assertNotNull(i);
+		assertTrue(i.hasNext());
+		for (int x = 0; x < E.values().length; x++)
+			assertEquals(E.values()[x], i.next());
 	}
 }
