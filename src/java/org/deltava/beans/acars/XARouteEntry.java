@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -17,8 +17,6 @@ import org.deltava.beans.flight.Warning;
 public class XARouteEntry extends RouteEntry {
 	
 	private int _flightID;
-	private int _vSpeed;
-	
 	private String _msgType;
 	
 	/**
@@ -52,14 +50,6 @@ public class XARouteEntry extends RouteEntry {
 	}
 	
 	/**
-	 * Returns the vertical speed.
-	 * @return the speed in feet per minute
-	 */
-	public int getVerticalSpeed() {
-		return _vSpeed;
-	}
-	
-	/**
 	 * Sets the Flight ID.
 	 * @param id the ID
 	 * @throws IllegalArgumentException if id is zero, negative or already set
@@ -70,14 +60,9 @@ public class XARouteEntry extends RouteEntry {
 	}
 
 	/**
-	 * Sets the vertical speed.
-	 * @param s the speed in feet per minute
+	 * Updats the XACARS message type.
+	 * @param mt the type
 	 */
-	public void setVerticalSpeed(int s) {
-		if ((s >= -7000) && (s <= 7000))
-			_vSpeed = s;
-	}
-	
 	public void setMessageType(String mt) {
 		_msgType = mt;
 	}
