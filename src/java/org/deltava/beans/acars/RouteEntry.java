@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	private int _hdg;
 	private int _aSpeed;
 	private int _gSpeed;
+	private int _vSpeed;
 	private double _mach;
 	private int _wSpeed;
 	private int _wHdg;
@@ -137,6 +138,14 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	public int getGroundSpeed() {
 		return _gSpeed;
 	}
+	
+	/**
+	 * Returns the vertical speed.
+	 * @return the speed in feet per minute
+	 */
+	public int getVerticalSpeed() {
+		return _vSpeed;
+	}
 
 	/**
 	 * Returns the amount of fuel remaining on the aircraft.
@@ -227,6 +236,14 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 */
 	public void setGroundSpeed(int speed) {
 		_gSpeed = speed;
+	}
+	
+	/**
+	 * Sets the vertical speed.
+	 * @param s the speed in feet per minute
+	 */
+	public void setVerticalSpeed(int s) {
+		_vSpeed = s;
 	}
 
 	/**

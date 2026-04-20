@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -24,7 +24,6 @@ public class ACARSRouteEntry extends RouteEntry {
 	private int _altimeter;
 	private double _pitch;
 	private double _bank;
-	private int _vSpeed;
 	private double _aoa;
 	private double _gForce;
 	private double _cg;
@@ -197,15 +196,6 @@ public class ACARSRouteEntry extends RouteEntry {
 		return _cg;
 	}
 
-	/**
-	 * Returns the aircraft's vertical speed.
-	 * @return the vertical speed in feet/minute
-	 * @see ACARSRouteEntry#setVerticalSpeed(int)
-	 */
-	public int getVerticalSpeed() {
-		return _vSpeed;
-	}
-	
 	/**
 	 * Returns the number of engines.
 	 * @return the engine count
@@ -454,15 +444,6 @@ public class ACARSRouteEntry extends RouteEntry {
 		_bank = Math.max(-178, Math.min(178, b));
 	}
 
-	/**
-	 * Updates the aircraft's vertical speed.
-	 * @param speed the speed in feet per minute
-	 * @see ACARSRouteEntry#getGroundSpeed()
-	 */
-	public void setVerticalSpeed(int speed) {
-		_vSpeed = speed;
-	}
-	
 	/**
 	 * Updates the number of engines.
 	 * @param cnt the engine count
@@ -743,7 +724,7 @@ public class ACARSRouteEntry extends RouteEntry {
 				warns.add(Warning.OVER250K);
 		}
 		
-		if ((_radarAlt < 1500) && (_vSpeed < -1500))
+		if ((_radarAlt < 1500) && (getVerticalSpeed() < -1500))
 			warns.add(Warning.DESCENTRATE);
 		if (Math.abs(_bank) > 45)
 			warns.add(Warning.BANK);
@@ -766,7 +747,7 @@ public class ACARSRouteEntry extends RouteEntry {
 		if (isFlagSet(ACARSFlags.GEARDOWN) && (getAirSpeed() > 250))
 			warns.add(Warning.GEARSPEED);
 		if (!isFlagSet(ACARSFlags.GEARDOWN)) {
-			if (isFlagSet(ACARSFlags.ONGROUND) || ((_vSpeed < 100) && (_radarAlt < 500)))
+			if (isFlagSet(ACARSFlags.ONGROUND) || ((getVerticalSpeed() < 100) && (_radarAlt < 500)))
 				warns.add(Warning.GEARUP);
 		}
 			
@@ -843,7 +824,7 @@ public class ACARSRouteEntry extends RouteEntry {
 		buf.append("<br>Heading: ");
 		buf.append(StringUtils.format(getHeading(), "000"));
 		buf.append(" degrees<br>Vertical Speed: ");
-		buf.append(StringUtils.format(_vSpeed, "###0"));
+		buf.append(StringUtils.format(getVerticalSpeed(), "###0"));
 		buf.append(" feet/min<br>");
 		boolean showPerEngine = isEngineOut() || _displayPerEngineNX;
 		if (showPerEngine && (_engineCount > 0)) {
