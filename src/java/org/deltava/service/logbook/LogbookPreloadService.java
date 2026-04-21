@@ -1,4 +1,4 @@
-// Copyright 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.logbook;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
  * A Web Service to allow asynchronous pre-population of a Pilot's log book into a dedicated cache
  * to reduce Flight Report approval times.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 11.2
  */
 
@@ -36,11 +36,11 @@ public class LogbookPreloadService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Check for role
+		// Get the Pilot ID
+		int id = ctx.getUser().getID();
 		if (!ctx.isUserInRole("PIREP") && !ctx.isUserInRole("Operations"))
-			return SC_FORBIDDEN;
+			StringUtils.parse(ctx.getParameter("id"), id);
 		
-		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -79,10 +79,5 @@ public class LogbookPreloadService extends WebService {
 	@Override
 	public final boolean isSecure() {
 		return true;
-	}
-	
-	@Override
-	public final boolean isLogged() {
-		return false;
 	}
 }
