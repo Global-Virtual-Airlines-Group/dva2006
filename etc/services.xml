@@ -71,6 +71,7 @@
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />
 	<service id="mylogbook" class="org.deltava.service.logbook.LogbookService" />
+	<service id="dataexport" class="org.deltava.service.logbook.DataExportService" />
 	<service id="allstats" class="org.deltava.service.stats.AllFlightsService" />
 	<service id="bwstats" class="org.deltava.service.stats.BandwidthInfoService" />
 	<service id="pirepstats" class="org.deltava.service.stats.FlightStatsService" />
