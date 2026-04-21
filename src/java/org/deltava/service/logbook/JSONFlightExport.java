@@ -9,6 +9,7 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Aircraft;
+import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.util.JSONUtils;
 
@@ -233,7 +234,6 @@ class JSONFlightExport {
 	 */
 	 static JSONObject format(NavigationDataBean ndb) {
 		
-		// Create the object
 		JSONObject jo = new JSONObject();
 		jo.put("type", ndb.getType().toString());
 		jo.put("id", ndb.getCode());
@@ -270,4 +270,21 @@ class JSONFlightExport {
 		
 		return jo;
 	}
+
+	 /**
+	  * Formats an online PositionData bean into a JSON object.
+	  * @param pd a PositionData
+	  * @return a JSONObject
+	  */
+	 static JSONObject format(PositionData pd) {
+
+		JSONObject jo = new JSONObject();
+		putEpoch(jo, "date", pd.getDate());
+		jo.put("lat", pd.getLatitude());
+		jo.put("lng", pd.getLongitude());
+		jo.put("alt", pd.getAltitude());
+		jo.put("hdg", pd.getHeading());
+		jo.put("aSpeed", pd.getAirSpeed());
+		return jo;
+	 }
 }
