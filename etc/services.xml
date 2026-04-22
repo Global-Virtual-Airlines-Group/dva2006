@@ -67,10 +67,14 @@
 	<service id="ftstats" class="org.deltava.service.schedule.FlightTimeStatsService" />
 	<service id="schedexport" class="org.deltava.service.schedule.ExportService" />
 	<service id="tourleg" class="org.deltava.service.schedule.TourLegService" />
+	
+	<!-- Logbook Services -->
+	<service id="mylogbook" class="org.deltava.service.logbook.LogbookService" />
+	<service id="logpreload" class="org.deltava.service.logbook.LogbookPreloadService" />
+	<service id="draftsubmit" class="org.deltava.service.logbook.DraftSubmitService" />
 
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />
-	<service id="mylogbook" class="org.deltava.service.logbook.LogbookService" />
 	<service id="allstats" class="org.deltava.service.stats.AllFlightsService" />
 	<service id="bwstats" class="org.deltava.service.stats.BandwidthInfoService" />
 	<service id="pirepstats" class="org.deltava.service.stats.FlightStatsService" />
@@ -84,7 +88,6 @@
 	<service id="loadstats" class="org.deltava.service.stats.LoadStatsService" />
 	<service id="lfmodel" class="org.deltava.service.stats.LoadModelService" />
 	<service id="otstats" class="org.deltava.service.stats.OnTimeStatsService" />
-	<service id="logpreload" class="org.deltava.service.logbook.LogbookPreloadService" />
 	<service id="airportinfo" class="org.deltava.service.stats.AirportInformationService" />
 	<service id="yeartracks" class="org.deltava.service.stats.YearlyTrackService" />
 
