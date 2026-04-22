@@ -86,7 +86,7 @@ public class DraftSubmitService extends WebService {
 			GetSimBrief sbdao = new GetSimBrief();
 			if (!StringUtils.isEmpty(sbID) && ctx.getUser().hasID(ExternalID.NAVIGRAPH)) {
 				sbPkg = sbdao.load(sbID);
-				ro.put("isSimBiref", true);
+				ro.put("isSimBrief", true);
 			}
 			
 			// Write the flight report
