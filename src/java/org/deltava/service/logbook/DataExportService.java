@@ -106,7 +106,6 @@ public class DataExportService extends WebService {
 			}
 			
 			// Serialize in a multi-threaded fashion
-			tt.mark("flightdata");
 			Collection<FlightJS> jsData = work.parallelStream().map(DataExportService::serialize).collect(Collectors.toList());
 			
 			// Write to ZIP file
