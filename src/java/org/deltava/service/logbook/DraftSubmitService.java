@@ -74,9 +74,6 @@ public class DraftSubmitService extends WebService {
 			Collection<FlightReport> flights = frdao.getDraftReports(ctx.getUser().getID(), dfr, ctx.getDB());
 			flights.removeIf(fr -> (fr.getID() == id));
 			
-			// TODO: If the IDs match, update that one
-			
-			
 			// Get the write DAO and start transaction
 			ctx.startTX();
 			SetFlightReport frwdao = new SetFlightReport(con);
@@ -86,7 +83,10 @@ public class DraftSubmitService extends WebService {
 			GetSimBrief sbdao = new GetSimBrief();
 			if (!StringUtils.isEmpty(sbID) && ctx.getUser().hasID(ExternalID.NAVIGRAPH)) {
 				sbPkg = sbdao.load(sbID);
-				ro.put("isSimBrief", true);
+				if (sbPkg != null) {
+					ro.put("isSimBrief", true);
+					dfr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Linked to SimBrief plan %s", sbID));
+				}
 			}
 			
 			// Write the flight report
