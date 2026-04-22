@@ -1248,6 +1248,12 @@
 		<roles>*</roles>	
 	</command>
 
+	<command id="dataexport">
+		<name>Logbook Data Export</name>
+		<class>org.deltava.commands.pirep.DataExportCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="pirep">
 		<name>PIREP</name>
 		<class>org.deltava.commands.pirep.PIREPCommand</class>
