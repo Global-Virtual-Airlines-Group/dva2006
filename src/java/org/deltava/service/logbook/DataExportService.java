@@ -6,13 +6,10 @@ import static jakarta.servlet.http.HttpServletResponse.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
-import java.util.concurrent.*;
 
 import java.sql.Connection;
 import java.time.Instant;
 import java.nio.file.attribute.FileTime;
-
-import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
@@ -33,77 +30,7 @@ import org.deltava.util.cache.*;
 
 public class DataExportService extends DownloadService {
 	
-	private static final Logger log = LogManager.getLogger(DataExportService.class);
-	
 	private static final Cache<CacheableCollection<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "Logbook");
-	
-	/*
-	 * This is a hack. Ordinarily we would do a map() on a queue, but stream iterators do not mutate their underlying stream and we will
-	 * OOM. Therefore, we submit work into a ThreadPoolExecutor which should allow the raw data to be garbage collected post serialization. 
-	 */
-	private class ExportWork implements Callable<Void> {
-		private final FlightData _fd;
-		private final Queue<FlightJS> _out;
-		
-		ExportWork(FlightData fd, Queue<FlightJS> out) {
-			super();
-			_fd = fd;
-			_out= out;
-		}
-
-		@Override
-		public Void call() throws Exception {
-			FlightJS js = DataSerializer.serialize(_fd);
-			_out.add(js);
-			return null;
-		}
-	}
-	
-	/**
-	 * Helper method to asynchronously write JSON data to a ZIP file. 
-	 */
-	private class ZIPWorker implements Runnable {
-		private final BlockingQueue<FlightJS> _work;
-		private File _f;
-		
-		ZIPWorker(BlockingQueue<FlightJS> work) {
-			super();
-			_work = work;
-		}
-		
-		@Override
-		public String toString() {
-			return "ZIPWorker";
-		}
-		
-		File getFile() {
-			return _f;
-		}
-		
-		@Override
-		public void run() {
-			try {
-				_f = File.createTempFile("dataExport", "zip");
-				try (OutputStream os = new BufferedOutputStream(new FileOutputStream(_f), 65536); ZipOutputStream zout = new ZipOutputStream(os)) {
-					while (!Thread.currentThread().isInterrupted()) {
-						FlightJS js = _work.take();
-						log.info("Wrote Flight {} to ZIP", Integer.valueOf(js.id()));
-						ZipEntry ze = new ZipEntry(String.valueOf(js.id()) + ".json");
-						ze.setMethod(ZipEntry.DEFLATED);
-						ze.setCreationTime(FileTime.from(Instant.now()));
-						zout.putNextEntry(ze);
-						PrintWriter pw = new PrintWriter(zout);
-						pw.print(js.js());
-						pw.flush();
-					}
-				}
-			} catch (IOException ie) {
-				log.atError().withThrowable(ie).log("Error writing ZIP file - {}", ie.getMessage());
-			} catch (InterruptedException ixe) {
-				log.info("ZIPWorker Interrupted");
-			}
-		}
-	}
 	
 	/**
 	 * Executes the Web Service.
@@ -121,7 +48,6 @@ public class DataExportService extends DownloadService {
 		
 		Pilot p = null;
 		Collection<FlightData> work = new ArrayList<FlightData>();
-		IntervalTaskTimer tt = new IntervalTaskTimer();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -130,7 +56,6 @@ public class DataExportService extends DownloadService {
 			GetAircraft acdao = new GetAircraft(con);
 			p = pdao.get(userID);
 			Map<String,Aircraft> acTypes = CollectionUtils.createMap(acdao.getAircraftTypes(), Aircraft::getName);
-			tt.mark("data");
 			
 			// Get the Flight Reports for the Pilot
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -147,7 +72,6 @@ public class DataExportService extends DownloadService {
 			// Remove flights not completed and scored
 			pireps.removeIf(fr -> !fr.getStatus().getIsComplete());
 			frdao.loadCaptEQTypes(userID, pireps, ctx.getDB());
-			tt.mark("logbook");
 			
 			// Load flight data
 			GetACARSData fidao = new GetACARSData(con);
@@ -169,8 +93,6 @@ public class DataExportService extends DownloadService {
 				FlightData fd = new FlightData(fr, ac, rtData, error);
 				work.add(fd);
 			}
-			
-			tt.mark("positions");
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -180,37 +102,36 @@ public class DataExportService extends DownloadService {
 		// Abort if no flights
 		if (work.isEmpty()) return SC_NOT_FOUND;
 		
-		// Build the worker
-		BlockingQueue<FlightJS> outWork = new LinkedBlockingQueue<FlightJS>();
-		ZIPWorker zw = new ZIPWorker(outWork);
-		Thread zwt = new Thread(zw, zw.toString());
-		zwt.setDaemon(true);
-		
-		// Serialize in a multi-threaded fashion
-		int poolSize = Runtime.getRuntime().availableProcessors();
-		try (ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, poolSize, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())) {
-			work.stream().map(fd -> new ExportWork(fd, outWork)).forEach(exec::submit);
-			tt.mark("submit");
-			work.clear();
-			zwt.start();
-			exec.shutdown();
-			exec.awaitTermination(150, TimeUnit.SECONDS);
-			zwt.interrupt();
-			tt.mark("serialize");
-		} catch (InterruptedException ie) {
-			log.atError().withThrowable(ie).log("Error executing ThreadPool - {}", ie.getMessage());
+		// Load the data and write to the ZIP file
+		File pth = new File(System.getProperty("java.io.tmpdir"), "export"); pth.mkdirs(); File df = null;
+		try {
+			df = File.createTempFile("dataExport", "zip", pth);
+			try (OutputStream os = new BufferedOutputStream(new FileOutputStream(df), 65536); ZipOutputStream zout = new ZipOutputStream(os)) {
+				for (Iterator<FlightData> i = work.iterator(); i.hasNext(); ) {
+					FlightData fd = i.next();
+					FlightJS js = DataSerializer.serialize(fd);
+					ZipEntry ze = new ZipEntry(String.valueOf(js.id()) + ".json");
+					ze.setMethod(ZipEntry.DEFLATED);
+					ze.setCreationTime(FileTime.from(Instant.now()));
+					zout.putNextEntry(ze);
+					PrintWriter pw = new PrintWriter(zout);
+					pw.print(js.js());
+					pw.flush();
+					i.remove();
+				}
+			}
+
+			// Dump to the output stream
+			ctx.setHeader("Content-disposition", String.format("attachment; filename=FlightData_%s.zip", p.getPilotCode()));
+			ctx.setContentType("application/zip");
+			//ctx.setExpiry(1800);
+			sendFile(df, ctx.getResponse(), false);
+		} catch (IOException ie) {
+			throw error(SC_CONFLICT, "I/O Error", false);			
+		} finally {
+			if (df != null) df.delete();
 		}
 		
-		// Dump to the output stream
-		tt.stop();
-		log.error("Timings = {}", tt);
-		File df = zw.getFile();
-		ctx.setHeader("Content-disposition", String.format("attachment; filename=FlightData_%s.zip", p.getPilotCode()));
-		ctx.setHeader("Content-Length", (int)df.length());
-		ctx.setContentType("application/zip");
-		//ctx.setExpiry(1800);
-		sendFile(df, ctx.getResponse());
-
 		return SC_OK;
 	}
 
