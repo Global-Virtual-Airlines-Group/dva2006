@@ -2086,7 +2086,7 @@
 	<command id="forget">
 		<name>Forget User</name>
 		<class>org.deltava.commands.system.ForgetUserCommand</class>
-		<roles>Admin</roles>
+		<roles>HR</roles>
 	</command>
 
 	<command id="securityroles">
