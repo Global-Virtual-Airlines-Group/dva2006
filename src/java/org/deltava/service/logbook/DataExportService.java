@@ -124,7 +124,7 @@ public class DataExportService extends DownloadService {
 			// Dump to the output stream
 			ctx.setHeader("Content-disposition", String.format("attachment; filename=FlightData_%s.zip", p.getPilotCode()));
 			ctx.setContentType("application/zip");
-			//ctx.setExpiry(1800);
+			ctx.setExpiry(1800);
 			sendFile(df, ctx.getResponse(), false);
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);			
