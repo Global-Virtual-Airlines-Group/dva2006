@@ -1,4 +1,4 @@
-// Copyright 2008, 2011, 2013, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011, 2013, 2015, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service supporting file downloads.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 2.2
  */
 
@@ -26,11 +26,21 @@ public abstract class DownloadService extends WebService {
 	 * @param rsp the HTTP Servlet response
 	 */
 	protected static void sendFile(File f, HttpServletResponse rsp) {
+		sendFile(f, rsp, true);
+	}
+	
+	/**
+	 * Sends a file to the HTTP output stream, either via mod_xsendfile or through native Java I/O streaming.
+	 * @param f the file to send
+	 * @param rsp the HTTP Servlet response
+	 * @param doSendFile TRUE to use sendfile (if available), otherwise FALSE
+	 */
+	protected static void sendFile(File f, HttpServletResponse rsp, boolean doSendFile) {
 		if (!f.exists() || !f.isFile())
 			throw new IllegalStateException(f.getAbsolutePath() + " does not exist");
 		
 		// Check if we stream via mod_xsendfile
-		if (SystemData.getBoolean("airline.files.sendfile")) {
+		if (doSendFile && SystemData.getBoolean("airline.files.sendfile")) {
 			log.debug("Sending {} via mod_xsendfile", f.getName());
 			rsp.addHeader("X-Sendfile", f.getAbsolutePath());
 			return;
