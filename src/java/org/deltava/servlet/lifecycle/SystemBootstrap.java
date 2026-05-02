@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -95,6 +95,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		} catch (ConnectionPoolException cpe) {
 			Throwable t = cpe.getCause();
 			log.atError().withThrowable(t).log("Error connecting to Jedis - {}", t.getMessage());
+			throw new RuntimeException(t);
 		}
 		
 		// Save the connection pool in the SystemData
@@ -125,9 +126,11 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			SharedWorker.register(new JMXRefreshTask(jmxpool, 60000));
 		} catch (ClassNotFoundException cnfe) {
 			log.error("Cannot load JDBC driver class - {}", SystemData.get("jdbc.Driver"));
+			throw new RuntimeException(cnfe);
 		} catch (ConnectionPoolException cpe) {
 			Throwable t = cpe.getCause();
 			log.atError().withThrowable(t).log("Error connecting to JDBC data source - {}", t.getMessage());
+			throw new RuntimeException(t);
 		}
 
 		// Save the connection pool in the SystemData
