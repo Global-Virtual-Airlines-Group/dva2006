@@ -171,7 +171,7 @@ span.rmbar {
 <tr>
  <td class="label top" style="background-color:#${yearMax.hexColor};" title="Year-end ${yr} status: ${yearMax.name}">${yr} Results</td>
  <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${total.points}" />&nbsp;${elitePoints}</span>
-<c:if test="${!roTotal.isZero()}"> <span class="small ita">(Rolled over <c:if test="${roTotal.hasLegs()}"><fmt:int value="${roTotal.legs}" /> flight legs</c:if><c:if test="${roTotal.hasLegs() && roTotal.hasDistance()}">, </c:if>
+<c:if test="${total.hasRollover()}"> <span class="small ita">(Rolled over <c:if test="${roTotal.hasLegs()}"><fmt:int value="${roTotal.legs}" /> flight legs</c:if><c:if test="${roTotal.hasLegs() && roTotal.hasDistance()}">, </c:if>
 <c:if test="${roTotal.hasDistance()}"><fmt:int value="${roTotal.distance}" />&nbsp;${eliteDistance}</c:if>)</span></c:if><br>
 <br>
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
