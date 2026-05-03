@@ -208,8 +208,8 @@
 	<!-- JDBC data source configuration -->
 	<jdbc>
 		<driver>com.mysql.cj.jdbc.Driver</driver>
-		<url>jdbc:mysql://mysql.gva.aws/dva</url>
-		<socket>/run/mysql/mysql.sock</socket>
+		<url>jdbc:mysql://localhost/dva</url>
+		<!-- <socket>/run/mysql/mysql.sock</socket> -->
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
@@ -314,7 +314,7 @@
 		<services>/etc/services.xml</services>
 		<tasks>/etc/tasks.xml</tasks>
 		<nat>
-			<url>https://nms.aim.faa.gov/nat</url>
+			<url>https://nms.aim.faa.gov/datanat/nat.json</url>
 		</nat>
 		<pacot>
 			<url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks&amp;actionType=advancedNOTAMFunctions</url>
