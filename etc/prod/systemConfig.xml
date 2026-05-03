@@ -314,7 +314,7 @@
 		<services>/etc/services.xml</services>
 		<tasks>/etc/tasks.xml</tasks>
 		<nat>
-			<url>https://notams.aim.faa.gov/nat.html</url>
+			<url>https://nms.aim.faa.gov/nat</url>
 		</nat>
 		<pacot>
 			<url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks&amp;actionType=advancedNOTAMFunctions</url>
