@@ -1,8 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.util.*;
+
+import org.json.*;
 
 import org.deltava.dao.DAOException;
 
@@ -11,12 +13,12 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get North Atlantic Track data.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
 public class GetNATs extends TrackDAO {
-
+	
 	private final String _url;
 	private String _notam;
 
@@ -37,33 +39,23 @@ public class GetNATs extends TrackDAO {
 	@Override
 	public String getTrackInfo() throws DAOException {
 		try {
-			setCompression(Compression.GZIP);
+			setCompression(Compression.GZIP, Compression.DEFLATE);
 			init(_url);
 			StringBuilder buf = new StringBuilder();
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "utf-8"))) {
-				boolean isWriting = false;
-				String data = br.readLine();
-				while (data != null) {
-					data = data.trim();
-
-					// Check for start/end of NAT segment
-					if (!isWriting && data.contains("NAT-")) {
-						buf.append(data);
-						buf.append("<br>");
-						buf.append(CRLF);
-						isWriting = true;
-					} else if (isWriting && (data.startsWith("END OF PART"))) {
-						buf.append(data);
-						buf.append("<br><hr>");
-						buf.append(CRLF);
-						isWriting = false;
-					} else if (isWriting) {
-						buf.append(data);
-						buf.append("<br>");
-						buf.append(CRLF);
-					}
-
-					data = br.readLine();
+				JSONArray ja = new JSONArray(new JSONTokener(br));
+				for (int x = 0; x < ja.length(); x++) {
+					JSONObject jo = ja.getJSONObject(x);
+					String data = jo.optString("condition_message");
+					if (StringUtils.isEmpty(data)) continue;
+					
+					// Split the string
+					int sPos = Math.max(0, data.indexOf("NAT-"));
+					int ePos = data.indexOf("END OF PART");
+					if (ePos > -1)
+						ePos = data.indexOf('\n', ePos);
+					
+					buf.append(data.subSequence(sPos, (ePos == -1) ? data.length() : ePos));
 				}
 			}
 
