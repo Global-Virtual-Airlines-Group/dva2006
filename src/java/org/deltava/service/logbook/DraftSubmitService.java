@@ -3,7 +3,7 @@ package org.deltava.service.logbook;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
-import java.util.Collection;
+import java.time.Instant;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -15,6 +15,9 @@ import org.deltava.beans.simbrief.BriefingPackage;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetSimBrief;
+
+import org.deltava.security.command.PIREPAccessControl;
+
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -50,6 +53,7 @@ public class DraftSubmitService extends WebService {
 			dfr = new DraftFlightReport(SystemData.getAirline(jo.getString("airline")), jo.getInt("flight"), jo.optInt("leg", 1));
 			dfr.setAuthorID(ctx.getUser().getID());
 			dfr.setRank(ctx.getUser().getRank());
+			dfr.setDate(Instant.now());
 			dfr.setStatus(FlightStatus.DRAFT);
 			dfr.setAirportD(SystemData.getAirport(jo.getString("airportD")));
 			dfr.setAirportA(SystemData.getAirport(jo.getString("airportA")));
@@ -61,18 +65,27 @@ public class DraftSubmitService extends WebService {
 			dfr.setRoute(jo.optString("route"));
 			if (id > 0) dfr.setID(id);
 			
-			// Check for simbrief ID
-			String sbID = jo.optString("simBriefID");
-
 			// Ensure we're populated
 			if (!dfr.isPopulated())
 				throw new JSONException(String.format("Invalid Airport Pair - %s / %s", jo.getString("airportD"), jo.getString("airportA")));
 			
 			// Get the connection and any draft flight reports
 			Connection con = ctx.getConnection();
-			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<FlightReport> flights = frdao.getDraftReports(ctx.getUser().getID(), dfr, ctx.getDB());
-			flights.removeIf(fr -> (fr.getID() == id));
+			
+			// If fr is not null, check that it's actually ours
+			if (id > 0) {
+				GetFlightReports frdao = new GetFlightReports(con);
+				FlightReport fr = frdao.get(id, ctx.getDB());
+				if (fr != null) {
+					PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
+					ac.validate();
+					if (!ac.getCanEdit())
+						throw error(SC_UNAUTHORIZED, "Cannot modify Flight Report " + id, false);
+					
+					dfr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
+					dfr.setSimulator(fr.getSimulator());
+				}
+			}
 			
 			// Get the write DAO and start transaction
 			ctx.startTX();
@@ -81,6 +94,7 @@ public class DraftSubmitService extends WebService {
 			// Get the SimBrief briefing
 			BriefingPackage sbPkg = null;
 			GetSimBrief sbdao = new GetSimBrief();
+			String sbID = jo.optString("simBriefID");
 			if (!StringUtils.isEmpty(sbID) && ctx.getUser().hasID(ExternalID.NAVIGRAPH)) {
 				sbPkg = sbdao.load(sbID);
 				if (sbPkg != null) {
