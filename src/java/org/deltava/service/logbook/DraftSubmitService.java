@@ -11,10 +11,11 @@ import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.simbrief.BriefingPackage;
 
 import org.deltava.dao.*;
-import org.deltava.dao.http.GetSimBrief;
+import org.deltava.dao.http.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
@@ -87,6 +88,13 @@ public class DraftSubmitService extends WebService {
 				}
 			}
 			
+			// Get the aircraft to calculate load factor
+			GetAircraft acdao = new GetAircraft(con);
+			Aircraft a = acdao.get(dfr.getEquipmentType());
+			AircraftPolicyOptions opts = a.getOptions(ctx.getDB());
+			if (opts.getSeats() > 0)
+				dfr.setLoadFactor(dfr.getPassengers() * 1.0d / opts.getSeats());
+			
 			// Get the write DAO and start transaction
 			ctx.startTX();
 			SetFlightReport frwdao = new SetFlightReport(con);
@@ -96,17 +104,26 @@ public class DraftSubmitService extends WebService {
 			GetSimBrief sbdao = new GetSimBrief();
 			String sbID = jo.optString("simBriefID");
 			if (!StringUtils.isEmpty(sbID) && ctx.getUser().hasID(ExternalID.NAVIGRAPH)) {
-				sbPkg = sbdao.load(sbID);
+				try {
+					sbPkg = sbdao.load(sbID);
+				} catch (HTTPDAOException hde) {
+					dfr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Error fetching SimBrief package - %s", hde.getMessage()));
+				}
+					
+				dfr.setAttribute(Attribute.SIMBRIEF, (sbPkg != null));
 				if (sbPkg != null) {
 					ro.put("isSimBrief", true);
+					dfr.setRoute(sbPkg.getRoute());
 					dfr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Linked to SimBrief plan %s", sbID));
 				}
 			}
 			
-			// Write the flight report
+			// Write the flight report and the SimBrief package
 			frwdao.write(dfr, ctx.getDB());
-			if (sbPkg != null)
+			if (sbPkg != null) {
+				sbPkg.setID(dfr.getID());
 				frwdao.writeSimBrief(sbPkg);
+			}
 
 			ro.put("id", dfr.getID());
 			ctx.commitTX();
