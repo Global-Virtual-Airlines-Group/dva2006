@@ -2253,10 +2253,16 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="hdtake">
+		<name>Help Desk Issue Take</name>
+		<class>org.deltava.commands.help.IssueTakeCommand</class>
+		<roles>HR,Examination,PIREP,Signature,Instructor,AcademyAdmin,HelpDesk,Developer</roles>
+	</command>
+
 	<command id="hdclose">
 		<name>Help Desk Issue Close</name>
 		<class>org.deltava.commands.help.IssueCloseCommand</class>
-		<roles>HR,Examination,PIREP,Signature,Instructor,AcademyAdmin,HelpDesk</roles>
+		<roles>HR,Examination,PIREP,Signature,Instructor,AcademyAdmin,HelpDesk,Developer</roles>
 	</command>
 
 	<command id="hdcomment">
@@ -2268,7 +2274,7 @@
 	<command id="hdconvert">
 		<name>Help Desk Issue Convert</name>
 		<class>org.deltava.commands.help.IssueConvertCommand</class>
-		<roles>HR,HelpDesk</roles>
+		<roles>HR,HelpDesk,Developer</roles>
 	</command>
 	
 	<command id="hdupdate">

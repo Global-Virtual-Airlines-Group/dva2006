@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2016, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2016, 2020, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Person;
@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Help Desk Issues.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	private boolean _canUpdateStatus;
 	private boolean _canUpdateContent;
 	private boolean _canConvert;
+	private boolean _canTake;
 	
 	private boolean _canUpdateTemplate;
 	private boolean _canUseTemplate;
@@ -74,6 +75,7 @@ public class HelpDeskAccessControl extends AccessControl {
 		_canUpdateStatus = isAdmin || isHelpDesk;
 		_canClose = _canUpdateStatus && (_i.getStatus() != IssueStatus.CLOSED);
 		_canUpdateContent = isHR;
+		_canTake = isOpen && isHelpDesk && !isMine && (_i.getAssignedTo() != _ctx.getUser().getID());
 		_canConvert = (_i.getLinkedIssueID() == 0) && (_ctx.isUserInRole("Developer") ||_ctx.isUserInRole("Operations") || isHR); 
 	}
 	
@@ -107,6 +109,14 @@ public class HelpDeskAccessControl extends AccessControl {
 	 */
 	public boolean getCanClose() {
 		return _canClose;
+	}
+	
+	/**
+	 * Returns whether this Issue can be reassigned to the current User.
+	 * @return TRUE if the Issue can be assigned, otherwise FALSE
+	 */
+	public boolean getCanTake() {
+		return _canTake;
 	}
 	
 	/**
