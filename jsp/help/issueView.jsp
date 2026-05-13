@@ -159,7 +159,8 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
 <c:if test="${access.canComment}">&nbsp;<el:button type="submit" label="SAVE NEW COMMENT" /></c:if>
 <c:if test="${access.canUpdateContent}">&nbsp;<el:cmdbutton label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" link="${issue}" /></c:if>
 <c:if test="${access.canClose}">&nbsp;<el:cmdbutton label="CLOSE ISSUE" url="hdclose" link="${issue}" /></c:if>
- </td>
+<c:if test="${access.canTake}">&nbsp;<el:cmdbutton label="TAKE OVER ISSUE" url="hdtake" link="${issue}" /></c:if>
+</td>
 </tr>
 </el:table>
 </el:form>
