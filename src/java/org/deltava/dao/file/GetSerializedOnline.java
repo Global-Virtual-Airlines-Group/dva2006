@@ -39,13 +39,13 @@ public class GetSerializedOnline extends DAO {
 	public List<PositionData> read() throws DAOException {
 		try (DataInputStream in = new DataInputStream(new BufferedInputStream(getStream()))) {
 			short ver = in.readShort();
-			in.readInt(); // flight ID
+			int flightID = in.readInt();
 			if (ver == 0) 
 				return Collections.emptyList();	
 				
 			int size = in.readInt();
 			if (size > 1024) {
-				log.warn("Possibly corrupt file - couunt={}", Integer.valueOf(size));
+				log.warn("Possibly corrupt online positions - ID={}, couunt={}", Integer.valueOf(flightID), Integer.valueOf(size));
 				size = 1024;
 			}
 			

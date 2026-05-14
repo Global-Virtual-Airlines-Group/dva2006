@@ -1,7 +1,9 @@
-// Copyright 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2019, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.ArchivedRoute;
 import org.deltava.beans.navdata.*;
@@ -11,11 +13,13 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to read serialized route data.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 7.0
  */
 
 public class GetSerializedRoute extends DAO {
+	
+	private static final Logger log = LogManager.getLogger(GetSerializedRoute.class);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -33,13 +37,17 @@ public class GetSerializedRoute extends DAO {
 	public ArchivedRoute read() throws DAOException {
 		try (DataInputStream in = new DataInputStream(new BufferedInputStream(getStream(), 4096))) {
 			short ver = in.readShort();
-			int flightID = in.readInt(); // flight ID
+			int flightID = in.readInt();
 			int airacVersion = (ver > 2) ? in.readInt() : -1;
 			ArchivedRoute rt = new ArchivedRoute(flightID, airacVersion);
 			if (ver == 0) return rt;
 
+			// Get the size and sanitize
 			int size = in.readInt();
-			for (int x = 0; x < size; x++) {
+			if (size > 128)
+				log.warn("Possibly corrupt route - ID={}, couunt={}", Integer.valueOf(flightID), Integer.valueOf(size));
+			
+			for (int x = 0; ((x < size) && (in.available() > 24)); x++) {
 				Navaid nt = Navaid.values()[in.readShort()];
 				NavigationDataBean ndb = NavigationDataBean.create(nt, in.readDouble(), in.readDouble());
 				ndb.setCode(in.readUTF());
