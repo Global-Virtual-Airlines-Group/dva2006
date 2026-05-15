@@ -91,7 +91,7 @@ public class DraftSubmitService extends WebService {
 			// Get the aircraft to calculate load factor
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(dfr.getEquipmentType());
-			AircraftPolicyOptions opts = a.getOptions(ctx.getDB());
+			AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 			if (opts.getSeats() > 0)
 				dfr.setLoadFactor(dfr.getPassengers() * 1.0d / opts.getSeats());
 			
