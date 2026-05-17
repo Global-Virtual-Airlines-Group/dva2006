@@ -3,6 +3,7 @@ package org.deltava.service.logbook;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
+import java.util.List;
 import java.time.Instant;
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,6 +12,7 @@ import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.navdata.Gate;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.simbrief.BriefingPackage;
 
@@ -94,6 +96,24 @@ public class DraftSubmitService extends WebService {
 			AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 			if (opts.getSeats() > 0)
 				dfr.setLoadFactor(dfr.getPassengers() * 1.0d / opts.getSeats());
+			
+			// Load gates if needed
+			if (!dfr.hasGates()) {
+				GetGates gdao = new GetGates(con);
+				GateHelper gh = new GateHelper(dfr, 5, true);
+				gh.addDepartureGates(gdao.getGates(dfr.getAirportD()), gdao.getUsage(dfr, true, ctx.getDB()));
+				gh.addArrivalGates(gdao.getGates(dfr.getAirportA()), gdao.getUsage(dfr, false, ctx.getDB()));
+				
+				// Load departure gate
+				List<Gate> dGates = gh.getDepartureGates();
+				if (!dGates.isEmpty())
+					dfr.setGateD(dGates.getFirst().getName());
+				
+				// Load arrival gate
+				List<Gate> aGates = gh.getArrivalGates();
+				if (!aGates.isEmpty())
+					dfr.setGateA(aGates.getFirst().getName());
+			}
 			
 			// Get the write DAO and start transaction
 			ctx.startTX();
