@@ -45,6 +45,7 @@ public class DraftSubmitService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Parse the inbound payload
+		Pilot p = ctx.getUser();
 		DraftFlightReport dfr = null; JSONObject ro = new JSONObject();
 		try {
 			JSONObject jo = new JSONObject(new JSONTokener(ctx.getBody()));
@@ -54,8 +55,8 @@ public class DraftSubmitService extends WebService {
 			
 			// Create the draft flight object
 			dfr = new DraftFlightReport(SystemData.getAirline(jo.getString("airline")), jo.getInt("flight"), jo.optInt("leg", 1));
-			dfr.setAuthorID(ctx.getUser().getID());
-			dfr.setRank(ctx.getUser().getRank());
+			dfr.setAuthorID(p.getID());
+			dfr.setRank(p.getRank());
 			dfr.setDate(Instant.now());
 			dfr.setStatus(FlightStatus.DRAFT);
 			dfr.setAirportD(SystemData.getAirport(jo.getString("airportD")));
@@ -67,6 +68,10 @@ public class DraftSubmitService extends WebService {
 			dfr.setRemarks(jo.optString("remarks"));
 			dfr.setRoute(jo.optString("route"));
 			if (id > 0) dfr.setID(id);
+			if ((dfr.getNetwork() != null) && !p.hasNetworkID(dfr.getNetwork())) {
+				dfr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("No %s ID on Pilot Profile", dfr.getNetwork()));
+				dfr.setNetwork(null);
+			}
 			
 			// Ensure we're populated
 			if (!dfr.isPopulated())
@@ -123,7 +128,7 @@ public class DraftSubmitService extends WebService {
 			BriefingPackage sbPkg = null;
 			GetSimBrief sbdao = new GetSimBrief();
 			String sbID = jo.optString("simBriefID");
-			if (!StringUtils.isEmpty(sbID) && ctx.getUser().hasID(ExternalID.NAVIGRAPH)) {
+			if (!StringUtils.isEmpty(sbID) && p.hasID(ExternalID.NAVIGRAPH)) {
 				try {
 					sbPkg = sbdao.load(sbID);
 				} catch (HTTPDAOException hde) {
