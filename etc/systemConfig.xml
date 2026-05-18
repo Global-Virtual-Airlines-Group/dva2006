@@ -192,7 +192,7 @@
 	<jdbc>
 		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://localhost/dva</url>
-		<socket>/run/mysql/mysql.sock</socket>
+		<!-- <socket>/run/mysql/mysql.sock</socket> -->
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
@@ -298,7 +298,7 @@
 		    <url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks&amp;actionType=advancedNOTAMFunctions</url>
 		</pacot>
 		<mapbox>
-			<v3 type="Integer">22</v3>
+			<v3 type="Integer">24</v3>
 		</mapbox>
 	</config>
 	
