@@ -176,7 +176,6 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <content:copyright />
 </content:region>
 </content:page>
-<c:if test="${!empty tour.flights}">
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -193,14 +192,14 @@ golgotha.onDOMReady(function() {
 	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	golgotha.airportLoad.setText([f.airportD,f.airportA]);
 });
-
+<c:if test="${!empty tour.flights}">
 golgotha.local.flightData = ${legData};
 const rows = golgotha.util.getElementsByClass('legRow', 'tr', document.getElementById('baseTable'));
 for (var x = 0; x < rows.length; x++)
 	rows[x].flight = golgotha.local.flightData[x];
 	
 document.forms[0].legCodes.value = golgotha.tour.buildLegCodes();
-</script>
 </c:if>
+</script>
 </body>
 </html>
