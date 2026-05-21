@@ -44,7 +44,7 @@ public class GetSerializedRoute extends DAO {
 
 			// Get the size and sanitize
 			int size = in.readInt();
-			if (size > 128)
+			if ((size > 128) || (size < 0))
 				log.warn("Possibly corrupt route - ID={}, couunt={}", Integer.valueOf(flightID), Integer.valueOf(size));
 			
 			for (int x = 0; ((x < size) && (in.available() > 24)); x++) {

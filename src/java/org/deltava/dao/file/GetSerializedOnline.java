@@ -44,9 +44,9 @@ public class GetSerializedOnline extends DAO {
 				return Collections.emptyList();	
 				
 			int size = in.readInt();
-			if (size > 1024) {
+			if ((size > 1024) || (size < 0)) {
 				log.warn("Possibly corrupt online positions - ID={}, couunt={}", Integer.valueOf(flightID), Integer.valueOf(size));
-				size = 1024;
+				size = 512;
 			}
 			
 			List<PositionData> results = new ArrayList<PositionData>(size + 2);
