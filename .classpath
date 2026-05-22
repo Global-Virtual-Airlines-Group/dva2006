@@ -39,11 +39,11 @@
 	<classpathentry kind="lib" path="lib/el-api-6.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jakarta.servlet.jsp.jstl-api-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-4.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/json-20251224.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.21.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-io-2.21.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-9.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-7.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-3.15.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/json-20260522.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
