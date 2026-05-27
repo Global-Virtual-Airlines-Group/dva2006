@@ -861,8 +861,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 				
 				// Check for data outages
-				if (Attribute.isFDR(fr.getAttributes()) && (fr.getNetwork( ) != null) && (ac.getCanDispose() || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Operations"))) {
-					FDRFlightReport ffr = (FDRFlightReport) fr;
+				if ((fr instanceof FDRFlightReport ffr) && (fr.getNetwork( ) != null) && (ac.getCanDispose() || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Operations"))) {
 					Collection<NetworkOutage> networkOutages = NetworkOutage.calculate(fr.getNetwork(), ffr, tdao.getFetches(fr.getNetwork(), ffr), 120);
 					ctx.setAttribute("networkOutages", networkOutages, REQUEST);
 					ctx.setAttribute("networkOutageTotal", Duration.ofSeconds(networkOutages.stream().mapToLong(o -> o.getDuration().toSeconds()).sum()), REQUEST);
