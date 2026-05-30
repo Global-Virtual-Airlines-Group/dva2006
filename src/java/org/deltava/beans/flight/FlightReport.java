@@ -191,17 +191,6 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 		return _dbIds.getOrDefault(idType, Integer.valueOf(0)).intValue();
 	}
 	
-	/**
-	 * Returns whether this Flight has a related database row ID.
-	 * @param idType the database row ID type
-	 * @return TRUE if the database row ID is not zero, otherwise FALSE
-	 * @throws NullPointerException if idType is null
-	 * @see FlightReport#setDatabaseID(DatabaseID, int)
-	 */
-	public boolean hasDatabaseID(DatabaseID idType) {
-		return _dbIds.containsKey(idType);
-	}
-	
 	@Override
 	public int getAuthorID() {
 		return getDatabaseID(DatabaseID.PILOT);
@@ -220,6 +209,15 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	 */
 	public int getAttributes() {
 		return _attr;
+	}
+	
+	/**
+	 * Helper method to check whether this Flight Report is pre-assigned - part of a Tour, Event or Flight Assignment. This can be used to avoid Flight
+	 * Schedule validation since the flight report was previously validated.
+	 * @return TRUE if the Assignment, Event or Tour ID are non-zero
+	 */
+	public boolean isAssigned() {
+		return _dbIds.containsKey(DatabaseID.ASSIGN) || _dbIds.containsKey(DatabaseID.EVENT) || _dbIds.containsKey(DatabaseID.TOUR); 
 	}
 
 	/**
@@ -496,7 +494,10 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 		if (id < 0)
 			throw new IllegalArgumentException(idType + " Datbase ID cannot be negative");
 
-		_dbIds.put(idType, Integer.valueOf(id));
+		if (id == 0)
+			_dbIds.remove(idType);
+		else
+			_dbIds.put(idType, Integer.valueOf(id));
 	}
 	
 	@Override
