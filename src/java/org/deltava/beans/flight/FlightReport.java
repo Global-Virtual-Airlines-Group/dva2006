@@ -212,8 +212,7 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	}
 	
 	/**
-	 * Helper method to check whether this Flight Report is pre-assigned - part of a Tour, Event or Flight Assignment. This can be used to avoid Flight
-	 * Schedule validation since the flight report was previously validated.
+	 * Helper method to check whether this Flight Report is pre-assigned - part of a Tour, Event or Flight Assignment.
 	 * @return TRUE if the Assignment, Event or Tour ID are non-zero
 	 */
 	public boolean isAssigned() {
