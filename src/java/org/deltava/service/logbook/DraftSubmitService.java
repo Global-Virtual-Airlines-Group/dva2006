@@ -92,7 +92,17 @@ public class DraftSubmitService extends WebService {
 					
 					dfr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 					dfr.setSimulator(fr.getSimulator());
+					dfr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 				}
+			}
+			
+			// Check schedule data
+			if (!dfr.isAssigned()) {
+				GetRawSchedule rsdao = new GetRawSchedule(con);
+				GetSchedule sdao = new GetSchedule(con);
+				sdao.setSources(rsdao.getSources(true, ctx.getDB()));
+				FlightTime avgHours = sdao.getFlightTime(dfr, ctx.getDB());
+				dfr.setAttribute(Attribute.ROUTEWARN, (avgHours.getType() == RoutePairType.UNKNOWN));
 			}
 			
 			// Get the aircraft to calculate load factor
@@ -120,10 +130,6 @@ public class DraftSubmitService extends WebService {
 					dfr.setGateA(aGates.getFirst().getName());
 			}
 			
-			// Get the write DAO and start transaction
-			ctx.startTX();
-			SetFlightReport frwdao = new SetFlightReport(con);
-			
 			// Get the SimBrief briefing
 			BriefingPackage sbPkg = null;
 			GetSimBrief sbdao = new GetSimBrief();
@@ -143,7 +149,11 @@ public class DraftSubmitService extends WebService {
 				}
 			}
 			
+			// Start transaction
+			ctx.startTX();
+			
 			// Write the flight report and the SimBrief package
+			SetFlightReport frwdao = new SetFlightReport(con);
 			frwdao.write(dfr, ctx.getDB());
 			if (sbPkg != null) {
 				sbPkg.setID(dfr.getID());
