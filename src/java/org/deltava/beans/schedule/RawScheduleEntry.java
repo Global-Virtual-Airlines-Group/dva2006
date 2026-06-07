@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Flight;
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 8.0
  */
 
@@ -19,6 +19,8 @@ public class RawScheduleEntry extends ScheduleEntry {
 	private LocalDate _startDate;
 	private LocalDate _endDate;
 	private boolean _isUpdated;
+	
+	private String _comments;
 	
 	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
 	private boolean _forceInclude;
@@ -117,6 +119,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
+	 * Returns the schedule entry comments.
+	 * @return the comments
+	 */
+	public String getComments() {
+		return _comments;
+	}
+	
+	/**
 	 * Returns if a flight is operated on a particular date.
 	 * @param ld the operating date
 	 * @return TRUE if the flight is operated on this date, otherwise FALSE
@@ -204,6 +214,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public void setArrivalPlusDays(int days) {
 		_arrivalPlusDays = days;
+	}
+	
+	/**
+	 * Updates the schedule entry comments.
+	 * @param comments the comments
+	 */
+	public void setComments(String comments) {
+		_comments = comments;
 	}
 	
 	/**
