@@ -143,4 +143,12 @@ public class TestStringUtils extends TestCase {
     	assertEquals("Normal String", StringUtils.stripUnicode("Normal String"));
     	assertEquals("unofferta che non potrà rifiutare.pdf", StringUtils.stripUnicode("un’offerta che non potrà rifiutare.pdf"));
     }
+    
+    public void testNullTrim() {
+    	assertNull(StringUtils.nullTrim((String)null));
+    	assertNull(StringUtils.nullTrim(""));
+    	assertNull(StringUtils.nullTrim(" "));
+    	assertEquals("e", StringUtils.nullTrim("e"));
+    	assertEquals("e", StringUtils.nullTrim("e "));
+    }
 }

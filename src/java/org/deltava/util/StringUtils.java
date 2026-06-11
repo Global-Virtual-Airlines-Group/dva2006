@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019, 2020, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019, 2020, 2021, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -464,6 +464,17 @@ public final class StringUtils {
 	 */
 	public static List<String> nullTrim(Collection<String> s) {
 		return (s == null) ? null : s.stream().filter(e -> !isEmpty(e)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Trims a String, returning null if the String is empty.
+	 * @param s the String to trim
+	 * @return a String, or null if empty
+	 */
+	public static String nullTrim(String s) {
+		if (isEmpty(s)) return null;
+		String s2 = s.trim();
+		return isEmpty(s2) ? null : s2;
 	}
 	
 	/**
