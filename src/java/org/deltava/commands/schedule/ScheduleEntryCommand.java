@@ -106,8 +106,8 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			}
 			
 			// Get comments and remarks
-			entry.setRemarks(ctx.getParameter("remarks"));
-			entry.setComments(ctx.getParameter("comments"));
+			entry.setRemarks(StringUtils.nullTrim(ctx.getParameter("remarks")));
+			entry.setComments(StringUtils.nullTrim(ctx.getParameter("comments")));
 			
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
