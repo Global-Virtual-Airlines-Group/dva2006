@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 8.0
  */
 
