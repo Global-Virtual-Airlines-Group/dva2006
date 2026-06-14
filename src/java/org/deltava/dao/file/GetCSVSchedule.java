@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetSchedule extends ScheduleLoadDAO {
+public class GetCSVSchedule extends ScheduleLoadDAO {
 	
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("d[d]-MMM[-YYYY]").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
@@ -36,7 +36,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * @param is the input stream to read
 	 * @param isUTC TRUE if departure/arrival times are UTC, otherwise FALSE
 	 */
-	public GetSchedule(ScheduleSource src, InputStream is, boolean isUTC) {
+	public GetCSVSchedule(ScheduleSource src, InputStream is, boolean isUTC) {
 		super(src, is);
 		_isUTC = isUTC;
 	}
