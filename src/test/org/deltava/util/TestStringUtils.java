@@ -48,6 +48,13 @@ public class TestStringUtils extends TestCase {
     	assertEquals("A,B,CD", StringUtils.listConcat(l, ","));
     }
     
+    public void testAddCSVQuotes() {
+    	assertEquals("\"Foo\"", StringUtils.addCSVQuotes("Foo"));
+    	assertEquals("F", StringUtils.addCSVQuotes("F"));
+    	assertEquals("", StringUtils.addCSVQuotes(null));
+    	assertEquals("", StringUtils.addCSVQuotes(""));
+    }
+    
     public void testRemoveCSVQuotes() {
     	assertEquals("Foo", StringUtils.removeCSVQuotes("Foo"));
     	assertEquals("Foo", StringUtils.removeCSVQuotes("\"Foo\""));
