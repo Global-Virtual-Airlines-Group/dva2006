@@ -30,7 +30,7 @@
 </tr>
 <tr>
  <td class="label">Schedule Format</td>
- <td class="data"><el:check name="src" idx="*" width="230" options="${srcInfo}" cols="5" newLine="true" /></td>
+ <td class="data"><el:check name="src" idx="*" width="250" options="${srcInfo}" cols="5" newLine="true" /></td>
 </tr>
 </el:table>
 
