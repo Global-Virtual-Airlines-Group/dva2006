@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to import the SkyTeam schedule.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 9.0
  */
 
@@ -76,7 +76,7 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 					if (!fd.flightNumber.endsWith("*") && !GROUND_EQ.contains(fd.eqType)) {
 						RawScheduleEntry se = new RawScheduleEntry(FlightCodeParser.parse(fd.flightNumber));
 						se.setAirportD(aD); se.setAirportA(aA);
-						se.setEquipmentType(getEquipmentType(fd.eqType));
+						se.setEquipmentType(getEquipmentType(fd.eqType, lr.getLineNumber()));
 						se.setSource(ScheduleSource.SKYTEAM);
 						se.setLineNumber(lr.getLineNumber());
 						for (char c : fd.daysOfWeek.toCharArray()) {

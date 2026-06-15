@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -41,19 +41,6 @@ public class GetCSVSchedule extends ScheduleLoadDAO {
 		_isUTC = isUTC;
 	}
 
-	/*
-	 * Helper method to load an airport bean.
-	 */
-	private Airport getAirport(String code, int line) {
-		Airport a = SystemData.getAirport(code);
-		if (a == null) {
-			_status.addInvalidAirport(code.toUpperCase());
-			_status.addMessage(String.format("Unknown Airport at Line %d - %s", Integer.valueOf(line), code));
-		}
-
-		return a;
-	}
-	
 	/**
 	 * Updates the maximum line number for a Schedule source.
 	 * @param src a ScheduleSource
@@ -63,11 +50,6 @@ public class GetCSVSchedule extends ScheduleLoadDAO {
 		_srcMaxLines.put(src, Integer.valueOf(maxLine));
 	}
 
-	/**
-	 * Loads the Schedule Entries.
-	 * @return a Collection of ScheduleEntry beans
-	 * @throws DAOException if an I/O error occurs
-	 */
 	@Override
 	public Collection<RawScheduleEntry> process() throws DAOException {
 		
