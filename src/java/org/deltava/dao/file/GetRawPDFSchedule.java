@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2020, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw PDF-exported airline schedules.
  * @author Luke
- * @version 11.0
+ * @version 12.5
  * @since 8.0
  */
 
@@ -67,7 +67,7 @@ public class GetRawPDFSchedule extends ScheduleLoadDAO {
 				RawScheduleEntry rse = new RawScheduleEntry(SystemData.getAirline(csv.get(7)), StringUtils.parse(csv.get(8), 1), StringUtils.parse(csv.get(9), 1));
 				rse.setAirportD(SystemData.getAirport(csv.get(2)));
 				rse.setAirportA(SystemData.getAirport(csv.get(4)));
-				rse.setEquipmentType(getEquipmentType(csv.get(10)));
+				rse.setEquipmentType(getEquipmentType(csv.get(10), lr.getLineNumber()));
 				rse.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(3), _tf)));
 				rse.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(5), _tf)));
 				rse.setDayMap(StringUtils.parse(csv.get(6), 0));

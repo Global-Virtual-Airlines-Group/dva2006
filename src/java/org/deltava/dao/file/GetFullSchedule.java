@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2020, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -41,10 +41,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		super(ScheduleSource.INNOVATA, is);
 	}
 
-	/**
-	 * Initializes the list of airlines.
-	 * @param airlines a Collection of Airline beans
-	 */
 	@Override
 	public void setAirlines(Collection<Airline> airlines) {
 		super.setAirlines(airlines);
@@ -123,26 +119,24 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				String data = br.readLine();
 				CSVTokens tkns = StringUtils.parseCSV(data);
 				if (data.startsWith("//") && log.isDebugEnabled())
-					log.debug("Skipping line " + br.getLineNumber() + " - comment");
+					log.debug("Skipping line {} - comment", Integer.valueOf(lr.getLineNumber()));
 				else if (tkns.size() < 53)
-					log.warn("Skipping line " + br.getLineNumber() + " - size = " + tkns.size());
+					log.warn("Skipping line {} - size = {}", Integer.valueOf(lr.getLineNumber()), Integer.valueOf(tkns.size()));
 				else if (include(tkns)) {
-					RawScheduleEntry se = parse(tkns);
-					if (se != null) {
-						se.setLineNumber(br.getLineNumber());
+					RawScheduleEntry se = parse(tkns, br.getLineNumber());
+					if (se != null)
 						results.add(se);
-					}
 				}
 			}
 		} catch (Exception e) {
-			log.error("Error at line " + lr.getLineNumber() + " - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Error at line {} - {}", Integer.valueOf(lr.getLineNumber()), e.getMessage());
 			throw new DAOException(e);
 		}
 
 		return results;
 	}
 
-	public RawScheduleEntry parse(CSVTokens entries) {
+	private RawScheduleEntry parse(CSVTokens entries, int line) {
 
 		Airport airportD = SystemData.getAirport(entries.get(14));
 		Airport airportA = SystemData.getAirport(entries.get(22));
@@ -154,7 +148,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			airportA = SystemData.getAirport("BSL");
 
 		// Look up the equipment type
-		String eqType = getEquipmentType(entries.get(27));
+		String eqType = getEquipmentType(entries.get(27), line);
 		String ln = entries.get(entries.size() - 1);
 
 		// Validate the data
@@ -198,6 +192,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		entry.setAirportA(airportA);
 		entry.setEquipmentType(eqType);
 		entry.setLength(Integer.parseInt(entries.get(42)) / 6);
+		entry.setLineNumber(line);
 		for (int x = 7; x < 14; x++) {
 			if ("1".equals(entries.get(x)))
 				entry.addDayOfWeek(DayOfWeek.of(x - 6));

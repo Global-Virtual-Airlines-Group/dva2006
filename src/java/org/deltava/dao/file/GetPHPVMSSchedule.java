@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load a PHPVMSv7 Flight Schedule.
  * @author Luke
- * @version 11.5
+ * @version 12.5
  * @since 11.5
  */
 
@@ -33,19 +33,6 @@ public class GetPHPVMSSchedule extends ScheduleLoadDAO {
 	 */
 	public GetPHPVMSSchedule(InputStream is) {
 		super(ScheduleSource.VASYS, is);
-	}
-
-	/*
-	 * Helper method to load an airport bean.
-	 */
-	private Airport getAirport(String code, int line) {
-		Airport a = SystemData.getAirport(code);
-		if (a == null) {
-			_status.addInvalidAirport(code.toUpperCase());
-			_status.addMessage(String.format("Unknown Airport at Line %d - %s", Integer.valueOf(line), code));
-		}
-
-		return a;
 	}
 
 	@Override
@@ -86,7 +73,7 @@ public class GetPHPVMSSchedule extends ScheduleLoadDAO {
 
 						// Build the flight number and equipment type
 						RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(csv.get(1)), StringUtils.parse(csv.get(4), 1));
-						String eqType = getEquipmentType(csv.get(23));
+						String eqType = getEquipmentType(csv.get(23), br.getLineNumber());
 						if (eqType == null)
 							throw new IllegalArgumentException(String.format("Unknown equipment type - %s", csv.get(23)));
 
