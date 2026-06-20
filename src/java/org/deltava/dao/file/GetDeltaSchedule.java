@@ -63,7 +63,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 			boolean foundValidity = false;
 		
 			while (lr.ready()) {
-				String data = lr.readLine(); boolean isOK = true; FlightData fd = null;
+				String data = lr.readLine(); FlightData fd = null;
 				
 				// Check for effective date
 				if (!foundValidity && data.startsWith("Validity Period:" )) {
@@ -82,7 +82,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 				try {
 					fd = parse(data);
 				} catch (Exception e) {
-					log.warn("Parse error at Line " + lr.getLineNumber() + " - " + e.getMessage());
+					log.warn("Parse error at Line {} - {}", Integer.valueOf(lr.getLineNumber()), e.getMessage());
 				}
 				
 				if (fd == null) continue;
@@ -95,47 +95,34 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 					isCodeShare = !fd.codeShare.contains("Delta");
 				}
 						
-				RawScheduleEntry rse = new RawScheduleEntry(FlightCodeParser.parse(fd.flightNumber));
-				rse.setAirportD(SystemData.getAirport(fd.airportD));
-				rse.setAirportA(SystemData.getAirport(fd.airportA));
-				rse.setEquipmentType(getEquipmentType(fd.eqType, lr.getLineNumber()));
-				rse.setStartDate(dts.getLeft());
-				rse.setEndDate(dts.getRight());
-				rse.setSource(ScheduleSource.DELTA);
-				rse.setLineNumber(lr.getLineNumber());
-				rse.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeD, _tf)));
-				rse.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeA, _tf)));
-				rse.setDaysOfWeek(fd.daysOfWeek);
-				
-				if (rse.getAirportD() == null) {
-					isOK = false;
-					_status.addInvalidAirport(fd.airportD);
-					log.warn("Unknown airport at Line " + lr.getLineNumber() + " - " + fd.airportD);
-					_status.addMessage("Unknown airport at Line " + lr.getLineNumber() + " - " + fd.airportD);
-				} else if (rse.getAirportA() == null) {
-					isOK = false;
-					_status.addInvalidAirport(fd.airportA);
-					log.warn("Unknown airport at Line " + lr.getLineNumber() + " - " + fd.airportA);
-					_status.addMessage("Unknown airport at Line " + lr.getLineNumber() + " - " + fd.airportA);
-				} else if (rse.getEquipmentType() == null) {
-					isOK = false;
-					_status.addInvalidEquipment(fd.eqType);
-					log.warn("Unknown equipment code at Line " + lr.getLineNumber() + " - " + fd.eqType + " (" + data + ")");
-					_status.addMessage("Unknown equipment code at Line " + lr.getLineNumber() + " - " + fd.eqType);
-				} else if (rse.getAirline() == null) {
-					isOK = false;
-					_status.addInvalidAirline(fd.flightNumber.substring(0, 2));
-					log.warn("Unknown airline at Line " + lr.getLineNumber() + " - " + fd.flightNumber + " (" + data + ")");
-					_status.addMessage("Unknown airline at Line " + lr.getLineNumber() + " - " + fd.flightNumber);
-				} else if (!rse.getAirline().getApplications().contains(SystemData.get("airline.code"))) {
-					isOK = false;
-					log.info("Disabled airline at Line " + lr.getLineNumber() + " - " + rse.getAirline().getCode() + " (" + fd.flightNumber.substring(0, 2) + ")");
-				}
+				try {
+					RawScheduleEntry rse = new RawScheduleEntry(FlightCodeParser.parse(fd.flightNumber));
+					rse.setAirportD(getAirport(fd.airportD, lr.getLineNumber()));
+					rse.setAirportA(getAirport(fd.airportA, lr.getLineNumber()));
+					rse.setEquipmentType(getEquipmentType(fd.eqType, lr.getLineNumber()));
+					rse.setStartDate(dts.getLeft());
+					rse.setEndDate(dts.getRight());
+					rse.setSource(ScheduleSource.DELTA);
+					rse.setLineNumber(lr.getLineNumber());
+					rse.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeD, _tf)));
+					rse.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeA, _tf)));
+					rse.setDaysOfWeek(fd.daysOfWeek);
 					
-				if (isOK && !isCodeShare)
-					results.add(rse);
-				else if (isOK && log.isDebugEnabled())
-					log.debug("Skipping codeshare " + fd.flightNumber);
+					// Do additional validation
+					if (rse.getAirline() == null) {
+						_status.addInvalidAirline(fd.flightNumber.substring(0, 2));
+						_status.addMessage("Unknown airline at Line " + lr.getLineNumber() + " - " + fd.flightNumber);
+						throw new InvalidDataException(String.format("Unknown airline at Line %d - %s (%s)", Integer.valueOf(lr.getLineNumber()), fd.flightNumber, data), lr.getLineNumber());
+					} else if (!rse.getAirline().getApplications().contains(SystemData.get("airline.code")))
+						log.info("Disabled airline at Line {} - {} ({})", Integer.valueOf(lr.getLineNumber()), rse.getAirline().getCode(), fd.flightNumber.substring(0, 2));
+				
+					if (!isCodeShare)
+						results.add(rse);
+					else
+						log.debug("Skipping codeshare {}", fd.flightNumber);
+				} catch (InvalidDataException ide) {
+					log.warn(ide.getMessage());
+				}
 			}
 
 			return results;

@@ -82,6 +82,8 @@ public class GetSimVector extends ScheduleLoadDAO {
 				se.setStartDate(sd);
 				se.setEndDate(ed);
 				se.setDaysOfWeek(jo.optString("days", "1234567"));
+
+				// TODO: Use validate()
 				
 				// Load departure/arrival times
 				Instant iD = ZonedDateTime.of(today, LocalTime.parse(jo.getString("dpt_time"), _tf), ZoneOffset.UTC).toInstant();

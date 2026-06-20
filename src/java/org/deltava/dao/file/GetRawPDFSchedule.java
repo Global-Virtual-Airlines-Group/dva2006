@@ -57,56 +57,37 @@ public class GetRawPDFSchedule extends ScheduleLoadDAO {
 			Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 			lr.readLine(); String data = lr.readLine();
 			while (data != null) {
- 				CSVTokens csv = StringUtils.parseCSV(data); boolean isOK = true;
+ 				CSVTokens csv = StringUtils.parseCSV(data);
  				if (csv.size() < 10) {
  					data = lr.readLine();
  					continue;
  				}
 				
 				// Parse the entry
-				RawScheduleEntry rse = new RawScheduleEntry(SystemData.getAirline(csv.get(7)), StringUtils.parse(csv.get(8), 1), StringUtils.parse(csv.get(9), 1));
-				rse.setAirportD(SystemData.getAirport(csv.get(2)));
-				rse.setAirportA(SystemData.getAirport(csv.get(4)));
-				rse.setEquipmentType(getEquipmentType(csv.get(10), lr.getLineNumber()));
-				rse.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(3), _tf)));
-				rse.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(5), _tf)));
-				rse.setDayMap(StringUtils.parse(csv.get(6), 0));
-				rse.setSource(ScheduleSource.DELTA);
-				rse.setLineNumber(lr.getLineNumber());
+ 				try {
+ 					RawScheduleEntry rse = new RawScheduleEntry(getAirline(csv.get(7), lr.getLineNumber()), StringUtils.parse(csv.get(8), 1), StringUtils.parse(csv.get(9), 1));
+					rse.setAirportD(getAirport(csv.get(2), lr.getLineNumber()));
+					rse.setAirportA(getAirport(csv.get(4), lr.getLineNumber()));
+					rse.setEquipmentType(getEquipmentType(csv.get(10), lr.getLineNumber()));
+					rse.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(3), _tf)));
+				rse	.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(5), _tf)));
+					rse.setDayMap(StringUtils.parse(csv.get(6), 0));
+					rse.setSource(ScheduleSource.DELTA);
+					rse.setLineNumber(lr.getLineNumber());
 
-				LocalDate startDate = "-".equals(csv.get(0)) ? LocalDate.now().minusDays(LocalDate.now().getDayOfYear()) : LocalDate.parse(csv.get(0), df);
-				LocalDate endDate = "-".equals(csv.get(1)) ? LocalDate.now().minusDays(LocalDate.now().getDayOfYear()).plusYears(1) : LocalDate.parse(csv.get(1), df);
-				rse.setStartDate(startDate);
-				rse.setEndDate(endDate);
-				
-				if (rse.getEquipmentType() == null) {
-					isOK = false;
-					_status.addInvalidEquipment(csv.get(10));
-					log.warn("Unknown equipment code at Line " + lr.getLineNumber() + " - " + csv.get(10) + " (" + data + ")");
-					_status.addMessage("Unknown equipment code at Line " + lr.getLineNumber() + " - " + csv.get(10));
-				} else if (rse.getAirportD() == null) {
-					isOK = false;
-					_status.addInvalidAirport(csv.get(2));
-					log.warn("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(2) + " (" + data + ")");
-					_status.addMessage("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(2));
-				} else if (rse.getAirportA() == null) {
-					isOK = false;
-					_status.addInvalidAirport(csv.get(4));
-					log.warn("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(4) + " (" + data + ")");
-					_status.addMessage("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(4));
-				} else if (rse.getAirline() == null) {
-					isOK = false;
-					_status.addInvalidAirline(csv.get(7));
-					log.warn("Unknown airline at Line " + lr.getLineNumber() + " - " + csv.get(7) + " (" + data + ")");
-					_status.addMessage("Unknown airline at Line " + lr.getLineNumber() + " - " + csv.get(7));
-				} else if (!rse.getAirline().getApplications().contains(SystemData.get("airline.code"))) {
-					isOK = false;
-					log.info("Disabled airline at Line " + lr.getLineNumber() + " - " + rse.getAirline().getCode() + " (" + csv.get(7) + ")");
-				}
+					LocalDate startDate = "-".equals(csv.get(0)) ? LocalDate.now().minusDays(LocalDate.now().getDayOfYear()) : LocalDate.parse(csv.get(0), df);
+					LocalDate endDate = "-".equals(csv.get(1)) ? LocalDate.now().minusDays(LocalDate.now().getDayOfYear()).plusYears(1) : LocalDate.parse(csv.get(1), df);
+					rse.setStartDate(startDate);
+					rse.setEndDate(endDate);
+					if (!rse.getAirline().getApplications().contains(SystemData.get("airline.code")))
+						throw new InvalidDataException(String.format("Disabled airline at Line %d - %s (%s)", Integer.valueOf(lr.getLineNumber()), rse.getAirline().getCode(), csv.get(7)), lr.getLineNumber());
+					
+					results.add(rse);
+ 				} catch (InvalidDataException ide) {
+ 					log.warn(ide.getMessage());
+ 				}
 				
 				data = lr.readLine();
-				if (isOK)
-					results.add(rse);
 			}
 			
 			return results;

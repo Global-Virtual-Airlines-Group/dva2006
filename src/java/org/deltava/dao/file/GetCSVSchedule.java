@@ -12,7 +12,6 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load an exported Flight Schedule.
@@ -82,14 +81,8 @@ public class GetCSVSchedule extends ScheduleLoadDAO {
 						LocalDate ed = LocalDate.parse(tkns.nextToken(), _df);
 						String daysOfWeek = tkns.nextToken();
 						
-						// Get the airline
-						String aCode = tkns.nextToken();
-						Airline a = SystemData.getAirline(aCode);
-						if (a == null)
-							throw new IllegalArgumentException(String.format("Invalid Airline Code - %s", aCode));
-
 						// Build the flight number and equipment type
-						RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
+						RawScheduleEntry entry = new RawScheduleEntry(getAirline(tkns.nextToken(), br.getLineNumber()), Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
 						entry.setEquipmentType(tkns.nextToken());
 
 						// Get the airports and times
@@ -106,7 +99,7 @@ public class GetCSVSchedule extends ScheduleLoadDAO {
 						entry.setAirportA(getAirport(aA, br.getLineNumber()));
 						if (!entry.isPopulated())
 							throw new IllegalArgumentException(String.format("Invalid Airport Code - %s / %s", aD, aA));
-
+						
 						// Load departure/arrival times
 						if (_isUTC) {
 							Instant iD = ZonedDateTime.of(today, LocalTime.parse(tD, _tf), ZoneOffset.UTC).toInstant();
