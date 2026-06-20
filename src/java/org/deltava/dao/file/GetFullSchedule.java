@@ -123,9 +123,13 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				else if (tkns.size() < 53)
 					log.warn("Skipping line {} - size = {}", Integer.valueOf(lr.getLineNumber()), Integer.valueOf(tkns.size()));
 				else if (include(tkns)) {
-					RawScheduleEntry se = parse(tkns, br.getLineNumber());
-					if (se != null)
-						results.add(se);
+					try {
+						RawScheduleEntry se = parse(tkns, br.getLineNumber());
+						if (se != null)
+							results.add(se);
+					} catch (InvalidDataException ide) {
+						// empty
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -136,8 +140,12 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		return results;
 	}
 
-	private RawScheduleEntry parse(CSVTokens entries, int line) {
+	/*
+	 * Helper method to parse and validate entries.
+	 */
+	private RawScheduleEntry parse(CSVTokens entries, int line) throws InvalidDataException {
 
+		Airline a = getAirline(entries.get(0), line);
 		Airport airportD = SystemData.getAirport(entries.get(14));
 		Airport airportA = SystemData.getAirport(entries.get(22));
 			
@@ -149,41 +157,24 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 		// Look up the equipment type
 		String eqType = getEquipmentType(entries.get(27), line);
-		String ln = entries.get(entries.size() - 1);
 
 		// Validate the data
-		boolean isOK = true;
-		Airline a = SystemData.getAirline(entries.get(0));
 		String flightCode = entries.get(0) + entries.get(1);
-		if (eqType == null) {
-			isOK = false;
-			_status.addInvalidEquipment(entries.get(27));
-			log.warn("Unknown equipment code at Line " + ln + " - " + entries.get(27) + " (" + flightCode + ")");
-			_status.addMessage("Unknown equipment code at Line " + ln + " - " + entries.get(27));
-		} else if (airportD == null) {
-			isOK = false;
+		if (airportD == null) {
 			_status.addInvalidAirport(entries.get(14));
-			log.warn("Unknown Airport at Line " + ln + " - " + entries.get(14) + " (" + flightCode + ")");
-			_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(14));
+			_status.addMessage("Unknown Airport at Line " + line + " - " + entries.get(14));
+			throw new InvalidDataException(String.format("Unknown Airport at Line %d - %s (%s)", Integer.valueOf(line), entries.get(14), flightCode), line);
 		} else if (airportA == null) {
-			isOK = false;
 			_status.addInvalidAirport(entries.get(22));
-			log.warn("Unknown Airport at Line " + ln + " - " + entries.get(22) + " (" + flightCode + ")");
-			_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(22));
-		} else if (a == null) {
-			isOK = false;
-			_status.addInvalidAirline(entries.get(0));
-			log.warn("Unknown airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
-			_status.addMessage("Unknown airline at Line " + ln + " - " + entries.get(0));
+			_status.addMessage("Unknown Airport at Line " + line + " - " + entries.get(22));
+			throw new InvalidDataException(String.format("Unknown Airport at Line %d - %s (%s)", Integer.valueOf(line), entries.get(22), flightCode), line);
 		} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
-			isOK = false;
-			log.info("Disabled airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
+			log.info("Disabled airline at Line {} - {} ({})", Integer.valueOf(line), entries.get(0), flightCode);
+			return null;
 		} else if (airportD.distanceTo(airportA) < 5) {
-			isOK = false;
-			log.info("Dummy flight from " + airportD.getIATA() + " to " + airportA.getIATA());
+			log.info("Dummy flight from {} to {}", airportD.getIATA(), airportA.getIATA());
+			return null;
 		}
-
-		if (!isOK) return null;
 
 		// Build the Schedule Entry
 		RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer.parseInt(entries.get(46)));

@@ -6,6 +6,8 @@ import java.io.StringWriter;
 
 import org.json.JSONObject;
 
+import org.deltava.util.JSONUtils;
+
 /**
  * A class to generate JSON-formatted raw schedule entries.
  * @author Luke
@@ -36,8 +38,8 @@ public class JSONScheduleFormatter implements ScheduleFormatter {
 		jo.put("historic", se.getHistoric());
 		jo.put("forceInclude", rse.getForceInclude());
 		jo.put("academy", se.getAcademy());
-		jo.put("startDate", LocalDateTime.of(rse.getStartDate(), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC));
-		jo.put("endDate", LocalDateTime.of(rse.getEndDate(), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC));
+		jo.put("startDate", JSONUtils.formatDate(LocalDateTime.of(rse.getStartDate(), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC)));
+		jo.put("endDate", JSONUtils.formatDate(LocalDateTime.of(rse.getEndDate(), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC)));
 		jo.putOpt("remarks", se.getRemarks());
 		jo.putOpt("comments", rse.getComments());
 		jo.put("timeD", formatTime(rse.getTimeD()));
