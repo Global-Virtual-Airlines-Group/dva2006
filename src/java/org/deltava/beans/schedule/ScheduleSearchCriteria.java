@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -48,6 +48,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private String _sortBy;
 	private String _dbName;
 	private final SequencedCollection<String> _eqTypes = new LinkedHashSet<String>();
+	private final SequencedCollection<Airline> _airlines = new LinkedHashSet<Airline>();
 
 	/**
 	 * Initializes the search criteria.
@@ -226,9 +227,17 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @return a Collection of equipment type names
 	 */
 	public Collection<String> getEquipmentTypes() {
-		return _eqTypes;
+		return Collections.unmodifiableCollection(_eqTypes);
 	}
 
+	/**
+	 * Returns the Airlines to search for.
+	 * @return a Collection of Airlines
+	 */
+	public Collection<Airline> getAirlines() {
+		return Collections.unmodifiableCollection(_airlines);
+	}
+	
 	/**
 	 * Updates the database to search.
 	 * @param db the database name
@@ -294,6 +303,19 @@ public class ScheduleSearchCriteria extends Flight {
 		if (!StringUtils.isEmpty(eqType) && !"-".equals(eqType))
 			_eqTypes.add(eqType);
 	}
+	
+	/**
+	 * Adds an Airline to serach with.
+	 * @param a the Airline
+	 */
+	public void addAirline(Airline a) {
+		_airlines.add(a);
+	}
+	
+	@Override
+	public final void setAirline(Airline a) {
+		addAirline(a);
+	}
 
 	/**
 	 * Updates the equipment types to search with.
@@ -306,6 +328,11 @@ public class ScheduleSearchCriteria extends Flight {
 			_eqTypes.clear();
 			eqTypes.forEach(this::addEquipmentType);
 		}
+	}
+	
+	@Override
+	public final Airline getAirline() {
+		return _airlines.isEmpty() ? null : _airlines.getFirst();
 	}
 
 	@Override
