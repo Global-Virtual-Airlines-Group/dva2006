@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 8.0
  */
 
@@ -169,7 +169,7 @@ public class GetRawSchedule extends DAO {
 	 * @param src the ScheduleSource, or null for all
 	 * @param a the Airport
 	 * @param isDestination TRUE if selecting arriving flights, otherwise FALSE
-	 * @return a Collection of DayOfWeek enums
+	 * @return a Collection of DayOfWeek enumerations
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<DayOfWeek> getDays(ScheduleSource src, Airport a, boolean isDestination) throws DAOException {
@@ -287,6 +287,7 @@ public class GetRawSchedule extends DAO {
 				se.setAcademy(rs.getBoolean(17));
 				se.setCodeShare(rs.getString(18));
 				se.setRemarks(rs.getString(19));
+				se.setComments(rs.getString(20));
 				results.add(se);
 			}
 		}

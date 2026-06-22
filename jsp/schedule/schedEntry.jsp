@@ -152,9 +152,17 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <c:if test="${entry.updated}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data sec bld small caps">This Schdule Entry has been manually updated since Import</td>
+ <td class="data sec bld small caps">This Schedule Entry has been manually updated since Import</td>
 </tr>
 </c:if>
+<tr>
+ <td class="label top">Comments</td>
+ <td class="data"><el:textbox name="comments" width="85%" height="3">${entry.comments}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label">Remarks</td>
+ <td class="data"><el:text name="remarks" idx="*" size="24" max="32" value="${entry.remarks}" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->

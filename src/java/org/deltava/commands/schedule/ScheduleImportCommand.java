@@ -16,7 +16,6 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-import org.deltava.dao.file.GetSchedule;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
@@ -126,7 +125,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 					boolean isUTC = Boolean.parseBoolean(ctx.getParameter("isUTC"));
 					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false, ctx.getDB());
 					try (InputStream is = new FileInputStream(f)) {
-						GetSchedule dao = new GetSchedule(ss, is, isUTC);
+						GetCSVSchedule dao = new GetCSVSchedule(ss, is, isUTC);
 						dao.setAircraft(acdao.getAircraftTypes());
 						dao.setAirlines(adao.getActive().values());
 						srcs.forEach(ssi -> dao.setMaxLine(ssi.getSource(), ssi.getMaxLineNumber()));

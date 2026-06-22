@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -6,8 +6,6 @@ import static jakarta.servlet.http.HttpServletResponse.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.time.*;
-import java.time.format.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -16,13 +14,13 @@ import org.deltava.service.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to export Raw Schedule entries.
  * @author Luke
- * @version 9.0
+ * @version 12.5
  * @since 9.0
  */
 
@@ -42,6 +40,10 @@ public class ExportService extends WebService {
 		access.validate();
 		if (!access.getCanExport())
 			throw error(SC_FORBIDDEN, "Cannot export Flight Schedule");
+		
+		// Get export format
+		ScheduleFormat sfmt = EnumUtils.parse(ScheduleFormat.class, ctx.getParameter("fmt"), ScheduleFormat.CSV);
+		ScheduleFormatter sf = sfmt.getIntsance();
 
 		// Load Sources
 		Collection<ScheduleSource> srcs = StringUtils.split(ctx.getParameter("src"), ",").stream().map(sc -> ScheduleSource.valueOf(sc)).collect(Collectors.toCollection(TreeSet::new));
@@ -56,57 +58,21 @@ public class ExportService extends WebService {
 			ctx.release();
 		}
 
-		// Create formatters
-		DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern("dd-MMM").toFormatter();
-		DateTimeFormatter tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
-		boolean doICAO = (ctx.getUser().getAirportCodeType() == Airport.Code.ICAO);
-
 		// Set the content type and force Save As
-		String aCode = SystemData.get("airline.code");
-		ctx.setContentType("text/csv", "utf-8");
-		ctx.setHeader("X-Schedule-Name", SystemData.get("airline.code").toLowerCase() + "_raw_schedule.csv");
+		ctx.setContentType(sfmt.getContentType(), "utf-8");
+		ctx.setHeader("X-Schedule-Name", String.format("%s_raw_schedule.%s", SystemData.get("airline.code").toLowerCase(), sfmt.getExtension()));
 
 		try (PrintWriter out = ctx.getResponse().getWriter()) {
-			// Write the header
-			out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss") + " UTC");
-			out.println("; SOURCE,LINE,STARTS,ENDS,DAYS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,FORCE,ACADEMY");
+			out.print(sf.getHeader());
+			for (Iterator<RawScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
+				RawScheduleEntry entry = i.next();
+				out.print(sf.format(entry));
+				if (i.hasNext())
+					out.println(sf.getSeparator());
+			}
 
-	         for (RawScheduleEntry entry : entries) {
-	             StringBuilder buf = new StringBuilder(entry.getSource().name());
-	             buf.append(',');
-	             buf.append(entry.getLineNumber());
-	             buf.append(',');
-	             buf.append(df.format(entry.getStartDate()));
-	             buf.append(',');
-	             buf.append(df.format(entry.getEndDate()));
-	             buf.append(',');
-	             buf.append(entry.getDayCodes());
-	             buf.append(',');
-	             buf.append(entry.getAirline().getCode());
-	             buf.append(',');
-	             buf.append(StringUtils.format(entry.getFlightNumber(), "#000"));
-	             buf.append(',');
-	             buf.append(String.valueOf(entry.getLeg()));
-	             buf.append(',');
-	             buf.append(entry.getEquipmentType());
-	             buf.append(',');
-	             buf.append(doICAO ? entry.getAirportD().getICAO() : entry.getAirportD().getIATA());
-	             buf.append(',');
-	             buf.append(tf.format(entry.getTimeD()));
-	             buf.append(',');
-	             buf.append(doICAO ? entry.getAirportA().getICAO() : entry.getAirportA().getIATA());
-	             buf.append(',');
-	             buf.append(tf.format(entry.getTimeA()));
-	             buf.append(',');
-	             buf.append(entry.getDistance());
-	             buf.append(',');
-	             buf.append(entry.getHistoric());
-	             buf.append(',');
-	             buf.append(entry.getForceInclude());
-	             buf.append(',');
-	             buf.append(entry.getAcademy());
-	             out.println(buf.toString());
-	          }
+	         out.println(sf.getFooter());
+	         ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
@@ -114,10 +80,6 @@ public class ExportService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
