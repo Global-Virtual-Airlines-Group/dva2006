@@ -123,10 +123,12 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 		
 		// Check for all airline search (used for DL/DLH/DLC and AF/AFH)
-		if (Boolean.parseBoolean(ctx.getParameter("allPrimary"))) {
-			
-			
-			
+		if (Boolean.parseBoolean(ctx.getParameter("allPrimary")) && (a != null) && defaultAirline.equals(a)) {
+			if (a.getCode().equals("DL")) {
+				ssc.addAirline(SystemData.getAirline("DLC"));
+				ssc.addAirline(SystemData.getAirline("DLH"));
+			} else if (a.getCode().equals("AF"))
+				ssc.addAirline(SystemData.getAirline("AFH"));
 		}
 
 		// Populate the search criteria from the request
