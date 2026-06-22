@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 11.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -79,9 +79,17 @@ public class GetScheduleSearch extends GetSchedule {
 		List<String> params = new ArrayList<String>();
 		
 		// Add airline
-		if (criteria.getAirline() != null) {
-			conditions.add("S.AIRLINE=?");
-			params.add(criteria.getAirline().getCode());
+		if (!criteria.getAirlines().isEmpty()) {
+			StringBuilder buf = new StringBuilder();
+			for (Iterator<Airline> i = criteria.getAirlines().iterator(); i.hasNext(); ) {
+				Airline a = i.next();
+				buf.append("(S.AIRLINE=?)");
+				params.add(a.getCode());
+				if (i.hasNext())
+					buf.append(" OR ");
+			}
+			
+			conditions.add(buf.toString());
 		}
 			
 		// Add flight number
