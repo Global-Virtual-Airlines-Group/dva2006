@@ -48,6 +48,13 @@ public class TestStringUtils extends TestCase {
     	assertEquals("A,B,CD", StringUtils.listConcat(l, ","));
     }
     
+    public void testAddCSVQuotes() {
+    	assertEquals("\"Foo\"", StringUtils.addCSVQuotes("Foo"));
+    	assertEquals("F", StringUtils.addCSVQuotes("F"));
+    	assertEquals("", StringUtils.addCSVQuotes(null));
+    	assertEquals("", StringUtils.addCSVQuotes(""));
+    }
+    
     public void testRemoveCSVQuotes() {
     	assertEquals("Foo", StringUtils.removeCSVQuotes("Foo"));
     	assertEquals("Foo", StringUtils.removeCSVQuotes("\"Foo\""));
@@ -142,5 +149,13 @@ public class TestStringUtils extends TestCase {
     public void testStripUnicode() {
     	assertEquals("Normal String", StringUtils.stripUnicode("Normal String"));
     	assertEquals("unofferta che non potrà rifiutare.pdf", StringUtils.stripUnicode("un’offerta che non potrà rifiutare.pdf"));
+    }
+    
+    public void testNullTrim() {
+    	assertNull(StringUtils.nullTrim((String)null));
+    	assertNull(StringUtils.nullTrim(""));
+    	assertNull(StringUtils.nullTrim(" "));
+    	assertEquals("e", StringUtils.nullTrim("e"));
+    	assertEquals("e", StringUtils.nullTrim("e "));
     }
 }

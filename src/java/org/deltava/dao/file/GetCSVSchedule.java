@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -12,16 +12,15 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 1.0
  */
 
-public class GetSchedule extends ScheduleLoadDAO {
+public class GetCSVSchedule extends ScheduleLoadDAO {
 	
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("d[d]-MMM[-YYYY]").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
@@ -36,24 +35,11 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * @param is the input stream to read
 	 * @param isUTC TRUE if departure/arrival times are UTC, otherwise FALSE
 	 */
-	public GetSchedule(ScheduleSource src, InputStream is, boolean isUTC) {
+	public GetCSVSchedule(ScheduleSource src, InputStream is, boolean isUTC) {
 		super(src, is);
 		_isUTC = isUTC;
 	}
 
-	/*
-	 * Helper method to load an airport bean.
-	 */
-	private Airport getAirport(String code, int line) {
-		Airport a = SystemData.getAirport(code);
-		if (a == null) {
-			_status.addInvalidAirport(code.toUpperCase());
-			_status.addMessage(String.format("Unknown Airport at Line %d - %s", Integer.valueOf(line), code));
-		}
-
-		return a;
-	}
-	
 	/**
 	 * Updates the maximum line number for a Schedule source.
 	 * @param src a ScheduleSource
@@ -63,11 +49,6 @@ public class GetSchedule extends ScheduleLoadDAO {
 		_srcMaxLines.put(src, Integer.valueOf(maxLine));
 	}
 
-	/**
-	 * Loads the Schedule Entries.
-	 * @return a Collection of ScheduleEntry beans
-	 * @throws DAOException if an I/O error occurs
-	 */
 	@Override
 	public Collection<RawScheduleEntry> process() throws DAOException {
 		
@@ -100,14 +81,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 						LocalDate ed = LocalDate.parse(tkns.nextToken(), _df);
 						String daysOfWeek = tkns.nextToken();
 						
-						// Get the airline
-						String aCode = tkns.nextToken();
-						Airline a = SystemData.getAirline(aCode);
-						if (a == null)
-							throw new IllegalArgumentException(String.format("Invalid Airline Code - %s", aCode));
-
 						// Build the flight number and equipment type
-						RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
+						RawScheduleEntry entry = new RawScheduleEntry(getAirline(tkns.nextToken(), br.getLineNumber()), Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
 						entry.setEquipmentType(tkns.nextToken());
 
 						// Get the airports and times
@@ -124,7 +99,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						entry.setAirportA(getAirport(aA, br.getLineNumber()));
 						if (!entry.isPopulated())
 							throw new IllegalArgumentException(String.format("Invalid Airport Code - %s / %s", aD, aA));
-
+						
 						// Load departure/arrival times
 						if (_isUTC) {
 							Instant iD = ZonedDateTime.of(today, LocalTime.parse(tD, _tf), ZoneOffset.UTC).toInstant();

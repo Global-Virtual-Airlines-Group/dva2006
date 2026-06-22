@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -75,7 +75,8 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, PLUSDAYS, FORCE_INCLUDE, ISUPDATED, ACADEMY, CODESHARE, REMARKS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, PLUSDAYS, "
+			+ "FORCE_INCLUDE, ISUPDATED, ACADEMY, CODESHARE, REMARKS, COMMENTS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, rse.getSource().ordinal());
@@ -97,6 +98,7 @@ public class SetSchedule extends DAO {
 			ps.setBoolean(17, rse.getAcademy());
 			ps.setString(18, rse.getCodeShare());
 			ps.setString(19, rse.getRemarks());
+			ps.setString(20, rse.getComments());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -119,6 +121,9 @@ public class SetSchedule extends DAO {
 		}
 	}
 	
+	/*
+	 * Helper method to purge the raw schedule cache.
+	 */
 	private static void purgeSourceCache(ScheduleSource src) {
 		if (src != null) 
 			_srcCache.remove(src.name());
