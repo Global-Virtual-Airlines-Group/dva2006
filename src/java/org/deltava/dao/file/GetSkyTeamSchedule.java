@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to import the SkyTeam schedule.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 9.0
  */
 
@@ -70,66 +70,61 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 						log.warn("Unknown airport at Line {} - {}", Integer.valueOf(lr.getLineNumber()), code);
 					}
 				} else if ((data.length() > 40) && Character.isDigit(data.charAt(0)) && Character.isDigit(data.charAt(1)) && (aD != null) && (aA != null)) {
-					FlightData fd = parseFlightLine(data); boolean isOK = true;
+					FlightData fd = parseFlightLine(data);
 					
 					// Check for codeshare
 					if (!fd.flightNumber.endsWith("*") && !GROUND_EQ.contains(fd.eqType)) {
-						RawScheduleEntry se = new RawScheduleEntry(FlightCodeParser.parse(fd.flightNumber));
-						se.setAirportD(aD); se.setAirportA(aA);
-						se.setEquipmentType(getEquipmentType(fd.eqType));
-						se.setSource(ScheduleSource.SKYTEAM);
-						se.setLineNumber(lr.getLineNumber());
-						for (char c : fd.daysOfWeek.toCharArray()) {
-							int dayNumber = Character.getNumericValue(c);
-							se.addDayOfWeek((dayNumber == 1) ? DayOfWeek.SUNDAY : DayOfWeek.of(dayNumber - 1));
-						}
+						try {
+							RawScheduleEntry se = new RawScheduleEntry(FlightCodeParser.parse(fd.flightNumber));
+							se.setAirportD(aD); se.setAirportA(aA);
+							se.setEquipmentType(getEquipmentType(fd.eqType, lr.getLineNumber()));
+							se.setSource(ScheduleSource.SKYTEAM);
+							se.setLineNumber(lr.getLineNumber());
+							for (char c : fd.daysOfWeek.toCharArray()) {
+								int dayNumber = Character.getNumericValue(c);
+								se.addDayOfWeek((dayNumber == 1) ? DayOfWeek.SUNDAY : DayOfWeek.of(dayNumber - 1));
+							}
 						
-						// Check for B737-900ER
-						if (se.getAirline().getCode().equals("DL") && "B737-900".equals(se.getEquipmentType()))
-							se.setEquipmentType("B737-900ER");
+							// Check for B737-900ER
+							if (se.getAirline().getCode().equals("DL") && "B737-900".equals(se.getEquipmentType()))
+								se.setEquipmentType("B737-900ER");
 						
-						// Parse dates/times - if start date is more than 100 days in the past, add a year
-						LocalDate sd = LocalDate.parse(fd.startDate, _df);
-						LocalDate ed = LocalDate.parse(fd.endDate, _df);
-						long deltaDays = sd.toEpochDay() - ed.toEpochDay();
-						if (deltaDays <= -100)
-							sd = sd.plusYears(1);
-						if (ed.isBefore(sd))
-							ed = ed.plusYears(1);
+							// Parse dates/times - if start date is more than 100 days in the past, add a year
+							LocalDate sd = LocalDate.parse(fd.startDate, _df);
+							LocalDate ed = LocalDate.parse(fd.endDate, _df);
+							long deltaDays = sd.toEpochDay() - ed.toEpochDay();
+							if (deltaDays <= -100)
+								sd = sd.plusYears(1);
+							if (ed.isBefore(sd))
+								ed = ed.plusYears(1);
 						
-						LocalDate endDate = sd;
-						if (fd.timeA.endsWith("+1") || fd.timeA.endsWith("+2")) {
-							int days = Character.getNumericValue(fd.timeA.charAt(fd.timeA.length() - 1));
-							fd.timeA = fd.timeA.substring(0, fd.timeA.length() - 2);
-							endDate = endDate.plusDays(days);
-						} else if (fd.timeA.endsWith("+-1")) {
-							fd.timeA = fd.timeA.substring(0, fd.timeA.length() - 3);
-							endDate = endDate.plusDays(-1);
-						}
+							LocalDate endDate = sd;
+							if (fd.timeA.endsWith("+1") || fd.timeA.endsWith("+2")) {
+								int days = Character.getNumericValue(fd.timeA.charAt(fd.timeA.length() - 1));
+								fd.timeA = fd.timeA.substring(0, fd.timeA.length() - 2);
+								endDate = endDate.plusDays(days);
+							} else if (fd.timeA.endsWith("+-1")) {
+								fd.timeA = fd.timeA.substring(0, fd.timeA.length() - 3);
+								endDate = endDate.plusDays(-1);
+							}
 
-						se.setStartDate(sd);
-						se.setEndDate(ed);
-						se.setTimeD(LocalDateTime.of(sd, LocalTime.parse(fd.timeD, _tf)));
-						se.setTimeA(LocalDateTime.of(endDate, LocalTime.parse(fd.timeA, _tf)));
-						
-						if (se.getEquipmentType() == null) {
-							isOK = false;
-							_status.addInvalidEquipment(fd.eqType);
-							log.warn("Unknown equipment code at Line {} - {} ({})", Integer.valueOf(lr.getLineNumber()), fd.eqType, data);
-							_status.addMessage("Unknown equipment code at Line " + lr.getLineNumber() + " - " + fd.eqType);
-						} else if (se.getAirline() == null) {
-							isOK = false;
-							_status.addInvalidAirline(fd.flightNumber.substring(0, 2));
-							log.warn("Unknown airline at Line {} - {} ({})", Integer.valueOf(lr.getLineNumber()), fd.flightNumber, data);
-							_status.addMessage("Unknown airline at Line " + lr.getLineNumber() + " - " + fd.flightNumber);
-						} else if (!se.getAirline().getApplications().contains(SystemData.get("airline.code"))) {
-							isOK = false;
-							log.info("Disabled airline at Line {} - {} ({})", Integer.valueOf(lr.getLineNumber()), se.getAirline().getCode(), fd.flightNumber.substring(0, 2));
-						}
+							se.setStartDate(sd);
+							se.setEndDate(ed);
+							se.setTimeD(LocalDateTime.of(sd, LocalTime.parse(fd.timeD, _tf)));
+							se.setTimeA(LocalDateTime.of(endDate, LocalTime.parse(fd.timeA, _tf)));
+							
+							// Do validation
+							if (se.getAirline() == null) {
+								_status.addInvalidAirline(fd.flightNumber.substring(0, 2));
+								_status.addMessage("Unknown airline at Line " + lr.getLineNumber() + " - " + fd.flightNumber);
+								throw new InvalidDataException(String.format("Unknown airline at Line %d - %s (%s)", Integer.valueOf(lr.getLineNumber()), fd.flightNumber, data), lr.getLineNumber());
+							} else if (!se.getAirline().getApplications().contains(SystemData.get("airline.code")))
+								throw new InvalidDataException(String.format("Disabled airline at Line %d - %s (%s)", Integer.valueOf(lr.getLineNumber()), se.getAirline().getCode(), fd.flightNumber.substring(0, 2)), lr.getLineNumber());
 
-						if (isOK) {
 							results.add(se);
 							lastEntry = se;
+						} catch (InvalidDataException ide) {
+							log.warn(ide.getMessage());
 						}
 					} else if (lastEntry != null)
 						lastEntry.setCodeShare(fd.flightNumber.substring(0, fd.flightNumber.length() - 2));
