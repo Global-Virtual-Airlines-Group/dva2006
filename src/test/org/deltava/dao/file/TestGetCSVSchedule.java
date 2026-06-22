@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 
 import junit.framework.TestCase;
 
-public class TestGetSchedule extends TestCase {
+public class TestGetCSVSchedule extends TestCase {
 
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false&connectionTimezone=SERVER&allowPublicKeyRetrieval=true";
 	
@@ -53,7 +53,7 @@ public class TestGetSchedule extends TestCase {
 		assertTrue(f.exists());
 		
 		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 16384)) {
-			GetSchedule sdao = new GetSchedule(ScheduleSource.MANUAL, is, false);
+			GetCSVSchedule sdao = new GetCSVSchedule(ScheduleSource.MANUAL, is, false);
 			sdao.setAirlines(_airlines);
 			sdao.setAircraft(_acTypes);
 			

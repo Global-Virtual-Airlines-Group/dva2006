@@ -105,6 +105,10 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				entry.setLineNumber(ridao.getNextManualEntryLine());
 			}
 			
+			// Get comments and remarks
+			entry.setRemarks(StringUtils.nullTrim(ctx.getParameter("remarks")));
+			entry.setComments(StringUtils.nullTrim(ctx.getParameter("comments")));
+			
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
 			wdao.writeRaw(entry, true);
