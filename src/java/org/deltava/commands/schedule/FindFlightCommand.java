@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -22,12 +22,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 1.0
  */
 
 public class FindFlightCommand extends AbstractCommand {
-
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -107,10 +107,12 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 
 		// Save airlines and ratings
+		Airline defaultAirline = SystemData.getAirline(SystemData.get("airline.code"));
 		List<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).collect(Collectors.toList());
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
-		ctx.setAttribute("airline", SystemData.getAirline(SystemData.get("airline.code")), REQUEST);
+		ctx.setAttribute("airline", defaultAirline, REQUEST);
+		ctx.setAttribute("primaryALCode", defaultAirline.getCode(), REQUEST);
 
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
@@ -118,6 +120,13 @@ public class FindFlightCommand extends AbstractCommand {
 		if (!isSearch) {
 			result.setSuccess(true);
 			return;
+		}
+		
+		// Check for all airline search (used for DL/DLH/DLC and AF/AFH)
+		if (Boolean.parseBoolean(ctx.getParameter("allPrimary"))) {
+			
+			
+			
 		}
 
 		// Populate the search criteria from the request
