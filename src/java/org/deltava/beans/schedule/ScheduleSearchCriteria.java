@@ -309,7 +309,8 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @param a the Airline
 	 */
 	public void addAirline(Airline a) {
-		_airlines.add(a);
+		if (a != null)
+			_airlines.add(a);
 	}
 	
 	@Override
