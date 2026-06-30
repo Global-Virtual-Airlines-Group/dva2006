@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016, 2017, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2017, 2019, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -31,6 +31,8 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	
 	private final Collection<String> _apps = new TreeSet<String>();
 	private final Collection<String> _codes = new HashSet<String>();
+	
+	private final Collection<String> _assocAirlineCodes = new TreeSet<String>();
 	
 	/**
 	 * Create a new Airline using a code and a name.
@@ -82,6 +84,15 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	 */
 	public Collection<String> getCodes() {
 		return _codes;
+	}
+	
+	/**
+	 * Returns the associated airline codes for this Airline. This is used for commuter and historic versions.
+	 * @return a Collection of Airline codes
+	 * @see Airline#addAssociatedAirline(String)
+	 */
+	public Collection<String> getAssociatedAirlines() {
+		return _assocAirlineCodes;
 	}
 	
 	/**
@@ -177,6 +188,16 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	public void addApp(String app) {
 		_apps.add(app);
 	}
+	
+	/**
+	 * Adds an associated airline code. This is used for commuter and historic versions of this airline.
+	 * @param code the airline code
+	 * @throws NullPointerException if code is null
+	 * @see Airline#getAssociatedAirlines()
+	 */
+	public void addAssociatedAirline(String code) {
+		_assocAirlineCodes.add(code.toUpperCase());
+	}
 
 	/**
 	 * Updates the web applications this Airline is enabled for.
@@ -220,7 +241,7 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	 */
 	public void setColor(String color) {
 		if (StringUtils.arrayIndexOf(COLORS, color) == -1)
-			throw new IllegalArgumentException("Invalid Google Map color - " + color);
+			throw new IllegalArgumentException(String.format("Invalid Google Map color - %s", color));
 		
 		_color = color;
 	}
