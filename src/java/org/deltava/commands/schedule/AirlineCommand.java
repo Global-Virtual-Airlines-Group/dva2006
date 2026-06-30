@@ -2,6 +2,7 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -19,7 +20,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -63,6 +64,15 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 			a.setCodes(StringUtils.split(ctx.getParameter("altCodes"), "\n"));
 			a.setScheduleSync(Boolean.parseBoolean(ctx.getParameter("sync")));
 			a.setHistoric(Boolean.parseBoolean(ctx.getParameter("historic")));
+			
+			// Get the linked airlines that don't exist at this VA
+			Collection<String> ourAirlineCodes = SystemData.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet());
+			Collection<String> laCodes = a.getAssociatedAirlines().stream().filter(c -> !ourAirlineCodes.contains(c)).collect(Collectors.toSet());
+			
+			// Get associated airlne codes
+			Collection<String> assocCodes = ctx.getParameters("assocCodes", Collections.emptySet());
+			assocCodes.stream().map(SystemData::getAirline).filter(Objects::nonNull).map(Airline::getCode).forEach(a::addAssociatedAirline);
+			laCodes.forEach(a::addAssociatedAirline);
 			
 			// Add airlines that have flights in their schedule
 			GetScheduleInfo sidao = new GetScheduleInfo(con);
@@ -161,6 +171,7 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 		
 		// Save airline colors
 		ctx.setAttribute("colors", List.of(MapEntry.COLORS), REQUEST);
+		ctx.setAttribute("allAirlines", SystemData.getAirlines(), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

@@ -81,6 +81,11 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:textbox name="altCodes" idx="*" width="50" height="3">${altCodes}</el:textbox></td>
 </tr>
 <tr>
+ <td class="label top">Associated Airlines</td>
+ <td class="data"><span class="ita">These are historic or commuter versions of this Airline.</span><br>
+<el:check name="assocCodes" width="185" className="small" checked="${airline.associatedAirlines}" options="${allAirlines}" /></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" idx="*" value="true" label="Airline is Active" checked="${airline.active}" /><br>
  <el:box name="historic" idx="*" value="true" label="This is a Historic Airline" checked="${airline.historic}" /><br>
