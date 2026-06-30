@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to delete Airport profiles.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class AirportDeleteCommand extends AbstractCommand {
 				throw notFoundException("Unknown Airport", ctx.getCmdParameter(Command.ID, null));
 			
 			// Get the write DAO and delete the airport
-			SetAirportAirline wdao = new SetAirportAirline(con);
+			SetAirport wdao = new SetAirport(con);
 			wdao.delete(a);
 			
 			// Save the airport in the request
