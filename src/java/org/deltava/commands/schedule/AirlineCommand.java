@@ -90,7 +90,7 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 			ctx.startTX();
 			
 			// Get the DAO and update the database
-			SetAirportAirline wdao = new SetAirportAirline(con);
+			SetAirline wdao = new SetAirline(con);
 			if (isNew) {
 				wdao.create(a);
 				ctx.setAttribute("airlineCreate", Boolean.TRUE, REQUEST);

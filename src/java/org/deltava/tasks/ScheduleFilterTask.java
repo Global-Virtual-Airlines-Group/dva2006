@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.sql.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to filter the day's raw schedule. 
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 8.0
  */
 
@@ -114,7 +114,7 @@ public class ScheduleFilterTask extends Task {
 			}
 			
 			// Determine unserviced airports
-			SetAirportAirline awdao = new SetAirportAirline(con);
+			SetAirport awdao = new SetAirport(con);
 			Collection<Airport> allAirports = SystemData.getAirports().values();
 			for (Airport ap : allAirports) {
 				Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
