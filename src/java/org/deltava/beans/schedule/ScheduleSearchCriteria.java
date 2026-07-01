@@ -235,7 +235,10 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @return a Collection of Airlines
 	 */
 	public Collection<Airline> getAirlines() {
-		return Collections.unmodifiableCollection(_airlines);
+		Collection<Airline> results = new LinkedHashSet<Airline>();
+		results.add(getAirline());
+		results.addAll(_airlines);
+		return Collections.unmodifiableCollection(results);
 	}
 	
 	/**
@@ -309,13 +312,14 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @param a the Airline
 	 */
 	public void addAirline(Airline a) {
-		if (a != null)
-			_airlines.add(a);
+		_airlines.add(a);
 	}
 	
 	@Override
 	public final void setAirline(Airline a) {
-		addAirline(a);
+		super.setAirline(a);
+		if (a == null)
+			_airlines.clear();
 	}
 
 	/**
@@ -331,11 +335,6 @@ public class ScheduleSearchCriteria extends Flight {
 		}
 	}
 	
-	@Override
-	public final Airline getAirline() {
-		return _airlines.isEmpty() ? null : _airlines.getFirst();
-	}
-
 	@Override
 	public final String getEquipmentType() {
 		return _eqTypes.isEmpty() ? null : _eqTypes.getFirst();

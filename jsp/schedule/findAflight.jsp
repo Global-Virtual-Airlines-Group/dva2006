@@ -22,7 +22,7 @@
 <content:newRelic>
 <content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
-golgotha.ff = golgotha.ff || {};
+golgotha.ff = golgotha.ff || {airlines:{}};
 golgotha.ff.primaryCode = '${primaryALCode}';
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
 golgotha.ff.validate = function(f) {
@@ -53,6 +53,9 @@ golgotha.ff.updateAirline = function(cb) {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config.clone();
 	cfg.airline = golgotha.form.getCombo(cb);
+	const ao = golgotha.ff.airlines[cfg.airline];
+	const hasAssoc = (ao) && (ao.associated.length > 0);
+	golgotha.util.disable(f.allPrimary, !hasAssoc);
 	golgotha.airportLoad.changeAirline([f.airportD], cfg);
 	golgotha.util.show('historicOpts', !golgotha.form.comboSet(f.airline));
 	window.setTimeout(function() {
@@ -86,20 +89,21 @@ golgotha.ff.refreshNV = function(checkbox, cboName, isDest) {
 	return true;
 };
 
-golgotha.ff.checkPrimary = function() {
-	const f = document.forms[0];
-	const aCode = golgotha.form.getCombo(f.airline);
-	if (aCode == golgotha.ff.primaryCode)
-		golgotha.util.enable(f.allPrimary, true);
-	else {
-		golgotha.util.enable(f.allPrimary, false);
-		f.allPrimary.checked = false;
-	}
-
-	return true;
+golgotha.ff.loadAirlines = function() {
+	const p = fetch('airlines.ws', {signal:AbortSignal.timeout(5000)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			for (var x = 0; x < js.length; x++) {
+				const ao = js[x];
+				golgotha.ff.airlines[ao.code] = ao;
+			}
+		});
+	});
 };
 
 golgotha.onDOMReady(function() {
+	golgotha.ff.loadAirlines();
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
 	cfg.doICAO = ${useICAO};
@@ -139,8 +143,8 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); golgotha.ff.checkPrimary(); void golgotha.ff.updateAirline(this)" onRightClick="return golgotha.form.resetCombo()" />
- <el:text name="airlineCode" size="2" max="3" idx="*" className="caos" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /> <el:box name="allPrimary" value="true" className="small" label="Include Historic and Connector" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); void golgotha.ff.updateAirline(this)" onRightClick="return golgotha.form.resetCombo()" />
+ <el:text name="airlineCode" size="2" max="3" idx="*" className="caos" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /> <el:box name="allPrimary" value="true" checked="${param.allPrimary}" className="small" label="Include Associated Airlines" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${(param.myEQTypes || (!empty eqFamily)) ? '-' : fafCriteria.equipmentType}" onChange="void golgotha.ff.updateEQ(this)" onRightClick="return golgotha.form.resetCombo()" /> - 
  family <el:combo name="family" size="1" firstEntry="-" options="${allFamily}" value="${eqFamily}" onChange="void golgotha.ff.updateFamily(this)" /></td>
