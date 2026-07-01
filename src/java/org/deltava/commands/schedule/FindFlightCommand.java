@@ -48,6 +48,7 @@ public class FindFlightCommand extends AbstractCommand {
 		int fn = Math.max(0, StringUtils.parse(ctx.getParameter("flightNumber"), 0));
 		int leg = Math.min(Math.max(0, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
 		if (ssc != null) {
+			ssc.setAirline(null); // clear out associated airlines from previous query
 			ssc.setAirline(a);
 			ssc.setFlightNumber(fn);
 			ssc.setLeg(leg);
@@ -107,12 +108,10 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 
 		// Save airlines and ratings
-		Airline defaultAirline = SystemData.getAirline(SystemData.get("airline.code"));
 		List<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).collect(Collectors.toList());
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
-		ctx.setAttribute("airline", defaultAirline, REQUEST);
-		ctx.setAttribute("primaryALCode", defaultAirline.getCode(), REQUEST);
+		ctx.setAttribute("airline", SystemData.getAirline(SystemData.get("airline.code")), REQUEST);
 
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
@@ -122,14 +121,9 @@ public class FindFlightCommand extends AbstractCommand {
 			return;
 		}
 		
-		// Check for all airline search (used for DL/DLH/DLC and AF/AFH)
-		if (Boolean.parseBoolean(ctx.getParameter("allPrimary")) && (a != null) && defaultAirline.equals(a)) {
-			if (a.getCode().equals("DL")) {
-				ssc.addAirline(SystemData.getAirline("DLC"));
-				ssc.addAirline(SystemData.getAirline("DLH"));
-			} else if (a.getCode().equals("AF"))
-				ssc.addAirline(SystemData.getAirline("AFH"));
-		}
+		// Add associated airlines if requested
+		if (Boolean.parseBoolean(ctx.getParameter("allPrimary")) && (a != null))
+			a.getAssociatedAirlines().stream().map(SystemData::getAirline).filter(Objects::nonNull).forEach(ssc::addAirline);
 
 		// Populate the search criteria from the request
 		ssc.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
