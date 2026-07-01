@@ -24,6 +24,7 @@ public class RawScheduleEntry extends ScheduleEntry {
 	
 	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
 	private boolean _forceInclude;
+	private boolean _isUTC;
 	
 	/**
 	 * Creates the bean.
@@ -106,6 +107,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
+	 * Returns if the departure and arrival times are in UTC, not airport local time.
+	 * @return TRUE if times are UTC, otherwise FALSE
+	 */
+	public boolean getIsUTC() {
+		return _isUTC;
+	}
+	
+	/**
 	 * Returns whether this entry has been manually updated since import.
 	 * @return TRUE if manually updated, otherwise FALSE
 	 */
@@ -133,6 +142,11 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public boolean operatesOn(LocalDate ld) {
 		return _days.contains(ld.getDayOfWeek()) && !ld.isBefore(_startDate) && !ld.isAfter(_endDate);
+	}
+	
+	@Override
+	protected ZoneId getAirportTimeZone(Airport a) {
+		return _isUTC ? ZoneOffset.UTC : super.getAirportTimeZone(a);
 	}
 	
 	/**
@@ -209,6 +223,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
+	 * Updates whether the arrival and departure times are UTC, instead of airport local times.
+	 * @param isUTC TRUE if times are UTC, otherwise FALSE 
+	 */
+	public void setIsUTC(boolean isUTC) {
+		_isUTC = isUTC;
+	}
+	
+	/**
 	 * Updates the number of days forward to adjust the arrival date.
 	 * @param days the number of days
 	 */
@@ -235,13 +257,23 @@ public class RawScheduleEntry extends ScheduleEntry {
 		se.setAirportD(getAirportD());
 		se.setAirportA(getAirportA());
 		se.setEquipmentType(getEquipmentType());
-		se.setTimeD(LocalDateTime.of(dt, getTimeD().toLocalTime()));
-		se.setTimeA(LocalDateTime.of(dt.plusDays(getArrivalPlusDays()), getTimeA().toLocalTime()));
 		se.setAcademy(getAcademy());
 		se.setHistoric(getHistoric());
 		se.setSource(getSource());
 		se.setCodeShare(getCodeShare());
 		se.setRemarks(getRemarks());
+		if (_isUTC) {
+			Instant idt = ZonedDateTime.of(dt, getTimeD().toLocalTime(), ZoneOffset.UTC).toInstant();
+			Instant iat = ZonedDateTime.of(dt.plusDays(getArrivalPlusDays()), getTimeA().toLocalTime(), ZoneOffset.UTC).toInstant();
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(idt, getAirportD().getTZ().getZone());
+			ZonedDateTime zat = ZonedDateTime.ofInstant(iat, getAirportA().getTZ().getZone());
+			se.setTimeD(zdt.toLocalDateTime());
+			se.setTimeA(zat.toLocalDateTime());
+		} else {
+			se.setTimeD(LocalDateTime.of(dt, getTimeD().toLocalTime()));
+			se.setTimeA(LocalDateTime.of(dt.plusDays(getArrivalPlusDays()), getTimeA().toLocalTime()));
+		}
+		
 		return se;
 	}
 }

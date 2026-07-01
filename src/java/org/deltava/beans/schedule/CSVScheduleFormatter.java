@@ -62,6 +62,8 @@ public class CSVScheduleFormatter implements ScheduleFormatter {
         buf.append(',');
         buf.append(se.getAcademy());
         buf.append(',');
+        buf.append(rse.getIsUTC());
+        buf.append(',');
         buf.append(StringUtils.addCSVQuotes(se.getRemarks()));
         buf.append(',');
         buf.append(StringUtils.addCSVQuotes(rse.getComments()));
@@ -72,7 +74,7 @@ public class CSVScheduleFormatter implements ScheduleFormatter {
 	public String getHeader() {
 		StringWriter out = new StringWriter();
 		out.write("; Flight Schedule - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss") + " UTC\n");
-		out.write("; SOURCE,LINE,STARTS,ENDS,DAYS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,FORCE,ACADEMY,REMARKS,COMMENTS\n");
+		out.write("; SOURCE,LINE,STARTS,ENDS,DAYS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,FORCE,ACADEMY,ISUTC,REMARKS,COMMENTS\n");
 		return out.toString();
 	}
 	
