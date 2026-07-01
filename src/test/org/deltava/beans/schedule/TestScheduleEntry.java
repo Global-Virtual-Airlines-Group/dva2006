@@ -251,13 +251,71 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	}
 	
 	public void testJamaicaDST() {
-		_e.setAirportD(_jfk);	
+		_e.setAirportD(_jfk);
 		_e.setAirportA(_kin);
 		_e.setTimeD(LocalDateTime.parse("14:00", df));
 		_e.setTimeA(LocalDateTime.parse("16:50", df));
+		assertFalse(_kin.getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
 		boolean jfkDST = _jfk.getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant());
 		int time = jfkDST ? 38 : 28;
 		assertEquals(time, _e.getLength());
+	}
+	
+	public void testUseUTC() {
+		LocalDate d1 = LocalDate.parse("2026-07-01"); // in DST
+		LocalDate d2 = LocalDate.parse("2026-12-01"); // outside DST
+
+		RawScheduleEntry rse = new RawScheduleEntry(_dva, 798, 1);
+		rse.setEquipmentType("A321neo");
+		rse.setStartDate(d1.minusDays(1));
+		rse.setEndDate(d2.plusDays(1));
+		rse.setAirportD(_jfk);
+		rse.setAirportA(_phx);
+		rse.setIsUTC(true);
+		rse.addDayOfWeek(d1.getDayOfWeek());
+		rse.addDayOfWeek(d2.getDayOfWeek());
+
+		// Validate D1 DST rules
+		assertTrue(rse.getAirportD().getTZ().getZone().getRules().isDaylightSavings(d1.atStartOfDay(ZoneOffset.UTC).toInstant()));
+		assertFalse(rse.getAirportA().getTZ().getZone().getRules().isDaylightSavings(d1.atStartOfDay(ZoneOffset.UTC).toInstant()));
+		
+		DateTimeFormatterBuilder zfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
+		zfb.parseDefaulting(ChronoField.YEAR, d1.get(ChronoField.YEAR)).parseDefaulting(ChronoField.DAY_OF_YEAR, d1.get(ChronoField.DAY_OF_YEAR));
+		DateTimeFormatter ztf = zfb.parseLenient().toFormatter();
+		
+		rse.setTimeD(LocalDateTime.parse("22:35", ztf));
+		rse.setTimeA(LocalDateTime.parse("03:28", ztf));
+		assertEquals(1, rse.getArrivalPlusDays());
+		assertEquals(48, rse.getLength());
+		
+		// Convert to schedule entry
+		ScheduleEntry se = rse.toToday(d1);
+		assertNotNull(se);
+		assertEquals(0, se.getArrivalPlusDays()); // This is zero because we're using local times
+		assertEquals(48, se.getLength());
+		assertEquals(18, se.getTimeD().getHour());
+		assertEquals(20, se.getTimeA().getHour());
+		
+		// Validate D2 DST rules
+		assertFalse(rse.getAirportD().getTZ().getZone().getRules().isDaylightSavings(d2.atStartOfDay(ZoneOffset.UTC).toInstant()));
+		assertFalse(rse.getAirportA().getTZ().getZone().getRules().isDaylightSavings(d2.atStartOfDay(ZoneOffset.UTC).toInstant()));
+
+		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
+		dfb.parseDefaulting(ChronoField.YEAR, d2.get(ChronoField.YEAR)).parseDefaulting(ChronoField.DAY_OF_YEAR, d2.get(ChronoField.DAY_OF_YEAR));
+		DateTimeFormatter dtf = dfb.parseLenient().toFormatter();
+		
+		rse.setTimeD(LocalDateTime.parse("22:35", dtf));
+		rse.setTimeA(LocalDateTime.parse("03:28", dtf));
+		assertEquals(1, rse.getArrivalPlusDays());
+		assertEquals(48, rse.getLength());
+
+		// Convert to schedule entry
+		ScheduleEntry se2 = rse.toToday(d2);
+		assertNotNull(se2);
+		assertEquals(0, se2.getArrivalPlusDays()); // This is zero because we're using local times
+		assertEquals(48, se2.getLength());
+		assertEquals(17, se2.getTimeD().getHour());
+		assertEquals(20, se2.getTimeA().getHour());
 	}
 
 	public void testComparator() {

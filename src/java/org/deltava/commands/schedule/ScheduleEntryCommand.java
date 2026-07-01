@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -88,6 +88,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			entry.setHistoric(a.getHistoric() || Boolean.parseBoolean(ctx.getParameter("isHistoric")));
 			entry.setAcademy(a.getAcademyOnly() || Boolean.parseBoolean(ctx.getParameter("isAcademy")));
 			entry.setForceInclude(Boolean.parseBoolean(ctx.getParameter("forceInclude")));
+			entry.setIsUTC(Boolean.parseBoolean(ctx.getParameter("isUTC")));
 			entry.setUpdated(true);
 			
 			// Parse times and days
