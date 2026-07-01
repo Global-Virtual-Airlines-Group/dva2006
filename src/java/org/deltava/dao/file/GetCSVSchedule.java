@@ -27,17 +27,13 @@ public class GetCSVSchedule extends ScheduleLoadDAO {
 	
 	private final Map<ScheduleSource, Integer> _srcMaxLines = new HashMap<ScheduleSource, Integer>();
 	
-	private final boolean _isUTC;
-		
 	/**
 	 * Initializes the Data Access Object.
 	 * @param src the ScheduleSource
 	 * @param is the input stream to read
-	 * @param isUTC TRUE if departure/arrival times are UTC, otherwise FALSE
 	 */
-	public GetCSVSchedule(ScheduleSource src, InputStream is, boolean isUTC) {
+	public GetCSVSchedule(ScheduleSource src, InputStream is) {
 		super(src, is);
-		_isUTC = isUTC;
 	}
 
 	/**
@@ -60,8 +56,8 @@ public class GetCSVSchedule extends ScheduleLoadDAO {
 				if ((!txtData.startsWith(";")) && (txtData.length() > 5)) {
 					try {
 						StringTokenizer tkns = new StringTokenizer(txtData, ",");
-						if (tkns.countTokens() != 17)
-							throw new IllegalArgumentException("Invalid number of tokens, count=" + tkns.countTokens());
+						if (tkns.countTokens() < 18)
+							throw new IllegalArgumentException(String.format("Invalid number of tokens, count=%d", Integer.valueOf(tkns.countTokens())));
 						
 						// Get source and line
 						String srcName = tkns.nextToken();
@@ -100,24 +96,28 @@ public class GetCSVSchedule extends ScheduleLoadDAO {
 						if (!entry.isPopulated())
 							throw new IllegalArgumentException(String.format("Invalid Airport Code - %s / %s", aD, aA));
 						
+						// Discard distance, load historic
+						tkns.nextToken();
+						entry.setHistoric(Boolean.parseBoolean(tkns.nextToken()));
+						entry.setForceInclude(Boolean.parseBoolean(tkns.nextToken()));
+						entry.setAcademy(Boolean.parseBoolean(tkns.nextToken()));
+						entry.setIsUTC(Boolean.parseBoolean(tkns.nextToken()));
+						if (tkns.hasMoreTokens())
+							entry.setRemarks(tkns.nextToken());
+						if (tkns.hasMoreTokens())
+							entry.setComments(tkns.nextToken());
+						
 						// Load departure/arrival times
-						if (_isUTC) {
-							Instant iD = ZonedDateTime.of(today, LocalTime.parse(tD, _tf), ZoneOffset.UTC).toInstant();
-							Instant iA = ZonedDateTime.of(today, LocalTime.parse(tA, _tf), ZoneOffset.UTC).toInstant();
-							ZonedDateTime zD = ZonedDateTime.ofInstant(iD, entry.getAirportD().getTZ().getZone());
-							ZonedDateTime zA = ZonedDateTime.ofInstant(iA, entry.getAirportA().getTZ().getZone());
+						if (entry.getIsUTC()) {
+							ZonedDateTime zD = ZonedDateTime.of(today, LocalTime.parse(tD, _tf), ZoneOffset.UTC);
+							ZonedDateTime zA = ZonedDateTime.of(today, LocalTime.parse(tA, _tf), ZoneOffset.UTC);
 							entry.setTimeD(zD.toLocalDateTime());
 							entry.setTimeA(zA.toLocalDateTime());
 						} else {
 							entry.setTimeD(LocalDateTime.of(today, LocalTime.parse(tD, _tf)));
 							entry.setTimeA(LocalDateTime.of(today, LocalTime.parse(tA, _tf)));
 						}
-
-						// Discard distance, load historic
-						tkns.nextToken();
-						entry.setHistoric(Boolean.parseBoolean(tkns.nextToken()));
-						entry.setForceInclude(Boolean.parseBoolean(tkns.nextToken()));
-						entry.setAcademy(Boolean.parseBoolean(tkns.nextToken()));
+						
 						results.add(entry);
 					} catch (Exception e) {
 						_status.addMessage(String.format("Error on line %d - %s", Integer.valueOf(br.getLineNumber()), e.getMessage()));
