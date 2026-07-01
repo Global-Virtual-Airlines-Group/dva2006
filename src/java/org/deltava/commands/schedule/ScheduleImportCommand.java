@@ -122,10 +122,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 					
 				case LEGACY:
 				case MANUAL:
-					boolean isUTC = Boolean.parseBoolean(ctx.getParameter("isUTC"));
 					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false, ctx.getDB());
 					try (InputStream is = new FileInputStream(f)) {
-						GetCSVSchedule dao = new GetCSVSchedule(ss, is, isUTC);
+						GetCSVSchedule dao = new GetCSVSchedule(ss, is);
 						dao.setAircraft(acdao.getAircraftTypes());
 						dao.setAirlines(adao.getActive().values());
 						srcs.forEach(ssi -> dao.setMaxLine(ssi.getSource(), ssi.getMaxLineNumber()));
