@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 11.6
+ * @version 12.5
  * @since 1.0
  */
 
@@ -56,7 +56,13 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		super(a, fNumber, leg);
 	}
 	
-	private static ZoneId getAirportTimeZone(Airport a) {
+	/**
+	 * Returns the time zone for a particular Airport.
+	 * @param a the Airport
+	 * @return the ZoneId for the Airport, or UTC if null
+	 */
+	@SuppressWarnings("static-method")
+	protected ZoneId getAirportTimeZone(Airport a) {
 		return (a == null) ? ZoneOffset.UTC : a.getTZ().getZone();
 	}
 	
@@ -70,12 +76,6 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		return EQ_VARIES.equalsIgnoreCase(f.getEquipmentType());
 	}
 	
-	/**
-	 * Returns the length of the flight, in hours <i>multiplied by 10</i>.
-	 * @return the length of the flight
-	 * @see ScheduleEntry#getDuration()
-	 * @throws IllegalStateException if departure or arrival times are not set
-	 */
 	@Override
 	public final int getLength() {
 		if (_length > 0)
@@ -221,7 +221,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 * @see ScheduleEntry#getTimeD()
 	 */
 	public void setTimeD(LocalDateTime dt) {
-		_length = 0; // reset length
+		_length = 0;
 		_timeD = ZonedDateTime.of(dt, getAirportTimeZone(getAirportD()));
 	}
 
@@ -233,7 +233,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 * @see ScheduleEntry#getTimeA()
 	 */
 	public void setTimeA(LocalDateTime dt) {
-		_length = 0; // reset length
+		_length = 0;
 		_timeA = ZonedDateTime.of(dt, getAirportTimeZone(getAirportA())); 
 		if ((_timeD != null) && _timeA.isBefore(_timeD)) {
 			_timeA = _timeA.plusDays(1);

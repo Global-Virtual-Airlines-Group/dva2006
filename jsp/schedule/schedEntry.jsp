@@ -146,7 +146,8 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" /><br>
-<el:box name="forceInclude" className="small" idx="*" value="true" label="Force Inclusion even if route exists" checked="${entry.forceInclude}" />
+<el:box name="forceInclude" className="small" idx="*" value="true" label="Force Inclusion even if route exists" checked="${entry.forceInclude}" /><br>
+<el:box name="isUTC" className="small" idx="*" value="true" label="Arrival and Departure time are UTC" checked="${entry.isUTC}" />
 <c:if test="${academyEnabled}"><br><el:box name="isAcademy" className="small" idx="*" value="true" label="This is a Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
 </tr>
 <c:if test="${entry.updated}">
