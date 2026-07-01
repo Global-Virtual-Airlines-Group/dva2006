@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to load Airline codes and names.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -104,6 +104,17 @@ public class GetAirline extends DAO {
 					Airline a = results.get(rs.getString(1).trim());
 					if (a != null)
 						a.addApp(rs.getString(2));
+				}
+			}
+		}
+		
+		// Load airline link information
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT CODE, ASSOC FROM common.AIRLINE_LINKS")) {
+			try (ResultSet rs = ps2.executeQuery()) {
+				while (rs.next()) {
+					Airline a = results.get(rs.getString(1).trim());
+					if (a != null)
+						a.addAssociatedAirline(rs.getString(2));
 				}
 			}
 		}

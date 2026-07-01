@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016, 2017, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2017, 2019, 2020, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -22,7 +22,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 11.6
+ * @version 12.5
  * @since 1.0
  */
 
@@ -155,7 +155,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			
 			// Determine unserviced airports
 			boolean updateAirports = false;
-			SetAirportAirline awdao = new SetAirportAirline(con);
+			SetAirport awdao = new SetAirport(con);
 			synchronized (SystemData.class) {
 				Collection<Airport> allAirports = SystemData.getAirports().values();
 				for (Airport ap : allAirports) {

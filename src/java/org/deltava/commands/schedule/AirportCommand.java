@@ -21,7 +21,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -130,7 +130,7 @@ public class AirportCommand extends AbstractAuditFormCommand {
 			ctx.startTX();
 
 			// Get the DAO and write the airport
-			SetAirportAirline wdao = new SetAirportAirline(con);
+			SetAirport wdao = new SetAirport(con);
 			if (isNew) {
 				wdao.create(a);
 				ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);

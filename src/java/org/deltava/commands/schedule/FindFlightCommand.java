@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -22,12 +22,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 1.0
  */
 
 public class FindFlightCommand extends AbstractCommand {
-
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -48,6 +48,7 @@ public class FindFlightCommand extends AbstractCommand {
 		int fn = Math.max(0, StringUtils.parse(ctx.getParameter("flightNumber"), 0));
 		int leg = Math.min(Math.max(0, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
 		if (ssc != null) {
+			ssc.setAirline(null); // clear out associated airlines from previous query
 			ssc.setAirline(a);
 			ssc.setFlightNumber(fn);
 			ssc.setLeg(leg);
@@ -119,6 +120,10 @@ public class FindFlightCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Add associated airlines if requested
+		if (Boolean.parseBoolean(ctx.getParameter("allPrimary")) && (a != null))
+			a.getAssociatedAirlines().stream().map(SystemData::getAirline).filter(Objects::nonNull).forEach(ssc::addAirline);
 
 		// Populate the search criteria from the request
 		ssc.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));

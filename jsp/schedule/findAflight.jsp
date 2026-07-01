@@ -22,7 +22,8 @@
 <content:newRelic>
 <content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
-golgotha.ff = golgotha.ff || {};
+golgotha.ff = golgotha.ff || {airlines:{}};
+golgotha.ff.primaryCode = '${primaryALCode}';
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
 golgotha.ff.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -52,6 +53,9 @@ golgotha.ff.updateAirline = function(cb) {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config.clone();
 	cfg.airline = golgotha.form.getCombo(cb);
+	const ao = golgotha.ff.airlines[cfg.airline];
+	const hasAssoc = (ao) && (ao.associated.length > 0);
+	golgotha.util.disable(f.allPrimary, !hasAssoc);
 	golgotha.airportLoad.changeAirline([f.airportD], cfg);
 	golgotha.util.show('historicOpts', !golgotha.form.comboSet(f.airline));
 	window.setTimeout(function() {
@@ -66,27 +70,40 @@ golgotha.ff.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[
 golgotha.ff.updateEQ = function(cb) { golgotha.form.setCombo(document.forms[0].family, '-'); };
 golgotha.ff.updateSort = function(cb) { return golgotha.util.disable('sortDesc', !golgotha.form.comboSet(cb)); };
 golgotha.ff.refreshAirports = function() { updateAirline(document.forms[0].airline); };
-golgotha.ff.refreshNV = function(checkbox, cboName, isDest)
-{
-const f = checkbox.form;
-const srcA = golgotha.form.getCombo(f.airportD);
-const cfg = golgotha.airportLoad.config.clone();
-cfg.airline = golgotha.form.getCombo(f.airline); cfg.notVisited = checkbox.checked;
-if (isDest && (srcA != null) && (srcA != '')) {
-	cfg.dst = true;	
-	cfg.code = srcA;
-}
+golgotha.ff.refreshNV = function(checkbox, cboName, isDest) {
+	const f = checkbox.form;
+	const srcA = golgotha.form.getCombo(f.airportD);
+	const cfg = golgotha.airportLoad.config.clone();
+	cfg.airline = golgotha.form.getCombo(f.airline); cfg.notVisited = checkbox.checked;
+	if (isDest && (srcA != null) && (srcA != '')) {
+		cfg.dst = true;	
+		cfg.code = srcA;
+	}
 
-const cbo = f[cboName];
-if (cbo) {
-	cbo.notVisited = cfg.notVisited;
-	cbo.loadAirports(cfg);
-}
+	const cbo = f[cboName];
+	if (cbo) {
+		cbo.notVisited = cfg.notVisited;
+		cbo.loadAirports(cfg);
+	}
 
-return true;
+	return true;
+};
+
+golgotha.ff.loadAirlines = function() {
+	const p = fetch('airlines.ws', {signal:AbortSignal.timeout(5000)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			for (var x = 0; x < js.length; x++) {
+				const ao = js[x];
+				golgotha.ff.airlines[ao.code] = ao;
+			}
+		});
+	});
 };
 
 golgotha.onDOMReady(function() {
+	golgotha.ff.loadAirlines();
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
 	cfg.doICAO = ${useICAO};
@@ -127,7 +144,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); void golgotha.ff.updateAirline(this)" onRightClick="return golgotha.form.resetCombo()" />
- <el:text name="airlineCode" size="2" max="3" idx="*" className="caos" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
+ <el:text name="airlineCode" size="2" max="3" idx="*" className="caos" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /> <el:box name="allPrimary" value="true" checked="${param.allPrimary}" className="small" label="Include Associated Airlines" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${(param.myEQTypes || (!empty eqFamily)) ? '-' : fafCriteria.equipmentType}" onChange="void golgotha.ff.updateEQ(this)" onRightClick="return golgotha.form.resetCombo()" /> - 
  family <el:combo name="family" size="1" firstEntry="-" options="${allFamily}" value="${eqFamily}" onChange="void golgotha.ff.updateFamily(this)" /></td>

@@ -23,7 +23,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -109,7 +109,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			ctx.startTX();
 			
 			// Get the DAO and update the database
-			SetAirportAirline wdao = new SetAirportAirline(con);
+			SetAircraft wdao = new SetAircraft(con);
 			if (isNew) {
 				wdao.create(a);
 				ctx.setAttribute("aircraftCreate", Boolean.TRUE, REQUEST);
