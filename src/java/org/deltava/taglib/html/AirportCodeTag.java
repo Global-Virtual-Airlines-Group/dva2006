@@ -1,4 +1,4 @@
-// Copyright 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2018, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.security.Principal;
@@ -13,7 +13,7 @@ import org.deltava.beans.schedule.Airport.Code;
 /**
  * A JSP tag to render airport code text boxes.
  * @author Luke
- * @version 8.1
+ * @version 12.5
  * @since 6.0
  */
 
@@ -51,9 +51,6 @@ public class AirportCodeTag extends InputTag {
 		_codeType = (p == null) ? Code.IATA : p.getAirportCodeType();
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		_a = null;
@@ -78,7 +75,7 @@ public class AirportCodeTag extends InputTag {
 		
 		// Set default events and render the tag
 		setOnChange("void this.form." + _comboName + ".setAirport(this.value, true, this)");
-		setOnKeypress("void golgotha.airportLoad.codeMassage()");
+		setOnKeydown("golgotha.airportLoad.codeMassage(event)");
 		return super.doStartTag();
 	}
 }

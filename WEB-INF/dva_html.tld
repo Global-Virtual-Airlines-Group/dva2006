@@ -633,7 +633,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>onKeypress</name>
+			<name>onKeydown</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

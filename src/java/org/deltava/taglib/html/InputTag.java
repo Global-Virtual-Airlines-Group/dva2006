@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2012, 2015, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012, 2015, 2021, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import jakarta.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML text field elements.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -24,10 +24,8 @@ public class InputTag extends FormElementTag {
     }
 
     /**
-     * Generates the HTML for this Input element. If a non-String value is set, this method calls
-     * the value's toString() method to render it.
+     * Generates the HTML for this Input element. If a non-String value is set, this method calls the value's toString() method to render it.
      * @throws JspException if an error occurs
-     * @see Object#toString()
      */
     @Override
     public int doEndTag() throws JspException {
@@ -158,11 +156,11 @@ public class InputTag extends FormElementTag {
     }
     
     /**
-     * Sets the JavaScript event for this element's onKeyPress() event.
+     * Sets the JavaScript event for this element's onKeyDown() event.
      * @param jsCode the JavaScript code
      */
-    public void setOnKeypress(String jsCode) {
-    	_data.setAttribute("onkeypress", jsCode);
+    public void setOnKeydown(String jsCode) {
+    	_data.setAttribute("onkeydown", jsCode);
     }
     
 	/**
