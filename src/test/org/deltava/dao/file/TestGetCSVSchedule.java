@@ -53,7 +53,7 @@ public class TestGetCSVSchedule extends TestCase {
 		assertTrue(f.exists());
 		
 		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 16384)) {
-			GetCSVSchedule sdao = new GetCSVSchedule(ScheduleSource.MANUAL, is, false);
+			GetCSVSchedule sdao = new GetCSVSchedule(ScheduleSource.MANUAL, is);
 			sdao.setAirlines(_airlines);
 			sdao.setAircraft(_acTypes);
 			
