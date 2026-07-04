@@ -37,6 +37,7 @@ public class GetPHPVMSSchedule extends ScheduleLoadDAO {
 	@Override
 	public Collection<RawScheduleEntry> process() throws DAOException {
 		
+		// Get start/end dates
 		LocalDate today = LocalDate.now();
 		LocalDate sd = today.minusDays(1);
 		LocalDate ed = LocalDate.of(today.getYear(), 1, 1).plusYears(1).minusDays(1);
@@ -64,8 +65,6 @@ public class GetPHPVMSSchedule extends ScheduleLoadDAO {
 							}
 						}
 						
-						// TODO: Use validate()
-						
 						// Build the flight number and equipment type
 						RawScheduleEntry entry = new RawScheduleEntry(getAirline(csv.get(0), br.getLineNumber()), Integer.parseInt(csv.get(1)), StringUtils.parse(csv.get(4), 1));
 						String eqType = getEquipmentType(csv.get(23), br.getLineNumber());
@@ -85,16 +84,24 @@ public class GetPHPVMSSchedule extends ScheduleLoadDAO {
 						String aA = csv.get(6); String tA = csv.get(10);
 						entry.setAirportD(getAirport(aD, br.getLineNumber()));
 						entry.setAirportA(getAirport(aA, br.getLineNumber()));
-						if (!entry.isPopulated())
-							throw new IllegalArgumentException(String.format("Invalid Airport Code - %s / %s", aD, aA));
+						
+						// Check for one airport DST
+						boolean useGMT = (entry.getAirportD().getTZ().hasDST() != entry.getAirportA().getTZ().hasDST());
 
 						// Load departure/arrival times
-						Instant iD = ZonedDateTime.of(today, LocalTime.parse(tD, _tf), ZoneOffset.UTC).toInstant();
-						Instant iA = ZonedDateTime.of(today, LocalTime.parse(tA, _tf), ZoneOffset.UTC).toInstant();
-						ZonedDateTime zD = ZonedDateTime.ofInstant(iD, entry.getAirportD().getTZ().getZone());
-						ZonedDateTime zA = ZonedDateTime.ofInstant(iA, entry.getAirportA().getTZ().getZone());
-						entry.setTimeD(zD.toLocalDateTime());
-						entry.setTimeA(zA.toLocalDateTime());
+						ZonedDateTime utcD = ZonedDateTime.of(today, LocalTime.parse(tD, _tf), ZoneOffset.UTC);
+						ZonedDateTime utcA = ZonedDateTime.of(today, LocalTime.parse(tA, _tf), ZoneOffset.UTC);
+						if (useGMT) {
+							entry.setIsUTC(true);
+							entry.setTimeD(utcD.toLocalDateTime());
+							entry.setTimeA(utcA.toLocalDateTime());
+						} else {
+							ZonedDateTime zD = ZonedDateTime.ofInstant(utcD.toInstant(), entry.getAirportD().getTZ().getZone());
+							ZonedDateTime zA = ZonedDateTime.ofInstant(utcA.toInstant(), entry.getAirportA().getTZ().getZone());
+							entry.setTimeD(zD.toLocalDateTime());
+							entry.setTimeA(zA.toLocalDateTime());
+						}
+						
 						results.add(entry);
 					} catch (Exception e) {
 						if (!(e instanceof InvalidDataException))

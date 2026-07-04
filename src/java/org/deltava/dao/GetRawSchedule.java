@@ -285,9 +285,10 @@ public class GetRawSchedule extends DAO {
 				se.setForceInclude(rs.getBoolean(15));
 				se.setUpdated(rs.getBoolean(16));
 				se.setAcademy(rs.getBoolean(17));
-				se.setCodeShare(rs.getString(18));
-				se.setRemarks(rs.getString(19));
-				se.setComments(rs.getString(20));
+				se.setForceInclude(rs.getBoolean(18));
+				se.setCodeShare(rs.getString(19));
+				se.setRemarks(rs.getString(20));
+				se.setComments(rs.getString(21));
 				results.add(se);
 			}
 		}

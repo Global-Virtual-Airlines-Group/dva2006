@@ -38,6 +38,7 @@ public class JSONScheduleFormatter implements ScheduleFormatter {
 		jo.put("historic", se.getHistoric());
 		jo.put("forceInclude", rse.getForceInclude());
 		jo.put("academy", se.getAcademy());
+		jo.put("isUTC", rse.getIsUTC());
 		jo.put("startDate", JSONUtils.formatDate(LocalDateTime.of(rse.getStartDate(), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC)));
 		jo.put("endDate", JSONUtils.formatDate(LocalDateTime.of(rse.getEndDate(), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC)));
 		jo.putOpt("remarks", se.getRemarks());
