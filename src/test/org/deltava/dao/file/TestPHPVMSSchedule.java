@@ -41,7 +41,7 @@ public class TestPHPVMSSchedule extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "***REMOVED***");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -79,6 +79,12 @@ public class TestPHPVMSSchedule extends TestCase {
 			dao.setAirlines(SystemData.getAirlines());
 			rawEntries.addAll(dao.process());
 			assertFalse(rawEntries.isEmpty());
+		}
+		
+		// Validate UTC usage
+		for (RawScheduleEntry rse : rawEntries) {
+			boolean useGMT = (rse.getAirportD().getTZ().hasDST() != rse.getAirportA().getTZ().hasDST());
+			assertEquals(useGMT, rse.getIsUTC());
 		}
 		
 		// Group by departure airport
