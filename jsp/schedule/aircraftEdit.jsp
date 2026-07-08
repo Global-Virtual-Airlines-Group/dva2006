@@ -21,9 +21,9 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const isUsed = f.useAircraft.checked;
 	golgotha.form.validate({f:f.name, l:3, t:'Aircraft Name'});
-	golgotha.form.validate({f:f.fullName, l:5, t:'Aircraft Full Name'});
+	golgotha.form.validate({f:f.fullName, l:5, t:'Full Aircraft Name'});
 	golgotha.form.validate({f:f.family, l:2, t:'Aircraft Family Code'});
-	golgotha.form.validate({f:f.icao, min:3, t:'ICAO Equipment Code'});
+	golgotha.form.validate({f:f.icao, l:3, t:'ICAO Equipment Code'});
 	golgotha.form.validate({f:f.maxWeight, min:1, t:'Maximum Weight'});
 	golgotha.form.validate({f:f.maxZFW, min:1, t:'Maximum Zero Fuel Weight'});
 	golgotha.form.validate({f:f.maxTWeight, min:1, t:'Maximum Takeoff Weight'});
@@ -48,8 +48,7 @@ golgotha.local.validate = function(f) {
 
 golgotha.local.showETOPS = function() {
 	const eCount = parseInt(document.forms[0].engineCount.value);
-	const r = document.getElementById('etopsRow');
-	golgotha.util.display(r, (eCount == 2));
+	golgotha.util.display('etopsRow', (eCount == 2));
 };
 
 golgotha.local.useAircraft = function(isUsed) {
