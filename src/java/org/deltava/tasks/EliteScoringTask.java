@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 9.2
  */
 
@@ -140,19 +140,24 @@ public class EliteScoringTask extends Task {
 							entries.addAll(psdao.read());
 						}
 					} catch (IOException ie) {
-						log.error("Error reading positions for Flight {} - {}", Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS)), ie.getMessage());
+						log.error("Error reading positions for Flight {} (ACARS ID {}) - {}", Integer.valueOf(fr.getID()), Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS)), ie.getMessage());
 					}
 					
 					// Get the Gates and Runways
 					FlightInfo info = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
-					gdao.populate(info);
-					tt.mark("acarsData");
-					
-					// Create the package
-					ScorePackage pkg = new ScorePackage(ac, ffr, null, info.getRunwayA(), opts);
-					pkg.setGates(info.getGateD(), info.getGateA());
-					entries.forEach(pkg::add);
-					sc = es.score(pkg, st.getLevel());
+					if (info != null) {
+						gdao.populate(info);
+						tt.mark("acarsData");
+
+						// Create the package and score
+						ScorePackage pkg = new ScorePackage(ac, ffr, null, info.getRunwayA(), opts);
+						pkg.setGates(info.getGateD(), info.getGateA());
+						entries.forEach(pkg::add);
+						sc = es.score(pkg, st.getLevel());
+					} else {
+						log.warn("No ACARS Flight Data for {} (ACARS ID {})", Integer.valueOf(fr.getID()), Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS)));
+						sc  = es.score(fr, st.getLevel());	
+					}
 				} else
 					sc  = es.score(fr, st.getLevel());
 				
