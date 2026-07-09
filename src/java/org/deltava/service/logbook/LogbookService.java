@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2021, 2022, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.logbook;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to export a Pilot's log book. 
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 3.6
  */
 
@@ -79,8 +79,8 @@ public class LogbookService extends WebService {
 			ctx.release();
 		}
 
-		// Format flights
-		pireps.forEach(le::add);
+		// Format flights -- don't filter draft flights
+		pireps.stream().filter(fr -> fr.getStatus() != FlightStatus.DRAFT).forEach(le::add);
 		
 		// Write the response
 		String fileName = String.format("logbook_%d.%s", Integer.valueOf(userID), le.getExtension());
