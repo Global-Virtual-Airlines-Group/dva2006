@@ -16,7 +16,7 @@
 <content:newRelic>
 <content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
-golgotha.local.fileTypes = ['txt','pdf','gz','csv','bz2','xz'];
+golgotha.local.fileTypes = ['txt','pdf','gz','csv','bz2','xz','json'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.schedType, t:'Schedule Type'});

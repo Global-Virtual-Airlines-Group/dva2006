@@ -11,6 +11,7 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
+import org.deltava.util.EnumUtils;
 
 /**
  * A Data Access Object to read JSON-formatted raw Schedule entries.
@@ -46,7 +47,8 @@ public class GetJSONSchedule extends ScheduleLoadDAO {
 			JSONObject so = ea.getJSONObject(x);
 			try {
 				RawScheduleEntry rse = new RawScheduleEntry(getAirline(so.getString("airline"), x), so.getInt("flight"), so.optInt("leg", 1));
-				rse.setSource(_status.getSource());
+				rse.setSource(EnumUtils.parse(ScheduleSource.class, so.optString("src"), _status.getSource()));
+				rse.setLineNumber(x + 1);
 				rse.setAirportD(getAirport(so.getString("airportD"), x));
 				rse.setAirportA(getAirport(so.getString("airportA"), x));
 				rse.setEquipmentType(getEquipmentType(so.getString("eqType"), x));

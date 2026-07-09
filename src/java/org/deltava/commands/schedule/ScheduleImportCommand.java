@@ -133,9 +133,20 @@ public class ScheduleImportCommand extends AbstractCommand {
 					}
 					
 					break;
+					
+				case JSON:
+					try (InputStream is = c.getStream(fis)) {
+						GetJSONSchedule dao = new GetJSONSchedule(ScheduleSource.JSON, is);
+						dao.setAircraft(acdao.getAircraftTypes());
+						dao.setAirlines(adao.getActive().values());	
+						entries.addAll(dao.process());
+						st = dao.getStatus();
+					}
+					
+					break;
 
 				default:
-					throw new CommandException("Unknown Schedule Source - " + ss);
+					throw new CommandException(String.format("Unknown Schedule Source - %s", ss));
 				}
 			}
 			

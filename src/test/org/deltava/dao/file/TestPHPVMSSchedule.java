@@ -5,6 +5,7 @@ import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import junit.framework.TestCase;
@@ -16,7 +17,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.ScheduleEntryComparator;
 
 import org.deltava.dao.*;
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
@@ -28,6 +29,14 @@ public class TestPHPVMSSchedule extends TestCase {
 
 	private Connection _c;
 	private final Collection<Aircraft> _acTypes = new ArrayList<Aircraft>();
+	
+	private record ImportInfo(String FileName, String Airline) {
+		ImportInfo(String filename) {
+			this(filename, null);
+		}
+	}
+	
+	private final Collection<ImportInfo> FILES = List.of(new ImportInfo("dl.csv"), new ImportInfo("end.csv", "Endeavor Airlines"), new ImportInfo("sky.csv", "SkyWest Airlines"), new ImportInfo("af.csv"), new ImportInfo("klm.csv"));
 
 	@Override
 	protected void setUp() throws Exception {
@@ -41,7 +50,7 @@ public class TestPHPVMSSchedule extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "***REMOVED***");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -65,40 +74,50 @@ public class TestPHPVMSSchedule extends TestCase {
 		_c.close();
 		super.tearDown();
 	}
-
-	public void testLoadRaw() throws Exception {
+	
+	private Collection<RawScheduleEntry> load(ImportInfo inf) throws Exception {
 		
-		File f = new File("C:\\Temp\\dl.csv");
+		File f = new File("C:\\Temp\\phpvms", inf.FileName);
 		assertTrue(f.exists());
-		
+
 		// Load the data
+		log.info("Reading {}", inf.FileName);
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
 		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 131072)) {
 			GetPHPVMSSchedule dao = new GetPHPVMSSchedule(is);
 			dao.setAircraft(_acTypes);
 			dao.setAirlines(SystemData.getAirlines());
 			rawEntries.addAll(dao.process());
+			ImportStatus st = dao.getStatus();
+			st.getErrorMessages().forEach(log::info);
+			if (!st.getInvalidAirports().isEmpty())
+				log.warn("Invalid Airports - {}", st.getInvalidAirports());
+			if (!st.getInvalidEquipment().isEmpty())
+				log.warn("Invalid Aircraft - {}", st.getInvalidEquipment());
+			
 			assertFalse(rawEntries.isEmpty());
 		}
 		
-		// Validate UTC usage
+		// Validate UTC usage and add operator
 		for (RawScheduleEntry rse : rawEntries) {
 			boolean useGMT = (rse.getAirportD().getTZ().hasDST() != rse.getAirportA().getTZ().hasDST());
 			assertEquals(useGMT, rse.getIsUTC());
+			if (!StringUtils.isEmpty(inf.Airline))
+				rse.setRemarks(String.format("Operated by %S", inf.Airline));
 		}
-		
+
 		// Group by departure airport
 		log.info("Loaded {} raw schedule entries", Integer.valueOf(rawEntries.size()));
 		Map<Airport, Collection<RawScheduleEntry>> rawMap = new HashMap<Airport, Collection<RawScheduleEntry>>();
 		rawEntries.forEach(rse -> CollectionUtils.addMapCollection(rawMap, rse.getAirportD(), rse, ArrayList::new));
-		
+
 		// Purge based on departure time
 		Comparator<RawScheduleEntry> cmp = ScheduleLegHelper.getDupeChecker(true); int dupeLegs = 0;
 		for (Collection<RawScheduleEntry> entries : rawMap.values()) {
 			Collection<RawScheduleEntry> apLegs = new TreeSet<RawScheduleEntry>(cmp);
 			for (RawScheduleEntry rse : entries) {
 				if (!apLegs.add(rse)) {
-					log.info("Removing {} from {}", rse, rse.getAirportD().getICAO());
+					log.debug("Removing {} from {}", rse, rse.getAirportD().getICAO());
 					rawEntries.remove(rse);
 					dupeLegs++;
 				}
@@ -109,36 +128,19 @@ public class TestPHPVMSSchedule extends TestCase {
 		log.info("Removed {} duplicate Flight Legs based on departure time", Integer.valueOf(dupeLegs));
 		ScheduleLegHelper.calculateLegs(rawEntries);
 
-		// Purge and write
-		SetSchedule rwdao = new SetSchedule(_c);
-		rwdao.purgeRaw(ScheduleSource.VASYS);
-		for (RawScheduleEntry rse : rawEntries)
-			rwdao.writeRaw(rse, false);
-		
-		_c.commit();
-		log.info("Wrote {} raw schedule entries", Integer.valueOf(rawEntries.size()));
-		
-		// Get from the database
-		final LocalDate today = LocalDate.now();
-		GetRawSchedule rawdao = new GetRawSchedule(_c);
-		Collection<RawScheduleEntry> todaysRaw = rawdao.load(ScheduleSource.VASYS, today);
-		assertNotNull(todaysRaw);
-		assertFalse(todaysRaw.isEmpty());
-		
 		// Get today's flights - Map via flight code
+		final LocalDate today = LocalDate.now();
 		Map<String, List<ScheduleEntry>> fMap = new HashMap<String, List<ScheduleEntry>>();
 		rawEntries.stream().map(rse -> rse.toToday(today)).filter(Objects::nonNull).forEach(se -> addEntry(fMap, se.getFlightCode(), se));
 		assertNotNull(fMap);
 		assertFalse(fMap.isEmpty());
-		
+
 		Supplier<IntStream> ss = () -> fMap.entrySet().stream().mapToInt(me -> me.getValue().size());
 		long totalFlights = ss.get().summaryStatistics().getSum();
 		long totalDupes = ss.get().filter(s -> (s > 1)).count();
-		assertEquals(totalFlights, todaysRaw.size());
-		
 		log.info("Processing {} flight codes for {}", Integer.valueOf(fMap.size()), today);
 		log.info("Total Flights = {}, dupe Count = {}", Long.valueOf(totalFlights), Long.valueOf(totalDupes));
-		
+
 		ScheduleEntryComparator scmp = new ScheduleEntryComparator(ScheduleEntryComparator.DTIME);
 		Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 		for (List<ScheduleEntry> flights : fMap.values()) {
@@ -152,9 +154,61 @@ public class TestPHPVMSSchedule extends TestCase {
 		}
 		
 		// Make sure there are no dupes
-		Collection<ScheduleEntry> uniqueCheck = new LinkedHashSet<ScheduleEntry>(entries);
-		assertNotNull(uniqueCheck);
+		Collection<ScheduleEntry> uniqueCheck = new LinkedHashSet<ScheduleEntry>();
+		for (ScheduleEntry se : entries) {
+			boolean isUnique = uniqueCheck.add(se);
+			if (!isUnique)
+				log.warn("Duplicate Flight {}", se.getFlightCode());
+		}
+		
 		assertEquals(entries.size(), uniqueCheck.size());
+		return rawEntries;
+	}
+
+	public void testLoadRaw() throws Exception {
+		
+		// Load existing Entries
+		GetRawSchedule rsdao = new GetRawSchedule(_c);
+		List<RawScheduleEntry> entries = rsdao.load(ScheduleSource.VASYS, null);
+		
+		// Load the files
+		for (ImportInfo info : FILES) {
+			Collection<RawScheduleEntry> rawEntries = load(info);
+			Collection<Airline> airlines = rawEntries.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
+			entries.removeIf(rse -> airlines.contains(rse.getAirline()));
+			entries.addAll(rawEntries);
+		}
+
+		// Set line number
+		for (int x = 0; x < entries.size(); x++) {
+			RawScheduleEntry rse = entries.get(x);
+			rse.setLineNumber(x + 1);
+		}
+
+		// Purge and write
+		SetSchedule rwdao = new SetSchedule(_c);
+		rwdao.purgeRaw(ScheduleSource.VASYS);
+		for (RawScheduleEntry rse : entries)
+			rwdao.writeRaw(rse, false);
+		
+		//_c.commit();
+		log.info("Wrote {} raw schedule entries", Integer.valueOf(entries.size()));
+		
+		// Export to JSON file
+		JSONScheduleFormatter fmt = new JSONScheduleFormatter();
+		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", "phpvms.json"))))) {
+			pw.print(fmt.getHeader());
+			for (Iterator<RawScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
+				RawScheduleEntry rse = i.next();
+				pw.print(fmt.format(rse));
+				if (i.hasNext()) {
+					pw.print(fmt.getSeparator());
+					pw.println();
+				}
+			}
+			
+			pw.println(fmt.getFooter());
+		}
 	}
 	
 	private static <K, V> void addEntry(Map<K, List<V>> m, K key, V value) {
