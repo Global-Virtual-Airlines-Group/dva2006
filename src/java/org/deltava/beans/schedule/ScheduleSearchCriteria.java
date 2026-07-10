@@ -236,7 +236,7 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public Collection<Airline> getAirlines() {
 		Collection<Airline> results = new LinkedHashSet<Airline>();
-		results.add(getAirline());
+		if (getAirline() != null) results.add(getAirline());
 		results.addAll(_airlines);
 		return Collections.unmodifiableCollection(results);
 	}
@@ -318,7 +318,7 @@ public class ScheduleSearchCriteria extends Flight {
 	@Override
 	public final void setAirline(Airline a) {
 		super.setAirline(a);
-		if (a == null)
+		if ((a == null) && (_airlines != null))
 			_airlines.clear();
 	}
 
