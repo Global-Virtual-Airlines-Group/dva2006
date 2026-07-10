@@ -64,11 +64,17 @@ public class EliteScoringTask extends Task {
 			// Get the Flight Reports
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			GetFlightReportQueue qdao = new GetFlightReportQueue(con);
-			Collection<ApprovalStatus> flights = qdao.getPostApprovalQueue();
+			List<ApprovalStatus> flights = qdao.getPostApprovalQueue();
 			flights.removeIf(ap -> !ap.isPending(ApprovalOperation.ELITE) && ap.isPending(ApprovalOperation.COMPLETION)); // Completion archives the position entries
 			log.log(flights.isEmpty() ? Level.INFO : Level.WARN, "{} processing {} Flight Reports", SystemData.get("airline.code"), Integer.valueOf(flights.size()));
 			
-			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
+			// Sort the queue entries
+			Collections.sort(flights);
+			
+			// Get lifetime Elite status levels
+			TreeSet<EliteLifetime> ltLvls = eldao.getLifetimeLevels();
+			
+			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>(); int pendingCount = 0;
 			for (Iterator<ApprovalStatus> i = flights.iterator(); i.hasNext(); ) {
 				ApprovalStatus ap = i.next();
 				IntervalTaskTimer tt = new IntervalTaskTimer();
@@ -76,7 +82,6 @@ public class EliteScoringTask extends Task {
 				FlightReport fr = frdao.get(ap.getID(), ctx.getDB());
 				final int yr = EliteScorer.getStatusYear(fr.getDate());
 				TreeSet<EliteLevel> lvls = eldao.getLevels(yr);
-				TreeSet<EliteLifetime> ltLvls = eldao.getLifetimeLevels();
 				
 				// If the fligt is rejected, mark complete
 				if (fr.getStatus() != FlightStatus.OK) {
@@ -105,12 +110,21 @@ public class EliteScoringTask extends Task {
 				// Load all previous Flight Reports for this Pilot
 				tt.mark("init");
 				if (p.getID() != lastID) {
+					log.info("New Pilot ({} {}), clearing Flights", p.getName(), p.getPilotCode());
 					lastID = p.getID();
 					pireps.clear();
+					pendingCount = frdao.getPendingCount(p.getID());
+				
+					// Load flights for the year
 					pireps.addAll(frdao.getEliteFlights(p.getID(), EliteScorer.getStatsYear(fr.getDate())));
-					
 					long ms = MILLISECONDS.convert(tt.mark("flights"), NANOSECONDS);
 					log.info("Loaded {} flights for {} ({}) in {}ms", Integer.valueOf(pireps.size()), p.getName(), p.getPilotCode(), Long.valueOf(ms));
+				}
+				
+				// Check for pending flights
+				if (pendingCount != 0) {
+					log.warn("{} has {} pending Flights, skipping Flight Report {}", p.getName(), Integer.valueOf(pendingCount), Integer.valueOf(fr.getID()));
+					continue;
 				}
 				
 				Collection<Integer> IDs = flights.stream().map(ApprovalStatus::getID).collect(Collectors.toSet());

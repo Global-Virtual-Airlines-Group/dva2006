@@ -2,9 +2,8 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.deltava.beans.flight.*;
 import org.deltava.beans.EquipmentType;
@@ -32,15 +31,16 @@ public class GetFlightReportQueue extends DAO {
 	 * @return a Collection of ApprovalStatus beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<ApprovalStatus> getPostApprovalQueue() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, COMPLETION, STATS, ELITE FROM PIREP_AGGREGATE_QUEUE ORDER BY CREATED")) {
-			Collection<ApprovalStatus> results = new ArrayList<ApprovalStatus>();
+	public List<ApprovalStatus> getPostApprovalQueue() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.ID, PQ.CREATED, P.PILOT_ID, PQ.COMPLETION, PQ.STATS, PQ.ELITE FROM PIREP_AGGREGATE_QUEUE PQ, PIREPS P WHERE (PQ.ID=P.ID)")) {
+			List<ApprovalStatus> results = new ArrayList<ApprovalStatus>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					ApprovalStatus a = new ApprovalStatus(rs.getInt(1));
-					if (!rs.getBoolean(2)) a.add(ApprovalOperation.COMPLETION);
-					if (!rs.getBoolean(3)) a.add(ApprovalOperation.STATS);
-					if (!rs.getBoolean(4)) a.add(ApprovalOperation.ELITE);
+					ApprovalStatus a = new ApprovalStatus(rs.getInt(1), toInstant(rs.getTimestamp(2)));
+					a.setAuthorID(rs.getInt(3));
+					if (!rs.getBoolean(4)) a.add(ApprovalOperation.COMPLETION);
+					if (!rs.getBoolean(5)) a.add(ApprovalOperation.STATS);
+					if (!rs.getBoolean(6)) a.add(ApprovalOperation.ELITE);
 					results.add(a);
 				}
 			}

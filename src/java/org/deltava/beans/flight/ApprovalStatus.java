@@ -1,28 +1,53 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
+import java.time.Instant;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
- * A bean to track post-approval operations for a Flight Report.
+ * A bean to track Flight Report post-approval operations queue entries. This has a different sorting order from its parent class, where
+ * the primary sort key is Pilot ID, followed by creation date/time.
  * @author Luke
- * @version 12.1
+ * @version 12.5
  * @since 12.1
  */
 
-public class ApprovalStatus extends DatabaseBean {
+public class ApprovalStatus extends DatabaseBean implements AuthoredBean {
 	
+	private int _authorID;
+	private final Instant _createdOn;
 	private final Collection<ApprovalOperation> _ops = new HashSet<ApprovalOperation>();
 
 	/**
 	 * Creates the bean.
 	 * @param id the Flight Report database ID
+	 * @param createdOn the date/time this queue entry was created
 	 */
-	public ApprovalStatus(int id) {
+	public ApprovalStatus(int id, Instant createdOn) {
 		super();
 		setID(id);
+		_createdOn = createdOn;
+	}
+	
+	@Override
+	public int getAuthorID() {
+		return _authorID;
+	}
+	
+	/**
+	 * Returns the date/time this queue entry was created.
+	 * @return the creation date/time
+	 */
+	public Instant getCreatedOn() {
+		return _createdOn;
+	}
+
+	@Override
+	public void setAuthorID(int id) {
+		validateID(_authorID, id);
+		_authorID = id;
 	}
 
 	/**
@@ -48,5 +73,15 @@ public class ApprovalStatus extends DatabaseBean {
 	 */
 	public void remove(ApprovalOperation op) {
 		_ops.remove(op);
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if (o instanceof ApprovalStatus aq) {
+			int tmpResult = Integer.compare(_authorID, aq.getAuthorID());
+			return (tmpResult == 0) ? _createdOn.compareTo(aq._createdOn) : tmpResult;
+		}
+		
+		return super.compareTo(o) ;
 	}
 }
