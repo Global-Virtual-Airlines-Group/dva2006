@@ -69,6 +69,7 @@ public class LogbookService extends WebService {
 			GetFlightReports frdao = new GetFlightReports(con);
 			pireps = frdao.getByPilot(userID, lsc);
 			frdao.loadCaptEQTypes(userID, pireps, ctx.getDB());
+			frdao.loadRoutes(userID, pireps);
 			
 			// Load flight status history
 			GetFlightReportHistory frhdao = new GetFlightReportHistory(con);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,12 +17,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 1.0
  */
 
 public class GetFlightReports extends DAO {
-
+	
 	/**
 	 * Initializes the DAO with a given JDBC connection.
 	 * @param c the JDBC connection to use
@@ -852,6 +852,29 @@ public class GetFlightReports extends DAO {
 			}
 			
 			return sc;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads all filed Routes for a Pilot's Flight Reports. 
+	 * @param pilotID the Pilot's database ID
+	 * @param pireps a Collection of FlightReports for this Pilot
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void loadRoutes(int pilotID, Collection<FlightReport> pireps) throws DAOException {
+		Map<Integer, FlightReport> pMap = CollectionUtils.createMap(pireps, FlightReport::getID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PR.* FROM PIREP_ROUTE PR, PIREPS P WHERE (PR.ID=P.ID) AND (P.PILOT_ID=?)")) {
+			ps.setFetchSize(Math.min(pireps.size() * 4, 1000));
+			ps.setInt(1, pilotID);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					FlightReport fr = pMap.get(Integer.valueOf(rs.getInt(1)));
+					if (fr != null)
+						fr.setRoute(rs.getString(2));
+				}
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
