@@ -50,7 +50,7 @@ public class TestPHPVMSSchedule extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -103,7 +103,7 @@ public class TestPHPVMSSchedule extends TestCase {
 			boolean useGMT = (rse.getAirportD().getTZ().hasDST() != rse.getAirportA().getTZ().hasDST());
 			assertEquals(useGMT, rse.getIsUTC());
 			if (!StringUtils.isEmpty(inf.Airline))
-				rse.setRemarks(String.format("Operated by %S", inf.Airline));
+				rse.setRemarks(String.format("Operated by %s", inf.Airline));
 		}
 
 		// Group by departure airport
@@ -129,7 +129,7 @@ public class TestPHPVMSSchedule extends TestCase {
 		ScheduleLegHelper.calculateLegs(rawEntries);
 
 		// Get today's flights - Map via flight code
-		final LocalDate today = LocalDate.now();
+		final LocalDate today = LocalDate.now().minusDays(1);
 		Map<String, List<ScheduleEntry>> fMap = new HashMap<String, List<ScheduleEntry>>();
 		rawEntries.stream().map(rse -> rse.toToday(today)).filter(Objects::nonNull).forEach(se -> addEntry(fMap, se.getFlightCode(), se));
 		assertNotNull(fMap);
@@ -191,12 +191,12 @@ public class TestPHPVMSSchedule extends TestCase {
 		for (RawScheduleEntry rse : entries)
 			rwdao.writeRaw(rse, false);
 		
-		//_c.commit();
+		_c.commit();
 		log.info("Wrote {} raw schedule entries", Integer.valueOf(entries.size()));
 		
 		// Export to JSON file
 		JSONScheduleFormatter fmt = new JSONScheduleFormatter();
-		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", "phpvms.json"))))) {
+		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", "phpvms.json")), 131072))) {
 			pw.print(fmt.getHeader());
 			for (Iterator<RawScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
 				RawScheduleEntry rse = i.next();
