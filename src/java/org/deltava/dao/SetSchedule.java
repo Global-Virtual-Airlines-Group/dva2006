@@ -75,8 +75,8 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, PLUSDAYS, FORCE_INCLUDE, ISUPDATED, ACADEMY, ISUTC, "
-			+ "CODESHARE, REMARKS, COMMENTS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, FORCE_INCLUDE, ISUPDATED, ACADEMY, ISUTC, "
+			+ "CODESHARE, REMARKS, COMMENTS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, rse.getSource().ordinal());
@@ -92,14 +92,13 @@ public class SetSchedule extends DAO {
 			ps.setString(11, rse.getEquipmentType());
 			ps.setTimestamp(12, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
 			ps.setTimestamp(13, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
-			ps.setInt(14, rse.getArrivalPlusDays());
-			ps.setBoolean(15, rse.getForceInclude());
-			ps.setBoolean(16, rse.getUpdated());
-			ps.setBoolean(17, rse.getAcademy());
-			ps.setBoolean(18, rse.getIsUTC());
-			ps.setString(19, rse.getCodeShare());
-			ps.setString(20, rse.getRemarks());
-			ps.setString(21, rse.getComments());
+			ps.setBoolean(14, rse.getForceInclude());
+			ps.setBoolean(15, rse.getUpdated());
+			ps.setBoolean(16, rse.getAcademy());
+			ps.setBoolean(17, rse.getIsUTC());
+			ps.setString(18, rse.getCodeShare());
+			ps.setString(19, rse.getRemarks());
+			ps.setString(20, rse.getComments());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

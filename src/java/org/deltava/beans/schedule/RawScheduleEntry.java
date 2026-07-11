@@ -52,6 +52,11 @@ public class RawScheduleEntry extends ScheduleEntry {
 		return _days;
 	}
 	
+	@Override
+	public boolean adjustForDST(LocalDate dt) {
+		return !_isUTC && super.adjustForDST(dt);
+	}
+	
 	/**
 	 * Returns the day codes of the days of the week the flight is operated on.
 	 * @return a set of day codes (1234567)

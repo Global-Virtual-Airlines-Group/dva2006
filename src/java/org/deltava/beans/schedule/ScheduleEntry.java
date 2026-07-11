@@ -235,11 +235,12 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	public void setTimeA(LocalDateTime dt) {
 		_length = 0;
 		_timeA = ZonedDateTime.of(dt, getAirportTimeZone(getAirportA())); 
-		if ((_timeD != null) && _timeA.isBefore(_timeD)) {
-			_timeA = _timeA.plusDays(1);
-			_arrivalPlusDays = 1;
-		} else if (_timeD != null)
-			_arrivalPlusDays = (int) ChronoUnit.DAYS.between(_timeD.toLocalDate(), dt.toLocalDate());
+		if (_timeD != null) {
+			while (_timeA.isBefore(_timeD))
+				_timeA = _timeA.plusDays(1);
+			
+			_arrivalPlusDays = (int) ChronoUnit.DAYS.between(_timeD.toLocalDate(), _timeA.toLocalDate());
+		}
 	}
 
 	/**
