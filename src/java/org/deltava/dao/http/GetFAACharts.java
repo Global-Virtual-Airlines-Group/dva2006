@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -21,14 +21,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download FAA chart metadata.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 5.0
  */
 
 public class GetFAACharts extends DAO {
 
 	private static final Logger log = LogManager.getLogger(GetFAACharts.class);
-	private static final String[] TYPES = {"???", "IAP", "IAP", "STAR", "DP", "APD"};
+	private static final String[] TYPES = {"???", "IAP", "IAP", "STR", "DP", "APD"};
 	
 	/**
 	 * Loads the FAA chart metadata file.
