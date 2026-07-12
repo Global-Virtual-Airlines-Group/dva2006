@@ -50,7 +50,7 @@ public class TestPHPVMSSchedule extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -104,6 +104,12 @@ public class TestPHPVMSSchedule extends TestCase {
 			assertEquals(useGMT, rse.getIsUTC());
 			if (!StringUtils.isEmpty(inf.Airline))
 				rse.setRemarks(String.format("Operated by %s", inf.Airline));
+			
+			// Update equipment
+			if ("B767-300".equals(rse.getEquipmentType()))
+				rse.setEquipmentType("B767-300ER");
+			else if ("B737-900".equals(rse.getEquipmentType()) && "DL".equals(rse.getAirline().getCode()))
+				rse.setEquipmentType("B737-900ER");
 		}
 
 		// Group by departure airport
