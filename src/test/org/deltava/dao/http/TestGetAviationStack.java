@@ -8,7 +8,7 @@ import java.util.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-
+import org.deltava.util.ConfigLoader;
 import org.deltava.util.PaginatedList;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
@@ -59,16 +59,34 @@ public class TestGetAviationStack extends TestCase {
 
 	public void testLoad() throws Exception {
 		
-		// Get the file
-		File f = new File("C:\\Temp", "ffYYZ.json");
-		assertTrue(f.exists());
-
 		LocalDate dt = LocalDate.now().plusDays(7);
-		try (InputStream is = new FileInputStream(f)) {
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffATL_dl_d.json")) {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("YYZ"), SystemData.getAirline("WS"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("YYZ"), SystemData.getAirline("DL"), dt, true);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+			assertTrue(results.size() <= results.getCount());
+			assertTrue(results.size() <= results.getTotal());
+		}
+		
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffJFK_dl_a.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("YYZ"), SystemData.getAirline("DL"), dt, true);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+			assertTrue(results.size() <= results.getCount());
+			assertTrue(results.size() <= results.getTotal());
+		}
+		
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffJFK_dl_d.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("YYZ"), SystemData.getAirline("DL"), dt, true);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
