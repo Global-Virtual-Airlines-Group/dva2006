@@ -131,12 +131,13 @@ public class GetAviationStack extends DAO {
 					JSONObject aro = fo.getJSONObject("arrival");
 					
 					RawScheduleEntry rse = new RawScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
+					rse.setSource(ScheduleSource.AVSTACK);
 					rse.setAirportD(SystemData.getAirport(dpo.getString("iataCode")));
 					rse.setAirportA(SystemData.getAirport(aro.getString("iataCode")));
 					rse.setEquipmentType(getEquipmentType(fo.getJSONObject("aircraft").getString("modelCode")));
 					rse.setDaysOfWeek(fo.optString("weekday", String.valueOf(ld.getDayOfWeek().getValue())));
 					rse.setStartDate(ld);
-					rse.setEndDate(ld.plusDays(1));
+					rse.setEndDate(ld.plusDays(14));
 					
 					// Get local departure/arrival times
 					LocalTime tD = LocalTime.parse(dpo.getString("scheduledTime"), _tf);
@@ -149,7 +150,7 @@ public class GetAviationStack extends DAO {
 					if (cso != null) {
 						Airline ca = SystemData.getAirline(cso.getJSONObject("airline").getString("iataCode"));
 						if (ca != null)
-							rse.setCodeShare(cso.getJSONObject("flight").optString("iataNumber"));
+							rse.setCodeShare(cso.getJSONObject("flight").getString("iataNumber").toUpperCase());
 						else
 							isOK = false;
 					}
