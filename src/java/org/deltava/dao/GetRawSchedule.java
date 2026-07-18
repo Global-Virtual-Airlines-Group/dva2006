@@ -131,6 +131,30 @@ public class GetRawSchedule extends DAO {
 	}
 	
 	/**
+	 * Returns the most popular departure Airports for a particular Airline. 
+	 * @param al the Airline
+	 * @param minFlights the minimum number of flights
+	 * @return a Collection of Airports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getPopularAirports(Airline al, int minFlights) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT AIRPORT_D, COUNT(*) AS CNT FROM RAW_SCHEDULE WHERE (AIRLINE=?) GROUP BY AIRPORT_D HAVING (CNT>=?) ORDER BY CNT DESC")) {
+			ps.setString(1, al.getCode());
+			ps.setInt(2, minFlights);
+			
+			Collection<Airport> results = new ArrayList<Airport>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(SystemData.getAirport(rs.getString(1)));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns the Airlines that service a particular Airport in a schedule source.
 	 * @param src the ScheduleSource or null for all
 	 * @param a the Airport
