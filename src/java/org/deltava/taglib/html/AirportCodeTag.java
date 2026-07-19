@@ -75,7 +75,7 @@ public class AirportCodeTag extends InputTag {
 		
 		// Set default events and render the tag
 		setOnChange("void this.form." + _comboName + ".setAirport(this.value, true, this)");
-		setOnKeydown("golgotha.airportLoad.codeMassage(event)");
+		setOnInput("golgotha.airportLoad.codeMassage(event)");
 		return super.doStartTag();
 	}
 }

@@ -156,11 +156,11 @@ public class InputTag extends FormElementTag {
     }
     
     /**
-     * Sets the JavaScript event for this element's onKeyDown() event.
+     * Sets the JavaScript event for this element's onInput() event.
      * @param jsCode the JavaScript code
      */
-    public void setOnKeydown(String jsCode) {
-    	_data.setAttribute("onkeydown", jsCode);
+    public void setOnInput(String jsCode) {
+    	_data.setAttribute("oninput", jsCode);
     }
     
 	/**
