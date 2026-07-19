@@ -25,6 +25,12 @@ public class FileCache<T extends Cacheable> extends AgingCache<T> {
 		save();
 	}
 	
+	@Override
+	public void clear() {
+		super.clear();
+		_f.delete();
+	}
+	
 	private void save() {
 		Map<Object, CacheEntry<T>> data = new LinkedHashMap<Object, CacheEntry<T>>(_cache);
 		try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(_f), 65536))) {
