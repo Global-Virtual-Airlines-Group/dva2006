@@ -1,4 +1,4 @@
-// Copyright 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,9 +10,10 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw flight schedule information.
  * @author Luke
- * @version 10.2
+ * @version 12.5
  * @since 9.0
  */
+
 public class GetRawScheduleInfo extends DAO {
 
 	/**
@@ -21,6 +22,28 @@ public class GetRawScheduleInfo extends DAO {
 	 */
 	public GetRawScheduleInfo(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns all Hub Airports.
+	 * @return a Collection of Hubs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Hub> getHubs() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM SCHEDULE_HUBS")) {
+			Collection<Hub> results = new ArrayList<Hub>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Hub h = new Hub(SystemData.getAirline(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+					h.setDestinationCount(rs.getInt(3));
+					results.add(h);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
