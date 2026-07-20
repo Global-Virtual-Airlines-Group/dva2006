@@ -33,14 +33,6 @@ public class GetAviationStack extends DAO {
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 	private String _accessKey;
 	
-	@Deprecated
-	private InputStream _is;
-	
-	@Deprecated
-	public void setStream(InputStream is) {
-		_is = is;
-	}
-	
 	/**
 	 * Updates the AviationStack API access key to use.
 	 * @param key the access key
@@ -119,8 +111,8 @@ public class GetAviationStack extends DAO {
 		PaginatedList<RawScheduleEntry> results = new PaginatedList<RawScheduleEntry>(ofs);
 		try {
 			setCompression(Compression.GZIP, Compression.BROTLI, Compression.DEFLATE);
-			//init(urlBuf.toString());
-			try (BufferedReader br = new BufferedReader(new InputStreamReader((_is == null) ? getIn() : _is, "utf-8"))) {
+			init(urlBuf.toString());
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "utf-8"))) {
 				JSONObject jo = new JSONObject(new JSONTokener(br));
 				
 				// Load Pagination metadata
@@ -151,13 +143,22 @@ public class GetAviationStack extends DAO {
 					rse.setEndDate(ld.plusDays(14));
 					
 					// Get local departure/arrival times
-					LocalTime tD = LocalTime.parse(dpo.getString("scheduledTime"), _tf);
-					LocalTime tA = LocalTime.parse(aro.getString("scheduledTime"), _tf);
-					rse.setTimeD(LocalDateTime.of(ld, tD));
-					rse.setTimeA(LocalDateTime.of(ld, tA));
+					boolean isOK = true;
+					try {
+						String stD = dpo.optString("scheduledTime"); String stA = aro.optString("scheduledTime");
+						if (StringUtils.isEmpty(stD) || StringUtils.isEmpty(stA)) continue;
+
+						LocalTime tD = LocalTime.parse(stD, _tf);
+						LocalTime tA = LocalTime.parse(stA, _tf);
+						rse.setTimeD(LocalDateTime.of(ld, tD));
+						rse.setTimeA(LocalDateTime.of(ld, tA));
+					} catch (DateTimeException dtpe) {
+						log.error("Error Parsing date for {} at Line {} - {}", rse.getFlightCode(), Integer.valueOf(x), dtpe.getMessage());
+						isOK = false;
+					}
 					
-					// Check for codeshares - this is the 'real' flight number, so keep it if we know the airline
-					JSONObject cso = fo.optJSONObject("codeshared"); boolean isOK = true;
+					// Check for codeshares - this is the 'real' flight number, so keep it if we know the airline. Let downstream deal with it.
+					JSONObject cso = fo.optJSONObject("codeshared"); 
 					if (cso != null) {
 						Airline ca = SystemData.getAirline(cso.getJSONObject("airline").getString("iataCode"));
 						if (ca != null)
