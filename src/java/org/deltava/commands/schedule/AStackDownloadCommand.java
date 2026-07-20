@@ -51,16 +51,11 @@ public class AStackDownloadCommand extends AbstractCommand {
 		LocalDate ld = LocalDate.now().plusDays(7);
 		Collection<String> msgs = new ArrayList<String>();
 
-		// Load initial airports
-		SequencedCollection<Airport> airports = new LinkedHashSet<Airport>();
+		// Load Hub airports
+		SequencedCollection<Hub> hubs = new LinkedHashSet<Hub>();
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the popular airports
-			GetRawSchedule rsdao = new GetRawSchedule(con);
-			rsdao.getSources(true, ctx.getDB());
-			rsdao.setQueryMax(5);
-			airports.addAll(rsdao.getPopularAirports(al, 5));
+			GetRawScheduleInfo rsdao = new GetRawScheduleInfo(ctx.getConnection());
+			hubs.addAll(rsdao.getHubs());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -73,21 +68,13 @@ public class AStackDownloadCommand extends AbstractCommand {
 		avdao.setConnectTimeout(3500);
 		avdao.setReadTimeout(17500);
 
-		// Load the arrivals for the top airports
+		// Walk through the Hubs. Load departures only
 		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		try {
-			for (Airport dA : airports) {
-				PaginatedList<RawScheduleEntry> entries = avdao.get(dA, al, ld, false);
-				Collection<Airport> newAirports = entries.stream().map(ScheduleEntry::getAirportD).filter(a -> !airports.contains(a)).collect(Collectors.toSet());
-				log(String.format("Added %d new Airports to queue for %d", Integer.valueOf(newAirports.size()), dA.getIATA()), msgs);
-			}
-
-			// Walk through the airports. Load departures only
-			log(String.format("Hub Airports for %s = %s", al.getName(), airports.stream().map(Airport::getIATA).collect(Collectors.toSet())), msgs);
+			log(String.format("Hub Airports for %s = %s", al.getName(), hubs.stream().map(h -> h.getAirport().getIATA()).collect(Collectors.toSet())), msgs);
 			Collection<Airport> processedAirports = new LinkedHashSet<Airport>();
-			Airport ap = airports.isEmpty() ? null : airports.getFirst();
-			while (ap != null) {
-				int ofs = 0;
+			for (Hub h : hubs) {
+				int ofs = 0; Airport ap = h.getAirport();
 				Collection<RawScheduleEntry> apEntries = new ArrayList<RawScheduleEntry>();
 				log(String.format("Loading Departures for %s (%s) (ofs=%d)", ap.getName(), ap.getIATA(), Integer.valueOf(ofs)), msgs);
 				PaginatedList<RawScheduleEntry> entries = avdao.get(ap, al, ld, true);
@@ -102,16 +89,8 @@ public class AStackDownloadCommand extends AbstractCommand {
 					ThreadUtils.sleep(SLEEP_INTERVAL);
 				}
 
-				// Get new airports
-				Collection<Airport> newAirports = apEntries.stream().map(ScheduleEntry::getAirportA).filter(a -> !processedAirports.contains(a)).collect(Collectors.toSet());
-				log(String.format("Added %d new Airports to queue for %d", Integer.valueOf(newAirports.size()), ap.getIATA()), msgs);
-				airports.addAll(newAirports);
-				results.addAll(apEntries);
-
 				// Update the airport lists
-				airports.remove(ap);
 				processedAirports.add(ap);
-				ap = airports.isEmpty() ? null : airports.getFirst();
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -134,10 +113,7 @@ public class AStackDownloadCommand extends AbstractCommand {
 			todaysFlights.addAll(rawEntries);
 			
 			// Update line numbers
-			for (int ln = 0; ln < todaysFlights.size(); ln++) {
-				RawScheduleEntry rse = todaysFlights.get(ln);
-				rse.setLineNumber(ln);
-			}
+			ScheduleLegHelper.calculateLineNumbers(todaysFlights);
 			
 			// Purge and save
 			ctx.startTX();

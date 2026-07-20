@@ -75,7 +75,7 @@ public class LoadAVStackSchedule extends TestCase {
 		super.tearDown();
 	}
 	
-	private Collection<RawScheduleEntry> loadFlights(Airline al, Airport ap, LocalDate ld) throws DAOException {
+	private Collection<RawScheduleEntry> loadFlights(Hub h, LocalDate ld) throws DAOException {
 		
 		// Get the API DAO
 		GetAviationStack avdao = new GetAviationStack();
@@ -83,18 +83,34 @@ public class LoadAVStackSchedule extends TestCase {
 		avdao.setConnectTimeout(3500);
 		avdao.setReadTimeout(17500);
 
-		// Load the flights
+		// Load the departure flights
 		int ofs = 0;
 		Collection<RawScheduleEntry> apEntries = new ArrayList<RawScheduleEntry>();
-		log.info("Loading Departures for {} ({}) (ofs={})", ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
-		PaginatedList<RawScheduleEntry> entries = avdao.get(ap, al, ld, true);
-		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
+		log.info("Loading Departures for {} ({}) (ofs={})", h.getAirport().getName(), h.getAirport().getIATA(), Integer.valueOf(ofs));
+		PaginatedList<RawScheduleEntry> entries = avdao.get(h.getAirport(), h.getAirline(), ld, true);
+		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), h.getAirport().getIATA());
 		apEntries.addAll(entries);
 		ThreadUtils.sleep(SLEEP_INTERVAL);
 		while ((ofs + entries.getCount()) < entries.getTotal()) {
 			ofs = entries.getOffset() + entries.getCount();
-			log.info("Loading Departures for{} ({}) (ofs={{})", ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
-			entries = avdao.get(ap, al, ld, true, ofs);
+			log.info("Loading Departures for{} ({}) (ofs={{})", h.getAirport().getName(), h.getAirport().getIATA(), Integer.valueOf(ofs));
+			entries = avdao.get(h.getAirport(), h.getAirline(), ld, true, ofs);
+			apEntries.addAll(entries);
+			log.info("Sleeping for {}ms", Integer.valueOf(SLEEP_INTERVAL));
+			ThreadUtils.sleep(SLEEP_INTERVAL);
+		}
+		
+		// Load the arrival flights
+		ofs = 0;
+		log.info("Loading Arrivals for {} ({}) (ofs={})", h.getAirport().getName(), h.getAirport().getIATA(), Integer.valueOf(ofs));
+		entries = avdao.get(h.getAirport(), h.getAirline(), ld, false);
+		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), h.getAirport().getIATA());
+		apEntries.addAll(entries);
+		ThreadUtils.sleep(SLEEP_INTERVAL);
+		while ((ofs + entries.getCount()) < entries.getTotal()) {
+			ofs = entries.getOffset() + entries.getCount();
+			log.info("Loading Arrivals for{} ({}) (ofs={{})", h.getAirport().getName(), h.getAirport().getIATA(), Integer.valueOf(ofs));
+			entries = avdao.get(h.getAirport(), h.getAirline(), ld, false, ofs);
 			apEntries.addAll(entries);
 			log.info("Sleeping for {}ms", Integer.valueOf(SLEEP_INTERVAL));
 			ThreadUtils.sleep(SLEEP_INTERVAL);
@@ -121,31 +137,13 @@ public class LoadAVStackSchedule extends TestCase {
 			processedAirports.addAll(_apCache.get(KEY));
 		}
 		
-		// Get the popular airports
-		SequencedCollection<Airport> airports = new LinkedHashSet<Airport>();
-		GetRawSchedule rsdao = new GetRawSchedule(_c);
-		rsdao.getSources(true, DB);
-		rsdao.setQueryMax(5);
-		airports.addAll(rsdao.getPopularAirports(al, 5));
-		
-		// Get the API DAO
-		GetAviationStack avdao = new GetAviationStack();
-		avdao.setAccessKey(SystemData.get("security.key.avstack"));
-		avdao.setConnectTimeout(3500);
-		avdao.setReadTimeout(17500);
-
-		// Load the arrivals for the top airports
-		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
-		Collection<Airport> newArrivalAirports = new LinkedHashSet<Airport>();
-		for (Airport dA : airports) {
-			PaginatedList<RawScheduleEntry> entries = avdao.get(dA, al, ld, false);
-			Thread.sleep(SLEEP_INTERVAL);
-			Collection<Airport> naa = entries.stream().map(ScheduleEntry::getAirportD).filter(a -> !airports.contains(a)).collect(Collectors.toSet());
-			log.info("Added {} new Airports to queue for {}", Integer.valueOf(naa.size()), dA.getIATA());
-			newArrivalAirports.addAll(naa);
-		}
+		// Get the Hub Airports
+		GetRawScheduleInfo rsdao = new GetRawScheduleInfo(_c);
+		Collection<Hub> hubs = rsdao.getHubs().stream().filter(h -> h.getAirline().equals(al)).collect(Collectors.toList());
+		log.info("Loaded {} Hub Airports for {}", Integer.valueOf(hubs.size()), al.getName());
 		
 		// Load existing entries
+		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		for (Airport ap : processedAirports) {
 			log.info("Reloading cached data for {}", ap.getIATA());
 			CacheableCollection<RawScheduleEntry> cachedEntries = _eCache.get(ap.getIATA());
@@ -155,25 +153,12 @@ public class LoadAVStackSchedule extends TestCase {
 			}
 		}
 
-		// Walk through the airports. Load departures only
-		log.info("Hub Airports for {} = {}", al.getName(), airports.stream().map(Airport::getIATA).collect(Collectors.toSet()));
-		airports.addAll(newArrivalAirports);
-		Airport ap = airports.isEmpty() ? null : airports.getFirst();
-		while (ap != null) {
-			Collection<RawScheduleEntry> apEntries = loadFlights(al, ap, ld);
-			_eCache.add(new CacheableList<RawScheduleEntry>(ap.getIATA(), apEntries));
-
-			// Get new airports
-			Collection<Airport> newAirports = apEntries.stream().map(ScheduleEntry::getAirportA).filter(a -> !processedAirports.contains(a)).collect(Collectors.toSet());
-			log.info("Added {} new Airports to queue for {}", Integer.valueOf(newAirports.size()), ap.getIATA());
-			airports.addAll(newAirports);
-			results.addAll(apEntries);
-
-			// Update the airport lists
-			airports.remove(ap);
-			processedAirports.add(ap);
+		// Walk through the Hubs
+		for (Hub h : hubs) {
+			Collection<RawScheduleEntry> apEntries = loadFlights(h, ld);
+			_eCache.add(new CacheableList<RawScheduleEntry>(h.getAirport().getIATA(), apEntries));
+			processedAirports.add(h.getAirport());
 			_apCache.add(processedAirports);
-			ap = airports.isEmpty() ? null : airports.getFirst();
 		}
 
 		// Export to JSON file

@@ -8,6 +8,7 @@ import java.time.format.*;
 import java.time.temporal.ChronoField;
 
 import org.json.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -24,6 +25,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetAviationStack extends DAO {
+	
+	private static final Logger log = LogManager.getLogger(GetAviationStack.class);
 	
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
@@ -62,11 +65,13 @@ public class GetAviationStack extends DAO {
 	/**
 	 * Helper method to map an IATA equipment code to an aircraft type.
 	 * @param iataCode the IATA code
+	 * @param line the entry number
 	 * @return the Aircraft, or null if not found
 	 */
-	protected String getEquipmentType(String iataCode) {
+	protected String getEquipmentType(String iataCode, int line) {
 		if (StringUtils.isEmpty(iataCode)) return null;
 		Aircraft a = _iataMappings.get(iataCode.toUpperCase());
+		if (a == null) log.info("Unknown Equipment Type at Entry {} - {}", Integer.valueOf(line), iataCode);
 		return (a == null) ? null : a.getName();
 	}
 	
@@ -113,7 +118,7 @@ public class GetAviationStack extends DAO {
 
 		PaginatedList<RawScheduleEntry> results = new PaginatedList<RawScheduleEntry>(ofs);
 		try {
-			//setCompression(Compression.GZIP, Compression.DEFLATE);
+			setCompression(Compression.GZIP, Compression.BROTLI, Compression.DEFLATE);
 			//init(urlBuf.toString());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader((_is == null) ? getIn() : _is, "utf-8"))) {
 				JSONObject jo = new JSONObject(new JSONTokener(br));
@@ -130,11 +135,17 @@ public class GetAviationStack extends DAO {
 					JSONObject dpo = fo.getJSONObject("departure");
 					JSONObject aro = fo.getJSONObject("arrival");
 					
+					// Check for known equipment
+					String eqType = fo.getJSONObject("aircraft").optString("modelCode");
+					if (StringUtils.isEmpty(eqType))
+						continue;
+					
+					// Populate the schedule entry
 					RawScheduleEntry rse = new RawScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
 					rse.setSource(ScheduleSource.AVSTACK);
 					rse.setAirportD(SystemData.getAirport(dpo.getString("iataCode")));
 					rse.setAirportA(SystemData.getAirport(aro.getString("iataCode")));
-					rse.setEquipmentType(getEquipmentType(fo.getJSONObject("aircraft").getString("modelCode")));
+					rse.setEquipmentType(getEquipmentType(eqType, x));
 					rse.setDaysOfWeek(fo.optString("weekday", String.valueOf(ld.getDayOfWeek().getValue())));
 					rse.setStartDate(ld);
 					rse.setEndDate(ld.plusDays(14));

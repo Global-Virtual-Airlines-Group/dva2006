@@ -2,18 +2,18 @@ package org.deltava.dao.http;
 
 import java.io.*;
 import java.sql.*;
-import java.time.LocalDate;
+import java.time.*;
 import java.util.*;
+
+import junit.framework.TestCase;
 
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-import org.deltava.util.ConfigLoader;
-import org.deltava.util.PaginatedList;
+
+import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
-
-import junit.framework.TestCase;
 
 public class TestGetAviationStack extends TestCase {
 	
@@ -56,6 +56,25 @@ public class TestGetAviationStack extends TestCase {
 		_c.close();
 		super.tearDown();
 	}
+	
+	private static void validateFlights(Collection<RawScheduleEntry> entries) {
+		DayOfWeek dow = LocalDate.now().getDayOfWeek();
+		for (RawScheduleEntry rse : entries) {
+			assertNotNull(rse);
+			assertEquals(ScheduleSource.AVSTACK, rse.getSource());
+			assertNotNull(rse.getAirline());
+			assertNotNull(rse.getAirportD());
+			assertNotNull(rse.getAirportA());
+			assertTrue(rse.getFlightNumber() > 0);
+			assertEquals(1, rse.getLeg());
+			assertNotNull(rse.getEquipmentType());
+			assertNotNull(rse.getTimeD());
+			assertNotNull(rse.getTimeA());
+			assertTrue(rse.getTimeD().isBefore(rse.getTimeA()));
+			assertEquals(1, rse.getDays().size());
+			assertTrue(rse.getDays().contains(dow));
+		}
+	}
 
 	public void testLoad() throws Exception {
 		
@@ -64,33 +83,60 @@ public class TestGetAviationStack extends TestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("YYZ"), SystemData.getAirline("DL"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("ATL"), SystemData.getAirline("DL"), dt, true);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
+			validateFlights(results);
 		}
 		
 		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffJFK_dl_a.json")) {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("YYZ"), SystemData.getAirline("DL"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, true);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
+			validateFlights(results);
 		}
 		
 		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffJFK_dl_d.json")) {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("YYZ"), SystemData.getAirline("DL"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, false);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
+			validateFlights(results);
+		}
+		
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffCDG_af_d.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, true);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+			assertTrue(results.size() <= results.getCount());
+			assertTrue(results.size() <= results.getTotal());
+			validateFlights(results);
+		}
+		
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffCDG_af_a.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, false);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+			assertTrue(results.size() <= results.getCount());
+			assertTrue(results.size() <= results.getTotal());
+			validateFlights(results);
 		}
 	}
 }
