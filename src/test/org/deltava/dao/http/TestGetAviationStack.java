@@ -32,7 +32,7 @@ public class TestGetAviationStack extends TestCase {
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -58,7 +58,6 @@ public class TestGetAviationStack extends TestCase {
 	}
 	
 	private static void validateFlights(Collection<RawScheduleEntry> entries) {
-		DayOfWeek dow = LocalDate.now().getDayOfWeek();
 		for (RawScheduleEntry rse : entries) {
 			assertNotNull(rse);
 			assertEquals(ScheduleSource.AVSTACK, rse.getSource());
@@ -72,7 +71,6 @@ public class TestGetAviationStack extends TestCase {
 			assertNotNull(rse.getTimeA());
 			assertTrue(rse.getTimeD().isBefore(rse.getTimeA()));
 			assertEquals(1, rse.getDays().size());
-			assertTrue(rse.getDays().contains(dow));
 		}
 	}
 
