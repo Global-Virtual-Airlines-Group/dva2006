@@ -101,7 +101,7 @@ public class GetAviationStack extends DAO {
 		urlBuf.append(al.getCode());
 		urlBuf.append("&date=");
 		urlBuf.append(StringUtils.format(ld, "yyyy-MM-dd"));
-		urlBuf.append("&accessKey=");
+		urlBuf.append("&access_key=");
 		urlBuf.append(_accessKey);
 		if (ofs > 0) {
 			urlBuf.append("&offset=");
@@ -110,7 +110,6 @@ public class GetAviationStack extends DAO {
 
 		PaginatedList<RawScheduleEntry> results = new PaginatedList<RawScheduleEntry>(ofs);
 		try {
-			setCompression(Compression.GZIP, Compression.BROTLI, Compression.DEFLATE);
 			init(urlBuf.toString());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "utf-8"))) {
 				JSONObject jo = new JSONObject(new JSONTokener(br));
@@ -119,9 +118,16 @@ public class GetAviationStack extends DAO {
 				JSONObject po = jo.getJSONObject("pagination");
 				results.setTotal(po.getInt("total"));
 				results.setCount(po.getInt("count"));
+				if (results.getCount() == 0)
+					return results;
 				
 				// Load scehdule entries
-				JSONArray da = jo.getJSONArray("data");
+				Object oA = jo.get("data");
+				if (!(oA instanceof JSONArray da)) {
+					log.warn("Schedule Data element is not a JSON array");
+					return results;
+				}
+				
 				for (int x = 0; x < da.length(); x++) {
 					JSONObject fo = da.getJSONObject(x);
 					JSONObject dpo = fo.getJSONObject("departure");
@@ -129,18 +135,19 @@ public class GetAviationStack extends DAO {
 					
 					// Check for known equipment
 					String eqType = fo.getJSONObject("aircraft").optString("modelCode");
-					if (StringUtils.isEmpty(eqType))
-						continue;
+					if (StringUtils.isEmpty(eqType)) continue;
 					
 					// Populate the schedule entry
 					RawScheduleEntry rse = new RawScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
 					rse.setSource(ScheduleSource.AVSTACK);
 					rse.setAirportD(SystemData.getAirport(dpo.getString("iataCode")));
 					rse.setAirportA(SystemData.getAirport(aro.getString("iataCode")));
-					rse.setEquipmentType(getEquipmentType(eqType, x));
 					rse.setDaysOfWeek(fo.optString("weekday", String.valueOf(ld.getDayOfWeek().getValue())));
 					rse.setStartDate(ld);
 					rse.setEndDate(ld.plusDays(14));
+					rse.setEquipmentType(getEquipmentType(eqType, x));
+					if (StringUtils.isEmpty(rse.getEquipmentType()))
+						log.warn(fo.getJSONObject("aircraft").toString());
 					
 					// Get local departure/arrival times
 					boolean isOK = true;
@@ -173,6 +180,8 @@ public class GetAviationStack extends DAO {
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
+		} finally {
+			reset();
 		}
 		
 		return results;
