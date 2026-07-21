@@ -14,7 +14,7 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.http.GetAviationStack;
+import org.deltava.dao.http.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
@@ -24,8 +24,12 @@ import junit.framework.TestCase;
 
 public class LoadAVStackSchedule extends TestCase {
 	
-	private static final String DB = "dva";
-	private static final String JDBC_URL = String.format("jdbc:mysql://sirius.sce.net/%s?useSSL=false&connectionTimezone=SERVER&allowPublicKeyRetrieval=true", DB);
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false&connectionTimezone=SERVER&allowPublicKeyRetrieval=true";
+	private static final String JDBC_USER = "luke";
+	private static final String JDBC_PWD = "test";
+	
+	private static final String AV_API_KEY = "fd7219da540b2130353b6b075ad7178f";
+	
 	private static final int SLEEP_INTERVAL = 62_500;
 	private static final Object KEY = "$KEY";
 	
@@ -50,7 +54,7 @@ public class LoadAVStackSchedule extends TestCase {
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD);
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -79,9 +83,11 @@ public class LoadAVStackSchedule extends TestCase {
 		
 		// Get the API DAO
 		GetAviationStack avdao = new GetAviationStack();
-		avdao.setAccessKey(SystemData.get("security.key.avstack"));
+		avdao.setAccessKey(AV_API_KEY);
 		avdao.setConnectTimeout(3500);
-		avdao.setReadTimeout(17500);
+		avdao.setReadTimeout(19500);
+		avdao.setCompression(Compression.GZIP, Compression.DEFLATE);
+		avdao.setAircraft(_acTypes);
 
 		// Load the departure flights
 		int ofs = 0;
@@ -119,22 +125,22 @@ public class LoadAVStackSchedule extends TestCase {
 		return apEntries;
 	}
 	
-	public void loadSchedule() throws Exception {
+	public void testLoadSchedule() throws Exception {
 
 		Airline al = SystemData.getAirline(AIRLINE_CODE);
 		assertNotNull(al);
 		log.info("Loading Flights for {}", al.getName());
 		
 		// Get the effective date
-		LocalDate ld = LocalDate.now().plusDays(7);
+		LocalDate ld = LocalDate.now().plusDays(14);
 		
 		// Get the caches
 		final CacheableCollection<Airport> processedAirports = new CacheableSet<Airport>(KEY);
 		FileCache<CacheableCollection<Airport>> _apCache = new FileCache<CacheableCollection<Airport>>(2, _c1);
-		FileCache<CacheableCollection<RawScheduleEntry>> _eCache = new FileCache<CacheableCollection<RawScheduleEntry>>(2, _c2);
+		FileCache<CacheableCollection<RawScheduleEntry>> _eCache = new FileCache<CacheableCollection<RawScheduleEntry>>(256, _c2);
 		if (_apCache.size() > 0) {
-			log.info("Preloaded {} processed Airports", Integer.valueOf(_apCache.size()));
 			processedAirports.addAll(_apCache.get(KEY));
+			log.info("Preloaded {} processed Airports", Integer.valueOf(processedAirports.size()));
 		}
 		
 		// Get the Hub Airports
@@ -150,10 +156,12 @@ public class LoadAVStackSchedule extends TestCase {
 			if (cachedEntries != null) {
 				log.info("Restored {} Schedule Entries for {}", Integer.valueOf(cachedEntries.size()), ap.getIATA());
 				results.addAll(cachedEntries);
+				hubs.remove(new Hub(al, ap));
 			}
 		}
-
+		
 		// Walk through the Hubs
+		log.info("Processing {} Hub Airports", Integer.valueOf(hubs.size()));
 		for (Hub h : hubs) {
 			Collection<RawScheduleEntry> apEntries = loadFlights(h, ld);
 			_eCache.add(new CacheableList<RawScheduleEntry>(h.getAirport().getIATA(), apEntries));
@@ -163,7 +171,7 @@ public class LoadAVStackSchedule extends TestCase {
 
 		// Export to JSON file
 		JSONScheduleFormatter fmt = new JSONScheduleFormatter();
-		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", String.format("avstack_%s.json", al.getCode()))), 131072))) {
+		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", String.format("avstack_%s.json", al.getCode().toLowerCase()))), 131072))) {
 			pw.print(fmt.getHeader());
 			for (Iterator<RawScheduleEntry> i = results.iterator(); i.hasNext(); ) {
 				RawScheduleEntry rse = i.next();
@@ -177,7 +185,7 @@ public class LoadAVStackSchedule extends TestCase {
 			pw.println(fmt.getFooter());
 		}
 
-		_apCache.clear();
-		_eCache.clear();
+		/* _apCache.clear();
+		_eCache.clear(); */
 	}
 }
