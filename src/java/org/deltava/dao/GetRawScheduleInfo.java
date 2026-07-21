@@ -30,7 +30,7 @@ public class GetRawScheduleInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Hub> getHubs() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM SCHEDULE_HUBS")) {
+		try (PreparedStatement ps = prepare("SELECT * FROM SCHEDULE_HUBS ORDER BY AIRLINE, DESTCOUNT DESC")) {
 			Collection<Hub> results = new ArrayList<Hub>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
