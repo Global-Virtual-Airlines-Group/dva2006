@@ -18,6 +18,8 @@ import org.deltava.util.system.SystemData;
 public class TestGetAviationStack extends TestCase {
 	
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false&connectionTimezone=SERVER&allowPublicKeyRetrieval=true";
+	private static final String JDBC_USER = "luke";
+	private static final String JDBC_PWD = "test";
 	
 	private Connection _c;
 	private final Collection<Aircraft> _acTypes = new ArrayList<Aircraft>();
@@ -32,7 +34,7 @@ public class TestGetAviationStack extends TestCase {
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD);
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -76,7 +78,7 @@ public class TestGetAviationStack extends TestCase {
 
 	public void testLoad() throws Exception {
 		
-		LocalDate dt = LocalDate.now().plusDays(7);
+		LocalDate dt = LocalDate.now().plusDays(14);
 		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffATL_dl_d.json")) {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
@@ -140,6 +142,21 @@ public class TestGetAviationStack extends TestCase {
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
 			validateFlights(results);
+		}
+	}
+	
+	public void testEmpty() throws Exception {
+
+		LocalDate dt = LocalDate.now().plusDays(14);
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffPVR_ws_d.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, false);
+			assertNotNull(results);
+			assertEquals(0, results.getCount());
+			assertEquals(results.getTotal(), results.getCount());
+			assertTrue(results.isEmpty());
 		}
 	}
 }
