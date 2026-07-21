@@ -58,6 +58,16 @@ public class Hub implements java.io.Serializable, Comparable<Hub> {
 		_destCount = cnt;
 	}
 	
+	/**
+	 * Helper method to check whether this Hub matches a particular Airline and Airport.  
+	 * @param al the Airline
+	 * @param a the Airport
+	 * @return TRUE if the Airline and Airport are equal to this Hub, otherwise FALSE
+	 */
+	public boolean matches(Airline al, Airport a) {
+		return _a.equals(al) && _ap.equals(a);
+	}
+	
 	@Override
 	public int hashCode() {
 		return toString().hashCode();

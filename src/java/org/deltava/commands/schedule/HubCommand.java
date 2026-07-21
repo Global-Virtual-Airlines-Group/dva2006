@@ -70,7 +70,7 @@ public class HubCommand extends AbstractFormCommand {
 		try {
 			GetRawScheduleInfo dao = new GetRawScheduleInfo(ctx.getConnection());
 			Collection<Hub> hubs = dao.getHubs();
-			Optional<Hub> oh = hubs.stream().filter(h -> h.getAirline().equals(a) && h.getAirport().equals(ap)).findAny();
+			Optional<Hub> oh = hubs.stream().filter(h -> h.matches(a, ap)).findAny();
 			ctx.setAttribute("hub", oh.orElse(null), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
