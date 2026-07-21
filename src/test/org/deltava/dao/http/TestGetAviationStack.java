@@ -32,7 +32,7 @@ public class TestGetAviationStack extends TestCase {
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -84,6 +84,7 @@ public class TestGetAviationStack extends TestCase {
 			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("ATL"), SystemData.getAirline("DL"), dt, true);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
+			assertEquals(results.getTotal(), results.getCount());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
 			validateFlights(results);
@@ -95,6 +96,7 @@ public class TestGetAviationStack extends TestCase {
 			dao.setStream(is);
 			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, true);
 			assertNotNull(results);
+			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
@@ -107,6 +109,7 @@ public class TestGetAviationStack extends TestCase {
 			dao.setStream(is);
 			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, false);
 			assertNotNull(results);
+			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
@@ -119,6 +122,7 @@ public class TestGetAviationStack extends TestCase {
 			dao.setStream(is);
 			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, true);
 			assertNotNull(results);
+			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
@@ -131,6 +135,7 @@ public class TestGetAviationStack extends TestCase {
 			dao.setStream(is);
 			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, false);
 			assertNotNull(results);
+			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
 			assertTrue(results.size() <= results.getCount());
 			assertTrue(results.size() <= results.getTotal());
