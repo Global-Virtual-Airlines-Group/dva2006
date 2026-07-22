@@ -1,16 +1,14 @@
 package org.deltava;
 
+import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
+import org.deltava.beans.FlightNumber;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
@@ -28,7 +26,7 @@ public class LoadAVStackSchedule extends TestCase {
 	private static final String JDBC_USER = "luke";
 	private static final String JDBC_PWD = "test";
 	
-	private static final String AV_API_KEY = "fd7219da540b2130353b6b075ad7178f";
+	private static final String AV_API_KEY = "foo";
 	
 	private static final int SLEEP_INTERVAL = 62_500;
 	private static final Object KEY = "$KEY";
@@ -71,6 +69,17 @@ public class LoadAVStackSchedule extends TestCase {
 		
 		_c.setAutoCommit(false);
 		assertFalse(_c.getAutoCommit());
+	}
+	
+	private static class RawEntryComparator implements Comparator<RawScheduleEntry> {
+		
+		@Override
+		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
+			int tmpResult = rse1.getAirline().compareTo(rse2.getAirline());
+			tmpResult = (tmpResult == 0) ? rse1.getAirportD().compareTo(rse2.getAirportD()) : tmpResult;
+			tmpResult = (tmpResult == 0) ? rse1.getAirportA().compareTo(rse2.getAirportA()) : tmpResult;
+			return (tmpResult == 0) ? FlightNumber.compare(rse1, rse2) : tmpResult;
+		}
 	}
 
 	@Override
@@ -149,11 +158,12 @@ public class LoadAVStackSchedule extends TestCase {
 		log.info("Loaded {} Hub Airports for {}", Integer.valueOf(hubs.size()), al.getName());
 		
 		// Load existing entries
-		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
+		Collection<RawScheduleEntry> results = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
 		for (Airport ap : processedAirports) {
 			log.info("Reloading cached data for {}", ap.getIATA());
 			CacheableCollection<RawScheduleEntry> cachedEntries = _eCache.get(ap.getIATA());
 			if (cachedEntries != null) {
+				cachedEntries.removeIf(rse -> !rse.isPopulated());
 				log.info("Restored {} Schedule Entries for {}", Integer.valueOf(cachedEntries.size()), ap.getIATA());
 				results.addAll(cachedEntries);
 				hubs.remove(new Hub(al, ap));
@@ -164,6 +174,7 @@ public class LoadAVStackSchedule extends TestCase {
 		log.info("Processing {} Hub Airports", Integer.valueOf(hubs.size()));
 		for (Hub h : hubs) {
 			Collection<RawScheduleEntry> apEntries = loadFlights(h, ld);
+			results.addAll(apEntries);
 			_eCache.add(new CacheableList<RawScheduleEntry>(h.getAirport().getIATA(), apEntries));
 			processedAirports.add(h.getAirport());
 			_apCache.add(processedAirports);
