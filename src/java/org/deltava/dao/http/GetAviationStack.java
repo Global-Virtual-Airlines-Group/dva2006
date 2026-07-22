@@ -54,17 +54,23 @@ public class GetAviationStack extends DAO {
 		}
 	}
 	
-	/**
-	 * Helper method to map an IATA equipment code to an aircraft type.
-	 * @param iataCode the IATA code
-	 * @param line the entry number
-	 * @return the Aircraft, or null if not found
+	/*
+	 * Helper method to map an IATA equipment code to an aircraft type, and log unknown codes.
 	 */
-	protected String getEquipmentType(String iataCode, int line) {
+	private String getEquipmentType(String iataCode, int line) {
 		if (StringUtils.isEmpty(iataCode)) return null;
 		Aircraft a = _iataMappings.get(iataCode.toUpperCase());
-		if (a == null) log.info("Unknown Equipment Type at Entry {} - {}", Integer.valueOf(line), iataCode);
+		if (a == null) log.warn("Unknown Equipment Type at Entry {} - {}", Integer.valueOf(line), iataCode);
 		return (a == null) ? null : a.getName();
+	}
+	
+	/*
+	 * Helper method to load Airports and log unknown codes.
+	 */
+	private static Airport getAirport(String code) {
+		Airport a = SystemData.getAirport(code);
+		if (a == null) log.warn("Unknown Airport - {}", code);
+		return a;
 	}
 	
 	/**
@@ -140,8 +146,8 @@ public class GetAviationStack extends DAO {
 					// Populate the schedule entry
 					RawScheduleEntry rse = new RawScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
 					rse.setSource(ScheduleSource.AVSTACK);
-					rse.setAirportD(SystemData.getAirport(dpo.getString("iataCode")));
-					rse.setAirportA(SystemData.getAirport(aro.getString("iataCode")));
+					rse.setAirportD(getAirport(dpo.getString("iataCode")));
+					rse.setAirportA(getAirport(aro.getString("iataCode")));
 					rse.setDaysOfWeek(fo.optString("weekday", String.valueOf(ld.getDayOfWeek().getValue())));
 					rse.setStartDate(ld);
 					rse.setEndDate(ld.plusDays(14));
@@ -150,7 +156,7 @@ public class GetAviationStack extends DAO {
 						log.warn(fo.getJSONObject("aircraft").toString());
 					
 					// Get local departure/arrival times
-					boolean isOK = true;
+					boolean isOK = rse.isPopulated();
 					try {
 						String stD = dpo.optString("scheduledTime"); String stA = aro.optString("scheduledTime");
 						if (StringUtils.isEmpty(stD) || StringUtils.isEmpty(stA)) continue;
