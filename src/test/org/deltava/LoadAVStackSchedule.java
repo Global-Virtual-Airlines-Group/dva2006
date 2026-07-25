@@ -1,12 +1,9 @@
 package org.deltava;
 
 import java.io.*;
-import java.sql.*;
 import java.util.*;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -17,65 +14,18 @@ import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
-import junit.framework.TestCase;
-
-public class LoadAVStackSchedule extends TestCase {
-	
-	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false&connectionTimezone=SERVER&allowPublicKeyRetrieval=true";
-	private static final String JDBC_USER = "luke";
-	private static final String JDBC_PWD = "test";
+public class LoadAVStackSchedule extends ScheduleTestCase {
 	
 	private static final String AV_API_KEY = "foo";
 	
 	private static final int SLEEP_INTERVAL = 62_500;
 	private static final Object KEY = "$KEY";
 	
-	private Logger log;
-	
-	private Connection _c;
-	private final Collection<Aircraft> _acTypes = new ArrayList<Aircraft>();
-	
 	private File _c1 = new File(System.getProperty("java.io.tmpdir"), "AirportCache.data");
 	private File _c2 = new File(System.getProperty("java.io.tmpdir"), "ScheduleEntries.data");
 	
 	private static final String AIRLINE_CODE = "WS";
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
-		log = LogManager.getLogger(LoadAVStackSchedule.class);
-
-		CacheManager.init("TEST");
-		SystemData.init();
-
-		// Connect to the database
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD);
-		assertNotNull(_c);
-		
-		// Load the airports/time zones
-		GetTimeZone tzdao = new GetTimeZone(_c);
-		tzdao.initAll();
-		GetAirport apdao = new GetAirport(_c);
-		SystemData.add("airports", apdao.getAll());
-		GetAirline aldao = new GetAirline(_c);
-		SystemData.add("airlines", aldao.getAll());
-		
-		// Get EQ types
-		GetAircraft acdao = new GetAircraft(_c);
-		_acTypes.addAll(acdao.getAircraftTypes());
-		
-		_c.setAutoCommit(false);
-		assertFalse(_c.getAutoCommit());
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		_c.close();
-		super.tearDown();
-	}
-	
 	private Collection<RawScheduleEntry> loadFlights(Hub h, LocalDate ld) throws DAOException {
 		
 		// Get the API DAO
@@ -141,8 +91,7 @@ public class LoadAVStackSchedule extends TestCase {
 		}
 		
 		// Get the Hub Airports
-		GetRawScheduleInfo rsdao = new GetRawScheduleInfo(_c);
-		Collection<Hub> hubs = rsdao.getHubs().stream().filter(h -> h.getAirline().equals(al)).collect(Collectors.toList());
+		Collection<Hub> hubs = _hubs.stream().filter(h -> h.getAirline().equals(al)).collect(Collectors.toList());
 		log.info("Loaded {} Hub Airports for {}", Integer.valueOf(hubs.size()), al.getName());
 		
 		// Load existing entries
