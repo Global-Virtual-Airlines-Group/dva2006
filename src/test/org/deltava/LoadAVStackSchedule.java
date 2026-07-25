@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.FlightNumber;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
@@ -71,17 +70,6 @@ public class LoadAVStackSchedule extends TestCase {
 		assertFalse(_c.getAutoCommit());
 	}
 	
-	private static class RawEntryComparator implements Comparator<RawScheduleEntry> {
-		
-		@Override
-		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
-			int tmpResult = rse1.getAirline().compareTo(rse2.getAirline());
-			tmpResult = (tmpResult == 0) ? rse1.getAirportD().compareTo(rse2.getAirportD()) : tmpResult;
-			tmpResult = (tmpResult == 0) ? rse1.getAirportA().compareTo(rse2.getAirportA()) : tmpResult;
-			return (tmpResult == 0) ? FlightNumber.compare(rse1, rse2) : tmpResult;
-		}
-	}
-
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
@@ -182,7 +170,7 @@ public class LoadAVStackSchedule extends TestCase {
 
 		// Export to JSON file
 		JSONScheduleFormatter fmt = new JSONScheduleFormatter();
-		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", String.format("avstack_%s.json", al.getCode().toLowerCase()))), 131072))) {
+		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("/Users/Luke", String.format("avstack_%s.json", al.getCode().toLowerCase()))), 131072))) {
 			pw.print(fmt.getHeader());
 			for (Iterator<RawScheduleEntry> i = results.iterator(); i.hasNext(); ) {
 				RawScheduleEntry rse = i.next();
