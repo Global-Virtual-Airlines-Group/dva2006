@@ -108,8 +108,8 @@ public class EliteScoringTask extends Task {
 				}
 				
 				// Load all previous Flight Reports for this Pilot
-				tt.mark("init");
-				if (p.getID() != lastID) {
+				tt.mark("init"); boolean isNewPilot = (p.getID() != lastID);
+				if (isNewPilot) {
 					log.info("New Pilot ({} {}), clearing Flights", p.getName(), p.getPilotCode());
 					lastID = p.getID();
 					pireps.clear();
@@ -123,7 +123,7 @@ public class EliteScoringTask extends Task {
 				
 				// Check for pending flights
 				if (pendingCount != 0) {
-					log.warn("{} has {} pending Flights, skipping Flight Report {}", p.getName(), Integer.valueOf(pendingCount), Integer.valueOf(fr.getID()));
+					log.log(isNewPilot ? Level.WARN : Level.INFO, "{} has {} pending Flights, skipping Flight Report {}", p.getName(), Integer.valueOf(pendingCount), Integer.valueOf(fr.getID()));
 					continue;
 				}
 				
