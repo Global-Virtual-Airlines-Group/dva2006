@@ -2,9 +2,7 @@
 package org.deltava.util;
 
 import java.io.*;
-import java.util.*;
 import java.nio.file.*;
-import java.nio.file.attribute.*;
 
 /**
  * A utility class for file system functions. 
