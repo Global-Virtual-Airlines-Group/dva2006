@@ -150,7 +150,7 @@ public class GetAviationStack extends DAO {
 					rse.setAirportA(getAirport(aro.getString("iataCode")));
 					rse.setDaysOfWeek(fo.optString("weekday", String.valueOf(ld.getDayOfWeek().getValue())));
 					rse.setStartDate(ld);
-					rse.setEndDate(ld.plusDays(14));
+					rse.setEndDate(ld.plusDays(1));
 					rse.setEquipmentType(getEquipmentType(eqType, x));
 					if (StringUtils.isEmpty(rse.getEquipmentType()))
 						log.warn(fo.getJSONObject("aircraft").toString());
