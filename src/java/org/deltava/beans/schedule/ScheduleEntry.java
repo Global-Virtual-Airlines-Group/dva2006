@@ -173,6 +173,15 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	public String getRemarks() {
 		return _remarks;
 	}
+	
+	/**
+	 * Returns if this flight is a code share flight.
+	 * @return TRUE if the code share flight code is populated, otherwise FALSE
+	 * @see ScheduleEntry#getCodeShare()
+	 */
+	public boolean isCodeShare() {
+		return (_codeShare != null);
+	}
 
 	/**
 	 * Sets the database ID of this schedule entry. <i>NOT IMPLEMENTED</i>
