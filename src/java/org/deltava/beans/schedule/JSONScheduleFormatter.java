@@ -46,7 +46,8 @@ public class JSONScheduleFormatter implements ScheduleFormatter {
 		jo.putOpt("comments", rse.getComments());
 		jo.put("timeD", formatTime(rse.getTimeD()));
 		jo.put("timeA", formatTime(rse.getTimeA()));
-		jo.optString("codeshare", rse.getCodeShare());
+		if (rse.isCodeShare())
+			jo.put("codeshare", rse.getCodeShare());
 		if (se.getArrivalPlusDays() != 0)
 			jo.put("plusDays", se.getArrivalPlusDays());
 		
