@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store raw schedule statistics data.
  * @author Luke
- * @version 10.5
+ * @version 12.5
  * @since 9.0
  */
 
@@ -288,9 +288,9 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable, CalendarEntry 
 		ScheduleSourceInfo ssi = (ScheduleSourceInfo) o;
 		Instant d2 = ssi.getDate();
 		if (_importDate == null)
-			return (d2 == null) ? _src.compareTo(ssi.getSource()) : 0;
+			return (d2 == null) ? ScheduleSource.comparator().compare(_src, ssi._src) : 0;
 
-		return (d2 == null) ? 1 : _importDate.compareTo(d2) ;
+		return (d2 == null) ? 1 : _importDate.compareTo(d2);
 	}
 	
 	@Override
