@@ -61,6 +61,7 @@ public class GetJSONSchedule extends ScheduleLoadDAO {
 				rse.setForceInclude(so.getBoolean("forceInclude"));
 				rse.setRemarks(so.optString("remarks"));
 				rse.setComments(so.optString("comments"));
+				rse.setCodeShare(so.optString("codeshare"));
 				results.add(rse);
 			} catch (InvalidDataException ide) {
 				log.warn(ide.getMessage());
