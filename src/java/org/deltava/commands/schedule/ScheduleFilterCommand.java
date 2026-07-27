@@ -63,7 +63,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 
 		// Load import options
 		PurgeOptions doPurge = EnumUtils.parse(PurgeOptions.class, ctx.getParameter("doPurge"), PurgeOptions.EXISTING);
-		Collection<ScheduleSource> srcs = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toCollection(TreeSet::new));
+		Collection<ScheduleSource> srcs = ctx.getParameters("src", Collections.emptyList()).stream().map(ScheduleSource::valueOf).collect(Collectors.toCollection(TreeSet::new));
 		Collection<ScheduleSourceHistory> sources = new LinkedHashSet<ScheduleSourceHistory>();
 		for (ScheduleSource src : srcs) {
 			ScheduleSourceHistory srcInfo = new ScheduleSourceHistory(src);
