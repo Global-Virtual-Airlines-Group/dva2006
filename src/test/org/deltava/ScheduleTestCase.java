@@ -40,6 +40,7 @@ public class ScheduleTestCase extends TestCase {
 		SystemData.init();
 		
 		// Check for existing files
+		DATADIR.mkdir();
 		if (!FileUtils.exists(DATADIR, "tz.dat")) saveTZ(); else loadTZ();
 		if (!FileUtils.exists(DATADIR, "airport.dat")) saveAirports(); else loadAirports();
 		if (!FileUtils.exists(DATADIR, "aircraft.dat")) saveAircraft(); else loadAircraft();
