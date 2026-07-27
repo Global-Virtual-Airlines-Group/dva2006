@@ -1,6 +1,8 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A bean to track Airline Hub Airports. This is used to reduce the numbner of schedule API calls since most Airlines operate
  * in a Hub and Spoke pattern. We can therefore query arrivals and departures from the Hubs.
@@ -9,7 +11,7 @@ package org.deltava.beans.schedule;
  * @since 12.5
  */
 
-public class Hub implements java.io.Serializable, Comparable<Hub> {
+public class Hub implements Cacheable, Comparable<Hub> {
 
 	private final Airline _a;
 	private final Airport _ap;
@@ -66,6 +68,11 @@ public class Hub implements java.io.Serializable, Comparable<Hub> {
 	 */
 	public boolean matches(Airline al, Airport a) {
 		return _a.equals(al) && _ap.equals(a);
+	}
+	
+	@Override
+	public Object cacheKey() {
+		return toString();
 	}
 	
 	@Override
