@@ -21,6 +21,13 @@ public class GetRawSchedule extends DAO {
 	
 	private static final Cache<CacheableCollection<ScheduleSourceInfo>> _srcCache = CacheManager.getCollection(ScheduleSourceInfo.class, "ScheduleSource"); 
 
+	private static class SSInfoComparator implements Comparator<ScheduleSourceInfo> {
+		@Override
+		public int compare(ScheduleSourceInfo ss1, ScheduleSourceInfo ss2) {
+			return ScheduleSource.comparator().compare(ss1.getSource(), ss2.getSource());
+		}
+	}
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -53,7 +60,7 @@ public class GetRawSchedule extends DAO {
 		sqlBuf.append(".RAW_SCHEDULE_DATES RSD ON (RS.SRC=RSD.SRC) GROUP BY SRC, AIRLINE ORDER BY SRC");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			Collection<ScheduleSourceInfo> srcs = new LinkedHashSet<ScheduleSourceInfo>();
+			Collection<ScheduleSourceInfo> srcs = new TreeSet<ScheduleSourceInfo>(new SSInfoComparator());
 			ScheduleSourceInfo inf = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
@@ -74,11 +81,7 @@ public class GetRawSchedule extends DAO {
 			
 			// Filter and add to the cache
 			results = new CacheableSet<ScheduleSourceInfo>(cacheKey);
-			if (isLoaded)
-				srcs.stream().filter(ScheduleSourceInfo::getActive).forEach(results::add);
-			else
-				results.addAll(srcs);
-			
+			srcs.stream().filter(isLoaded ? ScheduleSourceInfo::getActive : Objects::nonNull).forEach(results::add);
 			_srcCache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
