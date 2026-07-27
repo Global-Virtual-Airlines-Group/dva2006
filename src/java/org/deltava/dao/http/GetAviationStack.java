@@ -124,8 +124,10 @@ public class GetAviationStack extends DAO {
 				JSONObject po = jo.getJSONObject("pagination");
 				results.setTotal(po.getInt("total"));
 				results.setCount(po.getInt("count"));
-				if (results.getCount() == 0)
+				if (results.getCount() == 0) {
+					log.warn("AviationStack returned {} / {}", Integer.valueOf(results.getCount()), Integer.valueOf(results.getTotal()));
 					return results;
+				}
 				
 				// Load scehdule entries
 				Object oA = jo.get("data");
