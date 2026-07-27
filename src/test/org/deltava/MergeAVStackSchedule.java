@@ -19,6 +19,9 @@ public class MergeAVStackSchedule extends ScheduleTestCase {
 		
 		File fd = new File("C:\\Temp");
 		assertTrue(fd.isDirectory());
+		File ojf = new File(fd, "avstack.json");
+		if (ojf.exists()) return;
+		
 		FilenameFilter ff = FileUtils.fileFilter("avstack", "json");
 		String[] fileNames = fd.list(ff);
 		
@@ -47,7 +50,7 @@ public class MergeAVStackSchedule extends ScheduleTestCase {
 		jo.put("entries", ja);
 		
 		// Write the merge object
-		try (FileWriter fw = new FileWriter(new File(fd, "avstack.json"))) {
+		try (FileWriter fw = new FileWriter(ojf)) {
 			fw.write(jo.toString(2));
 			fw.write("\n");
 		}
@@ -70,7 +73,7 @@ public class MergeAVStackSchedule extends ScheduleTestCase {
 		// Save to the database
 		try (Connection con = getConnection()) {
 			SetSchedule wdao = new SetSchedule(con);
-			wdao.purge(ScheduleSource.AVSTACK);
+			wdao.purgeRaw(ScheduleSource.AVSTACK);
 			for (RawScheduleEntry rse : entries)
 				wdao.writeRaw(rse, false);
 			
