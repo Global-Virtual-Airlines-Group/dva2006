@@ -2,6 +2,7 @@ package org.deltava;
 
 import java.io.*;
 import java.util.*;
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
@@ -18,13 +19,14 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 	
 	private static final String AV_API_KEY = "foo";
 	
-	private static final int SLEEP_INTERVAL = 62_500;
+	private static final int SLEEP_INTERVAL = 10_275;
 	private static final Object KEY = "$KEY";
 	
 	private File _c1 = new File(System.getProperty("java.io.tmpdir"), "AirportCache.data");
 	private File _c2 = new File(System.getProperty("java.io.tmpdir"), "ScheduleEntries.data");
 	
-	private static final String AIRLINE_CODE = "WS";
+	private static final int DAYS_FWD = 13;
+	private static final String AIRLINE_CODE = "AM";
 
 	private Collection<RawScheduleEntry> loadFlights(Hub h, LocalDate ld) throws DAOException {
 		
@@ -32,7 +34,7 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 		GetAviationStack avdao = new GetAviationStack();
 		avdao.setAccessKey(AV_API_KEY);
 		avdao.setConnectTimeout(3500);
-		avdao.setReadTimeout(19500);
+		avdao.setReadTimeout(27500);
 		avdao.setCompression(Compression.GZIP, Compression.DEFLATE);
 		avdao.setAircraft(_acTypes);
 
@@ -73,13 +75,15 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 	}
 	
 	public void testLoadSchedule() throws Exception {
-
-		Airline al = SystemData.getAirline(AIRLINE_CODE);
-		assertNotNull(al);
-		log.info("Loading Flights for {}", al.getName());
 		
 		// Get the effective date
-		LocalDate ld = LocalDate.now().plusDays(14);
+		final LocalDate ld = LocalDate.now().plusDays(DAYS_FWD);
+		final String dt = StringUtils.format(ld, "MM-dd-yyyy");
+		
+		// Get the Airline
+		final Airline al = SystemData.getAirline(AIRLINE_CODE);
+		assertNotNull(al);
+		log.info("Loading Flights for {} on {}", al.getName(), dt);
 		
 		// Get the caches
 		final CacheableCollection<Airport> processedAirports = new CacheableSet<Airport>(KEY);
@@ -100,7 +104,6 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 			log.info("Reloading cached data for {}", ap.getIATA());
 			CacheableCollection<RawScheduleEntry> cachedEntries = _eCache.get(ap.getIATA());
 			if (cachedEntries != null) {
-				cachedEntries.removeIf(rse -> !rse.isPopulated());
 				log.info("Restored {} Schedule Entries for {}", Integer.valueOf(cachedEntries.size()), ap.getIATA());
 				results.addAll(cachedEntries);
 				hubs.remove(new Hub(al, ap));
@@ -108,7 +111,7 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 		}
 		
 		// Walk through the Hubs
-		log.info("Processing {} Hub Airports", Integer.valueOf(hubs.size()));
+		if (!hubs.isEmpty()) log.info("Processing {} Hub Airports", Integer.valueOf(hubs.size()));
 		for (Hub h : hubs) {
 			Collection<RawScheduleEntry> apEntries = loadFlights(h, ld);
 			results.addAll(apEntries);
@@ -116,10 +119,10 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 			processedAirports.add(h.getAirport());
 			_apCache.add(processedAirports);
 		}
-
+		
 		// Export to JSON file
-		JSONScheduleFormatter fmt = new JSONScheduleFormatter();
-		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("/Users/Luke", String.format("avstack_%s.json", al.getCode().toLowerCase()))), 131072))) {
+		JSONScheduleFormatter fmt = new JSONScheduleFormatter(); 
+		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", String.format("avstack_%s_%s.json", al.getCode().toLowerCase(), dt))), 131072))) {
 			pw.print(fmt.getHeader());
 			for (Iterator<RawScheduleEntry> i = results.iterator(); i.hasNext(); ) {
 				RawScheduleEntry rse = i.next();
@@ -132,8 +135,38 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 			
 			pw.println(fmt.getFooter());
 		}
+		
+		// Find and remove codeshares
+		long csSize = results.stream().filter(ScheduleEntry::isCodeShare).count();
+		log.info("Removing {} code shared flights", Long.valueOf(csSize));
+		results.removeIf(ScheduleEntry::isCodeShare);
+		
+		// Write to database
+		try (Connection con = getConnection()) {
+			GetRawSchedule rsdao = new GetRawSchedule(con);
+			List<RawScheduleEntry> rsEntries = rsdao.load(ScheduleSource.AVSTACK, null);
+			
+			// Get existing airline count
+			int eeCount = rsEntries.size();
+			rsEntries.removeIf(rse -> al.equals(rse.getAirline()) && ld.equals(rse.getStartDate()));
+			log.info("Removed {} of {} existing entries", Integer.valueOf(eeCount - rsEntries.size()), Long.valueOf(eeCount));
+			
+			// Add new entries and update line numbers
+			rsEntries.addAll(results);
+			ScheduleLegHelper.calculateLineNumbers(rsEntries);
+			
+			// Write the entries
+			SetSchedule swdao = new SetSchedule(con);
+			swdao.purgeRaw(ScheduleSource.AVSTACK);
+			for (RawScheduleEntry rse : rsEntries)
+				swdao.writeRaw(rse, false);
+			
+			con.commit();
+			log.info("Wrote {} enries to database", Integer.valueOf(rsEntries.size()));
+		}
 
-		/* _apCache.clear();
-		_eCache.clear(); */
+		_apCache.clear();
+		_eCache.clear();
+		log.info("Complete");
 	}
 }
