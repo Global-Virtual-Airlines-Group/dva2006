@@ -70,15 +70,20 @@ public class MergeAVStackSchedule extends ScheduleTestCase {
 			assertFalse(entries.isEmpty());
 		}
 		
+		log.info("Loaded {} schedule entries", Integer.valueOf(entries.size()));
+		Collection<RawScheduleEntry> results = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
+		results.addAll(entries);
+		log.info("Writing {} schedule entries", Integer.valueOf(results.size()));
+		
 		// Save to the database
 		try (Connection con = getConnection()) {
 			SetSchedule wdao = new SetSchedule(con);
 			wdao.purgeRaw(ScheduleSource.AVSTACK);
-			for (RawScheduleEntry rse : entries)
+			for (RawScheduleEntry rse : results)
 				wdao.writeRaw(rse, false);
 			
 			con.commit();
-			log.info("Wrote {} entries to database", Integer.valueOf(entries.size()));
+			log.info("Wrote {} entries to database", Integer.valueOf(results.size()));
 		}
 	}
 }
