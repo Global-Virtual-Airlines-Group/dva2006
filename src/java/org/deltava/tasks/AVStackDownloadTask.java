@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 
 public class AVStackDownloadTask extends Task {
 
-	private static final int SLEEP_INTERVAL = 62_500;
+	private static final int SLEEP_INTERVAL = 10_500;
 	
 	private static final Cache<CacheableCollection<RawScheduleEntry>> _eCache = CacheManager.getCollection(RawScheduleEntry.class, "AVStackEntries");
 	
@@ -37,13 +37,14 @@ public class AVStackDownloadTask extends Task {
 	 * Helper method to load departure and arrival flights from a given Hub airport, handling pagination.
 	 */
 	private Collection<RawScheduleEntry> loadFlights(LocalDate dt, Hub h) throws DAOException {
+		boolean isLargeHub = (h.getDestinationCount() > 20);
 		Collection<RawScheduleEntry> apEntries = new ArrayList<RawScheduleEntry>();
 		
 		// Get the AviationStack DAO
 		GetAviationStack avdao = new GetAviationStack();
 		avdao.setAccessKey(SystemData.get("security.key.avstack"));
 		avdao.setConnectTimeout(3500);
-		avdao.setReadTimeout(22500);
+		avdao.setReadTimeout(29500);
 		avdao.setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
 
 		// Load Departures
@@ -61,6 +62,10 @@ public class AVStackDownloadTask extends Task {
 			log.info("Sleeping for {}ms", Integer.valueOf(SLEEP_INTERVAL));
 			ThreadUtils.sleep(SLEEP_INTERVAL);
 		}
+		
+		// Check for empty result for large hub - this is usually an error
+		if (isLargeHub && apEntries.isEmpty())
+			return Collections.emptyList();
 
 		// Load Arrivals
 		ofs = 0;
@@ -101,8 +106,8 @@ public class AVStackDownloadTask extends Task {
 			Collection<Airline> airlines = hubs.stream().map(Hub::getAirline).collect(Collectors.toCollection(TreeSet::new));
 			for (Airline al : airlines) {
 				if (rsdao.isLoaded(ScheduleSource.AVSTACK, al, ld)) {
-					log.info("Removing Hubs for already loaded {}", al.getName());
-					hubs.removeIf(h -> h.getAirline().equals(al));
+					if (hubs.removeIf(h -> h.getAirline().equals(al)))
+						log.info("Removing Hubs for already loaded {}", al.getName());
 				}
 			}
 		} catch (DAOException de) {
@@ -112,6 +117,7 @@ public class AVStackDownloadTask extends Task {
 		}
 
 		// Walk through the Hubs. Load departures and arrivals
+		boolean isComplete = true;
 		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		try {
 			log.info("Hub Airports = {}", hubs);
@@ -119,8 +125,15 @@ public class AVStackDownloadTask extends Task {
 				CacheableCollection<RawScheduleEntry> entries = _eCache.get(h.toString());
 				if (entries == null) {
 					entries = new CacheableList<RawScheduleEntry>(h.toString());
-					entries.addAll(loadFlights(ld, h));
-					_eCache.add(entries);
+					boolean isLargeHub = (h.getDestinationCount() > 20);					
+					Collection<RawScheduleEntry> flights = loadFlights(ld, h);
+					if (!isLargeHub || !flights.isEmpty()) {
+						entries.addAll(flights);
+						_eCache.add(entries);
+					} else {
+						log.error("Returned no {} Flights for large Hub {} ({})", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
+						isComplete = false;
+					}
 				} else
 					log.info("Retrieved {} {} flights for {} from cache", Integer.valueOf(entries.size()), h.getAirline().getName(), h.getAirport().getIATA());
 						
@@ -129,12 +142,21 @@ public class AVStackDownloadTask extends Task {
 		} catch (DAOException de) {
 			log.atError().withThrowable(de).log(de.getMessage());
 		}
+		
+		// Remove code shares
+		int oldSize = results.size();
+		if (results.removeIf(ScheduleEntry::isCodeShare))
+			log.info("Removed {} code share flights", Integer.valueOf(oldSize - results.size()));
 
 		// Eliminate duplicates
 		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
 		rawEntries.addAll(results);
 		log.info("Eliminated {}/{} duplicate flights", Integer.valueOf(results.size() - rawEntries.size()), Integer.valueOf(results.size()));
 		results.clear();
+		if (!isComplete) {
+			log.error("Aborting due to incomplete download");
+			return;
+		}
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -164,8 +186,6 @@ public class AVStackDownloadTask extends Task {
 			ctx.release();
 		}
 
-		// Forward to the JSP
-		_eCache.clear();
 		log.info("Complete");
 	}
 }
