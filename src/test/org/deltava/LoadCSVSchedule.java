@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.Flight;
+import org.deltava.beans.FlightNumber;
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
@@ -85,7 +85,7 @@ public class LoadCSVSchedule extends TestCase {
 	}
 	
 	private RawScheduleEntry parse(int ln, CSVTokens csv, String airlineCode) {
-		Flight f = FlightCodeParser.parse(csv.get(3), airlineCode);
+		FlightNumber f = FlightCodeParser.parse(csv.get(3), airlineCode);
 		if (f == null) {
 			log.warn("Unparseable flight {} at Line {}", csv.get(3), Integer.valueOf(ln));
 			return null;

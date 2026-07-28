@@ -1,12 +1,11 @@
-// Copyright 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2018, 2019, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 import java.time.Instant;
 
-import org.deltava.beans.Flight;
-import org.deltava.beans.Simulator;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -15,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for reading XACARS data from the database.
  * @author Luke
- * @version 9.0
+ * @version 12.5
  * @since 4.1
  */
 
@@ -32,15 +31,15 @@ public class GetXACARS extends DAO {
 	/**
 	 * Retrieves an XACARS flight ID from a flight number and user. 
 	 * @param userID the user's database ID
-	 * @param f the Flight information
+	 * @param fn the FlightNumber
 	 * @return a Flight ID, or zero if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getID(int userID, Flight f) throws DAOException {
+	public int getID(int userID, FlightNumber fn) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID FROM xacars.FLIGHTS WHERE (PILOT_ID=?) AND (AIRLINE=?) AND (FLIGHT=?) ORDER BY START_TIME DESC LIMIT 1")) {
 			ps.setInt(1, userID);
-			ps.setString(2, f.getAirline().getCode());
-			ps.setInt(3, f.getFlightNumber());
+			ps.setString(2, fn.getAirline().getCode());
+			ps.setInt(3, fn.getFlightNumber());
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) : 0;
 			}

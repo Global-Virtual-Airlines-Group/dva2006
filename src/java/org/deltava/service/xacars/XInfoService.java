@@ -1,4 +1,4 @@
-// Copyright 2011, 2014, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016, 2018, 2019, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 10.1
+ * @version 12.5
  * @since 4.1
  */
 
@@ -43,7 +43,7 @@ public class XInfoService extends XAService {
 
 		// Try and parse the flight code and user ID
 		UserID uid = new UserID(ctx.getParameter("DATA4"));
-		Flight f = FlightCodeParser.parse(ctx.getParameter("DATA2"));
+		FlightNumber f = FlightCodeParser.parse(ctx.getParameter("DATA2"), uid.getAirlineCode());
 		FlightReport fr = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -75,10 +75,6 @@ public class XInfoService extends XAService {
 				GetRawSchedule rsdao = new GetRawSchedule(con);
 				GetSchedule sdao = new GetSchedule(con);
 				sdao.setSources(rsdao.getSources(true, ctx.getDB()));
-				f.setLeg(0);
-				if (f.getAirline() == null)
-					f.setAirline(SystemData.getAirline(uid.getAirlineCode()));
-				
 				ScheduleEntry se = sdao.get(f, ctx.getDB());
 				if (se != null)
 					fr = new FlightReport(se);

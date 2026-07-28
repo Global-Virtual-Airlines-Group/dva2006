@@ -4,7 +4,7 @@ package org.deltava.beans.schedule;
 import java.util.*;
 import java.time.*;
 
-import org.deltava.beans.Flight;
+import org.deltava.beans.FlightNumber;
 
 /**
  * A Schedule Entry with code share and day of week data. 
@@ -40,13 +40,13 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 * Creates the bean from an existing Flight.
 	 * @param f the Flight
 	 */
-	public RawScheduleEntry(Flight f) {
+	public RawScheduleEntry(FlightNumber f) {
 		super(f.getAirline(), f.getFlightNumber(), f.getLeg());
 	}
 
 	/**
 	 * Returns the day of the week this flight is operated on.
-	 * @return a DayOfWeek enum
+	 * @return a DayOfWeek enumeration
 	 */
 	public Collection<DayOfWeek> getDays() {
 		return _days;
