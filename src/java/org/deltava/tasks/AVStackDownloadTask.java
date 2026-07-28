@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 
 public class AVStackDownloadTask extends Task {
 
-	private static final int SLEEP_INTERVAL = 10_500;
+	private static final int SLEEP_INTERVAL = 10_750;
 	
 	private static final Cache<CacheableCollection<RawScheduleEntry>> _eCache = CacheManager.getCollection(RawScheduleEntry.class, "AVStackEntries");
 	
