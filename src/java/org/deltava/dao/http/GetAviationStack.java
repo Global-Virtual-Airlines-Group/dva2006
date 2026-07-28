@@ -10,6 +10,7 @@ import java.time.temporal.ChronoField;
 import org.json.*;
 import org.apache.logging.log4j.*;
 
+import org.deltava.beans.FlightNumber;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
@@ -32,6 +33,39 @@ public class GetAviationStack extends DAO {
 	
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 	private String _accessKey;
+
+	/*
+	 * Helper class to temporarily persist flight numbers.
+	 */
+	private class FlightData implements FlightNumber {
+		private final Airline _al;
+		private final int _flight;
+		
+		FlightData(Airline al, int flight) {
+			_al = al;
+			_flight = flight;
+		}
+
+		@Override
+		public Airline getAirline() {
+			return _al;
+		}
+
+		@Override
+		public int getFlightNumber() {
+			return _flight;
+		}
+
+		@Override
+		public int getLeg() {
+			return 1;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("%s%d", _al.getCode(), Integer.valueOf(_flight));
+		}
+	}
 	
 	/**
 	 * Updates the AviationStack API access key to use.
@@ -125,7 +159,7 @@ public class GetAviationStack extends DAO {
 				results.setTotal(po.getInt("total"));
 				results.setCount(po.getInt("count"));
 				if (results.getCount() == 0) {
-					log.warn("AviationStack returned {} / {}", Integer.valueOf(results.getCount()), Integer.valueOf(results.getTotal()));
+					log.warn("AviationStack returned {} / {} for {}", Integer.valueOf(results.getCount()), Integer.valueOf(results.getTotal()), a.getIATA());
 					return results;
 				}
 				
@@ -145,8 +179,23 @@ public class GetAviationStack extends DAO {
 					String eqType = fo.getJSONObject("aircraft").optString("modelCode");
 					if (StringUtils.isEmpty(eqType)) continue;
 					
+					// Check for codeshares - this is the 'real' flight number, so if we know the airline, swap it out.
+					FlightNumber f = new FlightData(al, fo.getJSONObject("flight").getInt("number"));
+					FlightNumber cs = null;
+					JSONObject cso = fo.optJSONObject("codeshared");
+					if (cso != null) {
+						Airline ca = SystemData.getAirline(cso.getJSONObject("airline").getString("iataCode"));
+						if (ca != null) {
+							cs = f;
+							f = new FlightData(ca, cso.getJSONObject("flight").getInt("number"));
+						} else {
+							log.info("Skipping unknown codeshare {} for {}");
+							continue;
+						}
+					}
+					
 					// Populate the schedule entry
-					RawScheduleEntry rse = new RawScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
+					RawScheduleEntry rse = new RawScheduleEntry(f);
 					rse.setSource(ScheduleSource.AVSTACK);
 					rse.setAirportD(getAirport(dpo.getString("iataCode")));
 					rse.setAirportA(getAirport(aro.getString("iataCode")));
@@ -172,14 +221,10 @@ public class GetAviationStack extends DAO {
 						isOK = false;
 					}
 					
-					// Check for codeshares - this is the 'real' flight number, so keep it if we know the airline. Let downstream deal with it.
-					JSONObject cso = fo.optJSONObject("codeshared"); 
-					if (cso != null) {
-						Airline ca = SystemData.getAirline(cso.getJSONObject("airline").getString("iataCode"));
-						if (ca != null)
-							rse.setCodeShare(cso.getJSONObject("flight").getString("iataNumber").toUpperCase());
-						else
-							isOK = false;
+					// Check for codeshares - this is the 'real' flight number, so if we know the airline, swap it out.
+					if (cs != null) {
+						rse.setCodeShare(cs.toString());
+						rse.setRemarks(String.format("%s code share (%s)", al.getName(), cs.toString()));
 					}
 						
 					if (isOK)
