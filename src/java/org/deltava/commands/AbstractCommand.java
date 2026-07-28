@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a CommandException
 	 */
 	protected static CommandException notFoundException(String msg, int id) {
-		return new CommandException(String.format("%s - %d", msg, Integer.valueOf(id)), false) {{ setStatusCode(SC_NOT_FOUND); setWarning(id == 0); }};
+		return new CommandException(String.format("%s - %d", msg, Integer.valueOf(id)), false) {{ setStatusCode(SC_NOT_FOUND); setSuppressed(id == 0); }};
 	}
 	
 	/**
