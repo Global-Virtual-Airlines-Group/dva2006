@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A utility class to pass asynchronous reverse DNS requests to a separate daemon thread.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 12.4
  */
 
@@ -114,7 +114,7 @@ public class Resolver {
 			log.debug("{} resolves to {}", addr, hostName);
 			return hostName;
 		} catch (InterruptedException | TimeoutException ie) {
-			log.info("{} timed out after {}ms", addr, Integer.valueOf(w));
+			log.debug("{} timed out after {}ms", addr, Integer.valueOf(w));
 		} catch (RejectedExecutionException re) {
 			_errs.incrementAndGet();
 			log.warn("Cannot resolve {} - queue full", addr);
