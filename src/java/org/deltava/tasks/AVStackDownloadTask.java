@@ -100,6 +100,7 @@ public class AVStackDownloadTask extends Task {
 
 		// Get the effective date
 		LocalDate ld = LocalDate.now().plusDays(14);
+		log.warn("Loading Schedules for {}", StringUtils.format(ld, "MM/dd/yyyy"));
 
 		// Load Hub airports and Airlines
 		SequencedCollection<Hub> hubs = new LinkedHashSet<Hub>();

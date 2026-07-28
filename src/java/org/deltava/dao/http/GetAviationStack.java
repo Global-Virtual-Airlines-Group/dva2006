@@ -147,7 +147,7 @@ public class GetAviationStack extends DAO {
 					if (StringUtils.isEmpty(eqType)) continue;
 					
 					// Check for codeshares - this is the 'real' flight number, so if we know the airline, swap it out.
-					FlightNumber f = new ScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
+					ScheduleEntry f = new ScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
 					FlightNumber cs = null;
 					JSONObject cso = fo.optJSONObject("codeshared");
 					if (cso != null) {
@@ -156,7 +156,8 @@ public class GetAviationStack extends DAO {
 							cs = f;
 							f = new ScheduleEntry(ca, cso.getJSONObject("flight").getInt("number"), 1);
 						} else {
-							log.info("Skipping unknown codeshare {} for {}");
+							String flightCode = cso.getJSONObject("flight").getString("iataNumber");
+							log.info("Skipping unknown codeshare {} for {}", flightCode.toUpperCase(), f.getShortCode());
 							continue;
 						}
 					}
