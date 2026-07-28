@@ -34,39 +34,6 @@ public class GetAviationStack extends DAO {
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 	private String _accessKey;
 
-	/*
-	 * Helper class to temporarily persist flight numbers.
-	 */
-	private class FlightData implements FlightNumber {
-		private final Airline _al;
-		private final int _flight;
-		
-		FlightData(Airline al, int flight) {
-			_al = al;
-			_flight = flight;
-		}
-
-		@Override
-		public Airline getAirline() {
-			return _al;
-		}
-
-		@Override
-		public int getFlightNumber() {
-			return _flight;
-		}
-
-		@Override
-		public int getLeg() {
-			return 1;
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("%s%d", _al.getCode(), Integer.valueOf(_flight));
-		}
-	}
-	
 	/**
 	 * Updates the AviationStack API access key to use.
 	 * @param key the access key
@@ -180,14 +147,14 @@ public class GetAviationStack extends DAO {
 					if (StringUtils.isEmpty(eqType)) continue;
 					
 					// Check for codeshares - this is the 'real' flight number, so if we know the airline, swap it out.
-					FlightNumber f = new FlightData(al, fo.getJSONObject("flight").getInt("number"));
+					FlightNumber f = new ScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
 					FlightNumber cs = null;
 					JSONObject cso = fo.optJSONObject("codeshared");
 					if (cso != null) {
 						Airline ca = SystemData.getAirline(cso.getJSONObject("airline").getString("iataCode"));
 						if (ca != null) {
 							cs = f;
-							f = new FlightData(ca, cso.getJSONObject("flight").getInt("number"));
+							f = new ScheduleEntry(ca, cso.getJSONObject("flight").getInt("number"), 1);
 						} else {
 							log.info("Skipping unknown codeshare {} for {}");
 							continue;
