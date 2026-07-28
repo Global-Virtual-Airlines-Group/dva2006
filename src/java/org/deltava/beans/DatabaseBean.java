@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.util.StringUtils;
@@ -7,7 +7,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A common abstract class for beans stored in the database with a numeric primary key.
  * @author Luke
- * @version 11.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -58,15 +58,15 @@ public abstract class DatabaseBean implements IDBean, Cacheable, Comparable<Obje
 	 */
 	public static void validateID(int oldID, int newID, boolean allowZero) throws IllegalArgumentException, IllegalStateException {
 		if (newID < (allowZero ? 0 : 1))
-			throw new IllegalArgumentException("Invalid Database ID");
+			throw new IllegalArgumentException(String.format("Invalid Database ID - %d", Integer.valueOf(newID)));
 		if ((oldID != 0) && (oldID != newID))
-			throw new IllegalStateException("Cannot change Datbase ID from " + oldID + " to " + newID);
+			throw new IllegalStateException(String.format("Cannot change ID from %d to %d", Integer.valueOf(oldID), Integer.valueOf(newID)));
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		return (o instanceof DatabaseBean) && (compareTo(o) == 0) && (getClass() == o.getClass());
+		return (o instanceof IDBean) && (compareTo(o) == 0) && (getClass() == o.getClass());
 	}
 
 	@Override
