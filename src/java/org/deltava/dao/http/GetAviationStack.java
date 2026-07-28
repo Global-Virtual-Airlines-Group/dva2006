@@ -10,7 +10,6 @@ import java.time.temporal.ChronoField;
 import org.json.*;
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.FlightNumber;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
@@ -148,7 +147,7 @@ public class GetAviationStack extends DAO {
 					
 					// Check for codeshares - this is the 'real' flight number, so if we know the airline, swap it out.
 					ScheduleEntry f = new ScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
-					FlightNumber cs = null;
+					ScheduleEntry cs = null;
 					JSONObject cso = fo.optJSONObject("codeshared");
 					if (cso != null) {
 						Airline ca = SystemData.getAirline(cso.getJSONObject("airline").getString("iataCode"));
@@ -191,8 +190,8 @@ public class GetAviationStack extends DAO {
 					
 					// Check for codeshares - this is the 'real' flight number, so if we know the airline, swap it out.
 					if (cs != null) {
-						rse.setCodeShare(cs.toString());
-						rse.setRemarks(String.format("%s code share (%s)", al.getName(), cs.toString()));
+						rse.setCodeShare(cs.getShortCode());
+						rse.setRemarks(String.format("%s code share (%s)", al.getName(), cs.getShortCode()));
 					}
 						
 					if (isOK)
