@@ -116,12 +116,12 @@ public class AVStackDownloadTask extends Task {
 			Collection<Airline> airlines = hubs.stream().map(Hub::getAirline).collect(Collectors.toCollection(TreeSet::new));
 			for (Airline al : airlines) {
 				if (rsdao.isLoaded(ScheduleSource.AVSTACK, al, ld)) {
-					if (hubs.removeIf(h -> h.getAirline().equals(al)))
-						log.info("Removing Hubs for already loaded {}", al.getName());
+					hubs.removeIf(h -> h.getAirline().equals(al));
+					log.info("Removing Hubs for already loaded {}", al.getName());
 				}
 			}
 			
-			// Load aircraft types
+			// Load aircraft types for IATA/ICAO lookup
 			GetAircraft acdao = new GetAircraft(con);
 			acTypes.addAll(acdao.getAll());
 		} catch (DAOException de) {
@@ -158,9 +158,9 @@ public class AVStackDownloadTask extends Task {
 		}
 		
 		// Remove code shares
-		int oldSize = results.size();
+		/* int oldSize = results.size();
 		if (results.removeIf(ScheduleEntry::isCodeShare))
-			log.info("Removed {} code share flights", Integer.valueOf(oldSize - results.size()));
+			log.info("Removed {} code share flights", Integer.valueOf(oldSize - results.size())); */
 
 		// Eliminate duplicates
 		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
@@ -179,10 +179,15 @@ public class AVStackDownloadTask extends Task {
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			rsdao.getSources(true, ctx.getDB());
 			List<RawScheduleEntry> todaysFlights = rsdao.load(ScheduleSource.AVSTACK, null);
-			todaysFlights.removeIf(rse -> rse.getStartDate().equals(ld));
-			todaysFlights.addAll(rawEntries);
+			
+			// Clean out processed hubs
+			for (Hub h : hubs) {
+				if (todaysFlights.removeIf(rse -> rse.getStartDate().equals(ld) && h.hasRoute(rse)))
+					log.info("Removing {} Flights for {} ({})", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
+			}
 			
 			// Update line numbers
+			todaysFlights.addAll(rawEntries);
 			ScheduleLegHelper.calculateLineNumbers(todaysFlights);
 			
 			// Purge and save

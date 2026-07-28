@@ -61,13 +61,22 @@ public class Hub implements Cacheable, Comparable<Hub> {
 	}
 	
 	/**
-	 * Helper method to check whether this Hub matches a particular Airline and Airport.  
+	 * Filter method to check whether this Hub matches a particular Airline and Airport.  
 	 * @param al the Airline
 	 * @param a the Airport
 	 * @return TRUE if the Airline and Airport are equal to this Hub, otherwise FALSE
 	 */
 	public boolean matches(Airline al, Airport a) {
 		return _a.equals(al) && _ap.equals(a);
+	}
+	
+	/**
+	 * Filter method to check whether a given RoutePair uses this Hub Airport.
+	 * @param rp the RoutePair
+	 * @return TRUE if either airport matches, otherwise FALSE
+	 */
+	public boolean hasRoute(RoutePair rp) {
+		return rp.isPopulated() && (rp.getAirportD().equals(_ap) || rp.getAirportA().equals(_ap));
 	}
 	
 	@Override
