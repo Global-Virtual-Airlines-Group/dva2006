@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 
 public class AVStackDownloadTask extends Task {
 
-	private static final int SLEEP_INTERVAL = 10_750;
+	private static final int SLEEP_INTERVAL = 10_350;
 	
 	private static final Cache<CacheableCollection<RawScheduleEntry>> _eCache = CacheManager.getCollection(RawScheduleEntry.class, "AVStackEntries");
 	
@@ -54,6 +54,8 @@ public class AVStackDownloadTask extends Task {
 		PaginatedList<RawScheduleEntry> entries = avdao.get(ap, h.getAirline(), dt, true);
 		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 		apEntries.addAll(entries);
+		log.info("Sleeping for {}ms", Integer.valueOf(SLEEP_INTERVAL));
+		ThreadUtils.sleep(SLEEP_INTERVAL);
 		while ((ofs + entries.getCount()) < entries.getTotal()) {
 			ofs = entries.getOffset() + entries.getCount();
 			log.info("Loading {} Departures for {} ({}) (ofs={})", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
@@ -74,6 +76,8 @@ public class AVStackDownloadTask extends Task {
 		entries = avdao.get(ap, h.getAirline(), dt, false);
 		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 		apEntries.addAll(entries);
+		log.info("Sleeping for {}ms", Integer.valueOf(SLEEP_INTERVAL));
+		ThreadUtils.sleep(SLEEP_INTERVAL);
 		while ((ofs + entries.getCount()) < entries.getTotal()) {
 			ofs = entries.getOffset() + entries.getCount();
 			log.info("Loading {} Arrivals for {} ({}) (ofs={})", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
