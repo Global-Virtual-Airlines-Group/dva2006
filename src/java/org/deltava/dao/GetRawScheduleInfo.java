@@ -1,8 +1,9 @@
-// Copyright 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.LocalDate;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.util.system.SystemData;
@@ -10,9 +11,10 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw flight schedule information.
  * @author Luke
- * @version 10.2
+ * @version 12.5
  * @since 9.0
  */
+
 public class GetRawScheduleInfo extends DAO {
 
 	/**
@@ -21,6 +23,49 @@ public class GetRawScheduleInfo extends DAO {
 	 */
 	public GetRawScheduleInfo(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns all Hub Airports.
+	 * @return a Collection of Hubs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Hub> getHubs() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM SCHEDULE_HUBS ORDER BY AIRLINE, DESTCOUNT DESC")) {
+			Collection<Hub> results = new ArrayList<Hub>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Hub h = new Hub(SystemData.getAirline(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+					h.setDestinationCount(rs.getInt(3));
+					results.add(h);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Checks whether any Flights have been loaded for a given start date and Airline.
+	 * @param src the ScheduleSource
+	 * @param al the Airline
+	 * @param ld the start day
+	 * @return TRUE if at least one flight is present, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean isLoaded(ScheduleSource src, Airline al, LocalDate ld) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT COUNT(*) FROM RAW_SCHEDULE WHERE (SRC=?) AND (STARTDATE=?) AND (AIRLINE=?)")) {
+			ps.setInt(1, src.ordinal());
+			ps.setTimestamp(2, Timestamp.valueOf(ld.atStartOfDay()));
+			ps.setString(3, al.getCode());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() && (rs.getInt(1) > 0);
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**

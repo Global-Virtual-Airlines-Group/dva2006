@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -6,15 +6,16 @@ import java.util.*;
 import org.deltava.beans.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 1.0
  */
 
-public class Airport implements Comparable<Airport>, Auditable, ComboAlias, ViewEntry, ICAOAirport, MarkerMapEntry, IconMapEntry, LabelMapEntry {
+public class Airport implements Comparable<Airport>, Cacheable, Auditable, ComboAlias, ViewEntry, ICAOAirport, MarkerMapEntry, IconMapEntry, LabelMapEntry {
 
 	/**
 	 * Enumeration for Airport code types.
@@ -500,6 +501,11 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 		StringBuilder buf = new StringBuilder(_name);
 		buf.append(" (").append(_iata).append(')');
 		return buf.toString();
+	}
+	
+	@Override
+	public Object cacheKey() {
+		return _iata;
 	}
 	
 	@Override

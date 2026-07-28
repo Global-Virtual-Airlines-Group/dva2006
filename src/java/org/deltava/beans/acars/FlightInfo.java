@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 10.5
+ * @version 12.5
  * @since 1.0
  */
 
@@ -162,7 +162,6 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	/**
 	 * Returns the flight code for this flight.
 	 * @return the flight code (eg. DVA123)
-	 * @see FlightInfo#setFlightCode(String)
 	 */
 	public String getFlightCode() {
 		if (_a == null) return null;
@@ -842,19 +841,6 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	 */
 	public void setIsACARS64Bit(boolean is64) {
 		_isACARS64Bit = is64;
-	}
-
-	/**
-	 * Updates the flight number for this flight.
-	 * @param code the flight code
-	 * @throws NullPointerException if code is null
-	 * @see FlightInfo#getFlightCode()
-	 */
-	@Deprecated
-	public void setFlightCode(String code) {
-		Flight f = FlightCodeParser.parse(code);
-		_a = f.getAirline();
-		_flight = f.getFlightNumber();
 	}
 
 	/**

@@ -850,7 +850,8 @@ pilot Certification.</td>
  <td class="data">You can modify the Airline profiles contained within the <content:airline /> Flight Schedule. <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="airports">Update Airports</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="airports">Update Airports</el:cmd><br>
+<el:cmd url="hubs" className="bld">Update Airline Hub Airports</el:cmd></td>
  <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule. <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
