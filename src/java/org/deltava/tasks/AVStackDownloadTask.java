@@ -36,7 +36,7 @@ public class AVStackDownloadTask extends Task {
 	/*
 	 * Helper method to load departure and arrival flights from a given Hub airport, handling pagination.
 	 */
-	private Collection<RawScheduleEntry> loadFlights(LocalDate dt, Hub h) throws DAOException {
+	private Collection<RawScheduleEntry> loadFlights(LocalDate dt, Hub h, Collection<Aircraft> acTypes) throws DAOException {
 		boolean isLargeHub = (h.getDestinationCount() > 20);
 		Collection<RawScheduleEntry> apEntries = new ArrayList<RawScheduleEntry>();
 		
@@ -46,6 +46,7 @@ public class AVStackDownloadTask extends Task {
 		avdao.setConnectTimeout(3500);
 		avdao.setReadTimeout(29500);
 		avdao.setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
+		avdao.setAircraft(acTypes);
 
 		// Load Departures
 		int ofs = 0; Airport ap = h.getAirport();
@@ -98,8 +99,12 @@ public class AVStackDownloadTask extends Task {
 
 		// Load Hub airports and Airlines
 		SequencedCollection<Hub> hubs = new LinkedHashSet<Hub>();
+		Collection<Aircraft> acTypes = new ArrayList<Aircraft>();
 		try {
-			GetRawScheduleInfo rsdao = new GetRawScheduleInfo(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			
+			// Load Hubs
+			GetRawScheduleInfo rsdao = new GetRawScheduleInfo(con);
 			hubs.addAll(rsdao.getHubs());
 			
 			// Check for loaded airlines
@@ -110,6 +115,10 @@ public class AVStackDownloadTask extends Task {
 						log.info("Removing Hubs for already loaded {}", al.getName());
 				}
 			}
+			
+			// Load aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			acTypes.addAll(acdao.getAll());
 		} catch (DAOException de) {
 			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
@@ -126,7 +135,7 @@ public class AVStackDownloadTask extends Task {
 				if (entries == null) {
 					entries = new CacheableList<RawScheduleEntry>(h.toString());
 					boolean isLargeHub = (h.getDestinationCount() > 20);					
-					Collection<RawScheduleEntry> flights = loadFlights(ld, h);
+					Collection<RawScheduleEntry> flights = loadFlights(ld, h, acTypes);
 					if (!isLargeHub || !flights.isEmpty()) {
 						entries.addAll(flights);
 						_eCache.add(entries);
