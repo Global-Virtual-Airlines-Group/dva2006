@@ -54,6 +54,7 @@ public class GetJSONSchedule extends ScheduleLoadDAO {
 				rse.setEquipmentType(so.getString("equipment"));
 				rse.setStartDate(parseDate(so.getJSONObject("startDate")));
 				rse.setEndDate(parseDate(so.getJSONObject("endDate")));
+				rse.setDayMap(so.optInt("days", (1 << rse.getStartDate().getDayOfWeek().ordinal())));
 				rse.setTimeD(LocalDateTime.of(rse.getStartDate(), parseTime(so.getJSONObject("timeD"))));
 				rse.setTimeA(LocalDateTime.of(rse.getStartDate(), parseTime(so.getJSONObject("timeA"))));
 				rse.setAcademy(so.optBoolean("academy"));
