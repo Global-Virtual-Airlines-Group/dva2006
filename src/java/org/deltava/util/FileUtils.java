@@ -1,15 +1,13 @@
-// Copyright 2012, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2018, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
-import java.util.*;
 import java.nio.file.*;
-import java.nio.file.attribute.*;
 
 /**
- * A utility class for filesystem functions. 
+ * A utility class for file system functions. 
  * @author Luke
- * @version 10.0
+ * @version 12.5
  * @since 4.2
  */
 
@@ -39,6 +37,18 @@ public class FileUtils {
 	// static class
 	private FileUtils() {
 		super();
+	}
+	
+	/**
+	 * Checks if a File exists within a directory.
+	 * @param d the parent directory as a File
+	 * @param fileName the file name
+	 * @return TRUE if the file exists, otherwise FALSE 
+	 */
+	public static boolean exists(File d, String fileName) {
+		if ((d == null) || !d.exists() || !d.isDirectory()) return false;
+		File f = new File(d, fileName);
+		return f.exists();
 	}
 
 	/**
@@ -77,43 +87,5 @@ public class FileUtils {
 	            String n = name.toLowerCase();
 	            return n.startsWith(p) && n.endsWith(e);
 	          }};
-	}
-	
-	/**
-	 * Sets the owner and group membership for a file.
-	 * @param f the File
-	 * @param owner the owner name
-	 * @param group the group name
-	 * @throws IOException if an error occurs 
-	 */
-	public static void setOwner(File f, String owner, String group) throws IOException {
-		Path p = f.toPath();
-		UserPrincipalLookupService lookupService = FileSystems.getDefault().getUserPrincipalLookupService();
-		if (!StringUtils.isEmpty(group)) {
-			GroupPrincipal grp = lookupService.lookupPrincipalByGroupName(group);
-			Files.setAttribute(p, "posix:group", grp, LinkOption.NOFOLLOW_LINKS);
-		}
-		
-		if (!StringUtils.isEmpty(owner)) {
-			UserPrincipal usr = lookupService.lookupPrincipalByName(owner);
-			Files.setOwner(p, usr);
-		}
-	}
-	
-	/**
-	 * Sets the permissions for a file.
-	 * @param f the File
-	 * @param permissions the permission names
-	 * @throws IOException if an error occurs
-	 * @see PosixFilePermission
-	 */
-	public static void setPermissions(File f, String... permissions) throws IOException {
-		
-		// Parse permission names
-		Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-		for (int x = 0; x < permissions.length; x++) 
-			perms.add(PosixFilePermission.valueOf(permissions[x]));
-		
-		Files.setPosixFilePermissions(f.toPath(), perms);
 	}
 }

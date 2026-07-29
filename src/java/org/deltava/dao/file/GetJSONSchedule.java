@@ -51,17 +51,22 @@ public class GetJSONSchedule extends ScheduleLoadDAO {
 				rse.setLineNumber(x + 1);
 				rse.setAirportD(getAirport(so.getString("airportD"), x));
 				rse.setAirportA(getAirport(so.getString("airportA"), x));
-				rse.setEquipmentType(getEquipmentType(so.getString("eqType"), x));
+				rse.setEquipmentType(so.getString("equipment"));
 				rse.setStartDate(parseDate(so.getJSONObject("startDate")));
 				rse.setEndDate(parseDate(so.getJSONObject("endDate")));
+				rse.setDayMap(so.optInt("days", (1 << rse.getStartDate().getDayOfWeek().ordinal())));
 				rse.setTimeD(LocalDateTime.of(rse.getStartDate(), parseTime(so.getJSONObject("timeD"))));
 				rse.setTimeA(LocalDateTime.of(rse.getStartDate(), parseTime(so.getJSONObject("timeA"))));
-				rse.setAcademy(so.getBoolean("academy"));
-				rse.setHistoric(so.getBoolean("historic"));
-				rse.setForceInclude(so.getBoolean("forceInclude"));
+				rse.setAcademy(so.optBoolean("academy"));
+				rse.setHistoric(so.optBoolean("historic"));
+				rse.setForceInclude(so.optBoolean("forceInclude"));
 				rse.setRemarks(so.optString("remarks"));
 				rse.setComments(so.optString("comments"));
+				rse.setCodeShare(so.optString("codeshare"));
 				results.add(rse);
+			} catch (JSONException je) {
+				log.warn("Error at entry {} - {}", Integer.valueOf(x), je.getMessage());
+				log.warn(so.toString());
 			} catch (InvalidDataException ide) {
 				log.warn(ide.getMessage());
 			}

@@ -36,6 +36,7 @@ public class JSONScheduleFormatter implements ScheduleFormatter {
 		jo.put("airportD", se.getAirportD().getICAO());
 		jo.put("airportA", se.getAirportA().getICAO());
 		jo.put("distance", se.getDistance());
+		jo.put("days", rse.getDayMap());
 		if (se.getHistoric()) jo.put("historic", se.getHistoric());
 		if (rse.getForceInclude()) jo.put("forceInclude", rse.getForceInclude());
 		if (se.getAcademy()) jo.put("academy", se.getAcademy());
@@ -46,6 +47,8 @@ public class JSONScheduleFormatter implements ScheduleFormatter {
 		jo.putOpt("comments", rse.getComments());
 		jo.put("timeD", formatTime(rse.getTimeD()));
 		jo.put("timeA", formatTime(rse.getTimeA()));
+		if (rse.isCodeShare())
+			jo.put("codeshare", rse.getCodeShare());
 		if (se.getArrivalPlusDays() != 0)
 			jo.put("plusDays", se.getArrivalPlusDays());
 		

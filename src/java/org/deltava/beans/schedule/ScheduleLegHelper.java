@@ -1,4 +1,4 @@
-// Copyright 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.comparators.ScheduleEntryComparator;
 /**
  * A utility class to assign leg numbers to schedule entries. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 9.0
  */
 
@@ -98,6 +98,16 @@ public class ScheduleLegHelper {
 		
 		// Sort each bucket based on arrival time
 		return fMap.entrySet().stream().map(Map.Entry::getValue).flatMap(ScheduleLegHelper::setLegs).collect(Collectors.toList());
+	}
+
+	/**
+	 * Calculates synthetic Line Numbers from a collection of RawScheduleEntries. 
+	 * @param entries the Collection of RawScheduleEntry beans
+	 */
+	public static void calculateLineNumbers(SequencedCollection<RawScheduleEntry> entries) {
+		int ln = 0;
+		for (RawScheduleEntry rse : entries)
+			rse.setLineNumber(++ln);
 	}
 
 	/*

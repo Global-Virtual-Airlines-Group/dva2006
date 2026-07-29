@@ -121,6 +121,22 @@ public class SetSchedule extends DAO {
 		}
 	}
 	
+	/**
+	 * Writes an Airline Hub to the database.
+	 * @param h the Hub
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(Hub h) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SCHEDULE_HUBS VALUES (?,?,?)")) {
+			ps.setString(1, h.getAirline().getCode());
+			ps.setString(2, h.getAirport().getIATA());
+			ps.setInt(3, h.getDestinationCount());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/*
 	 * Helper method to purge the raw schedule cache.
 	 */

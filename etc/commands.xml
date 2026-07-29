@@ -853,6 +853,18 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
+	<command id="hubs">
+		<name>Hub Airport List</name>
+		<class>org.deltava.commands.schedule.HubListCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
+	<command id="hub">
+		<name>Hub Airport</name>
+		<class>org.deltava.commands.schedule.HubCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
 	<command id="aircraftlist">
 		<name>Aircraft List</name>
 		<class>org.deltava.commands.schedule.AircraftListCommand</class>

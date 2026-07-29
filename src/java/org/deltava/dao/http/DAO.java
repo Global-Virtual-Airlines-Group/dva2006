@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -16,9 +16,10 @@ import org.deltava.util.StringUtils;
 
 /**
  * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only
- * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL.
+ * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL. This abstract
+ * class also supports the injection of an InputStream for unit testing purposes.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 2.4
  */
 
@@ -36,12 +37,14 @@ abstract class DAO {
 	private URLConnection _urlcon;
 	private CountingInputStream _rawStream;
 	private boolean _getErrorStream;
+	
+	private InputStream _testStream;
 
 	/*
-	 * Helper to check connection state.
+	 * Helper to check connection state. This will always return successfully if a testing InputStream has been injected. 
 	 */
 	private void checkConnected() {
-		if (_urlcon == null)
+		if ((_urlcon == null) && (_testStream == null))
 			throw new IllegalStateException("Not Initialized");
 	}
 	
@@ -95,6 +98,14 @@ abstract class DAO {
 		_compression.clear();
 		_compression.addAll(Arrays.asList(cmps));
 	}
+	
+	/**
+	 * Overrides the InputStream to use for unit testing purposes. This will disable all HTTP connections by the DAO.
+	 * @param is an InputStream
+	 */
+	public void setStream(InputStream is) {
+		_testStream = is;
+	}
 
 	/**
 	 * Helper method to open the connection.
@@ -102,6 +113,7 @@ abstract class DAO {
 	 * @throws IOException if an error occurs
 	 */
 	protected void init(String url) throws IOException {
+		if (_testStream != null) return;
 		URL u;
 		try {
 			u = new URI(url).toURL();
@@ -159,6 +171,7 @@ abstract class DAO {
 	 * @throws HTTPDAOException if the read times out, with stack dump disabled
 	 */
 	protected int getResponseCode() throws IOException, HTTPDAOException {
+		if (_testStream != null) return 200;
 		checkConnected();
 		try {
 			return (_urlcon instanceof HttpURLConnection urlcon) ? urlcon.getResponseCode() : 0;
@@ -173,6 +186,7 @@ abstract class DAO {
 	 * @return the header value
 	 */
 	protected String getHeaderField(String name) {
+		if (_testStream != null) return null;
 		checkConnected();
 		return _urlcon.getHeaderField(name);
 	}
@@ -184,6 +198,7 @@ abstract class DAO {
 	 * @throws IOException if an error occurs
 	 */
 	protected InputStream getIn() throws IOException, HTTPDAOException {
+		if (_testStream != null) return new CountingInputStream(_testStream, _stats::updateTotal);
 		checkConnected();
 
 		try {
