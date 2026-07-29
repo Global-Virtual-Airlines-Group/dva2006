@@ -30,6 +30,7 @@ public class GetAviationStack extends DAO {
 	
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
+	private boolean _saveData;
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 	private String _accessKey;
 
@@ -39,6 +40,20 @@ public class GetAviationStack extends DAO {
 	 */
 	public void setAccessKey(String key) {
 		_accessKey = key;
+	}
+	
+	/**
+	 * Updates whether to persist the returned JSON data to disk.
+	 * @param doSave TRUE to persist data, otherwise FALSE
+	 */
+	public void setSaveData(boolean doSave) {
+		_saveData = doSave;
+	}
+	
+	@Override
+	public void setStream(InputStream is) {
+		super.setStream(is);
+		_saveData = (is == null);
 	}
 	
 	/**
@@ -99,6 +114,7 @@ public class GetAviationStack extends DAO {
 	public PaginatedList<RawScheduleEntry> get(Airport a, Airline al, LocalDate ld, boolean isDeparture, int ofs) throws DAOException {
 		
 		// Build the URL
+		String dt = StringUtils.format(ld, "yyyy-MM-dd");
 		StringBuilder urlBuf = new StringBuilder("https://api.aviationstack.com/v1/flightsFuture?iataCode=");
 		urlBuf.append(a.getIATA());
 		urlBuf.append("&type=");
@@ -106,7 +122,7 @@ public class GetAviationStack extends DAO {
 		urlBuf.append("&airline_iata=");
 		urlBuf.append(al.getCode());
 		urlBuf.append("&date=");
-		urlBuf.append(StringUtils.format(ld, "yyyy-MM-dd"));
+		urlBuf.append(dt);
 		urlBuf.append("&access_key=");
 		urlBuf.append(_accessKey);
 		if (ofs > 0) {
@@ -196,6 +212,14 @@ public class GetAviationStack extends DAO {
 						
 					if (isOK)
 						results.add(rse);
+				}
+				
+				// Persist JSON document
+				if (_saveData) {
+					File of = new File(SystemData.get("schedule.cache"), String.format("avstack_%s_%s_%s_%s.json", al.getCode(), a.getIATA(), isDeparture ? "d" : "a", dt));
+					try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(of), 131072))) {
+						pw.println(jo.toString(2));
+					}
 				}
 			}
 		} catch (IOException ie) {
