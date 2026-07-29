@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to read serialized route data.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 7.0
  */
 
@@ -37,10 +37,10 @@ public class GetSerializedRoute extends DAO {
 	public ArchivedRoute read() throws DAOException {
 		try (DataInputStream in = new DataInputStream(new BufferedInputStream(getStream(), 4096))) {
 			short ver = in.readShort();
-			int flightID = in.readInt();
+			int flightID = Math.max(1, in.readInt());
 			int airacVersion = (ver > 2) ? in.readInt() : -1;
 			ArchivedRoute rt = new ArchivedRoute(flightID, airacVersion);
-			if (ver == 0) return rt;
+			if ((ver == 0) || (flightID == 1)) return rt;
 
 			// Get the size and sanitize
 			int size = in.readInt();
