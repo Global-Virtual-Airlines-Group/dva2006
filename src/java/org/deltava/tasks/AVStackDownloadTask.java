@@ -163,7 +163,7 @@ public class AVStackDownloadTask extends Task {
 			log.info("Removed {} code share flights", Integer.valueOf(oldSize - results.size())); */
 
 		// Eliminate duplicates
-		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
+		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(RawScheduleHelper.getDupeChecker(false));
 		rawEntries.addAll(results);
 		log.info("Eliminated {}/{} duplicate flights", Integer.valueOf(results.size() - rawEntries.size()), Integer.valueOf(results.size()));
 		results.clear();
@@ -188,7 +188,7 @@ public class AVStackDownloadTask extends Task {
 			
 			// Update line numbers
 			todaysFlights.addAll(rawEntries);
-			ScheduleLegHelper.calculateLineNumbers(todaysFlights);
+			RawScheduleHelper.calculateLineNumbers(todaysFlights);
 			
 			// Purge and save
 			ctx.startTX();
