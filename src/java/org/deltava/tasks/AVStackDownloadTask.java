@@ -184,6 +184,10 @@ public class AVStackDownloadTask extends Task {
 					log.info("Removing {} Flights for {} ({})", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
 			}
 			
+			// Remove older flights
+			final LocalDate today = LocalDate.now();
+			todaysFlights.removeIf(rse -> rse.getEndDate().isBefore(today));
+			
 			// Update line numbers
 			todaysFlights.addAll(rawEntries);
 			RawScheduleHelper.calculateLineNumbers(todaysFlights);
