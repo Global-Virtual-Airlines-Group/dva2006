@@ -3,6 +3,7 @@ package org.deltava.dao.http;
 import java.io.*;
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.ScheduleTestCase;
 
@@ -111,6 +112,30 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			assertEquals(0, results.getCount());
 			assertEquals(results.getTotal(), results.getCount());
 			assertTrue(results.isEmpty());
+		}
+	}
+	
+	public void testCodeShares() throws Exception {
+	
+		LocalDate dt = LocalDate.now().plusDays(14);
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/lax_cs.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("DL"), dt, false);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+
+			// Search for codeshares
+			List<RawScheduleEntry> csEntries = results.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
+			Collection<Airline> csAirlines = csEntries.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
+			assertFalse(csEntries.isEmpty());
+			assertFalse(csAirlines.isEmpty());
+			log.info(csAirlines);
+			for (RawScheduleEntry rse : csEntries) {
+				assertFalse(rse.getAirline().getCode().equals("DL"));
+				assertTrue(rse.getCodeShare().startsWith("DL"));
+			}
 		}
 	}
 }
