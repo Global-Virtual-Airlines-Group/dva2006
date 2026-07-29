@@ -46,7 +46,7 @@ public class RawScheduleEntry extends ScheduleEntry {
 
 	/**
 	 * Returns the day of the week this flight is operated on.
-	 * @return a DayOfWeek enum
+	 * @return a DayOfWeek enumeration
 	 */
 	public Collection<DayOfWeek> getDays() {
 		return _days;

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static org.deltava.beans.flight.Attribute.SIMFDR;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 7.0
  */
 
@@ -61,7 +61,7 @@ final class OfflineFlightParser {
 		
 		// Build the offline Flight
 		String cs = ie.getChildTextTrim("callsign");
-		Flight f = FlightCodeParser.parse(cs, SystemData.get("airline.code"));
+		FlightNumber f = FlightCodeParser.parse(cs, SystemData.get("airline.code"));
 		OfflineFlight<SimFDRFlightReport, ACARSRouteEntry> of = new OfflineFlight<SimFDRFlightReport, ACARSRouteEntry>();
 		
 		// Build a flight data entry

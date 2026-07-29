@@ -6,15 +6,24 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
-import org.deltava.beans.Flight;
+import org.apache.logging.log4j.*;
+
+import org.deltava.beans.FlightNumber;
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-public class LoadCSVSchedule extends ScheduleTestCase {
+import junit.framework.TestCase;
+
+public class LoadCSVSchedule extends TestCase {
 	
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?rewriteBatchedStatements=true&useSSL=false&allowPublicKeyRetrieval=true";
+	
+	private Logger log;
+	
+	private Connection _c;
 	private final Collection<Aircraft> _allAC = new ArrayList<Aircraft>();
 	
 	private final ScheduleSource SRC = ScheduleSource.DELTA;
@@ -39,8 +48,44 @@ public class LoadCSVSchedule extends ScheduleTestCase {
 		}
 	}
 
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(LoadCSVSchedule.class);
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		DriverManager.setLoginTimeout(3);
+		
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		assertNotNull(_c);
+		_c.setAutoCommit(false);
+		
+		// Load the airports/time zones
+		SystemData.init();
+		SystemData.add("airline.code", "DVA");
+		GetTimeZone tzdao = new GetTimeZone(_c);
+		tzdao.initAll();
+		GetAirport apdao = new GetAirport(_c);
+		SystemData.add("airports", apdao.getAll());
+		GetAirline aldao = new GetAirline(_c);
+		SystemData.add("airlines", aldao.getAll());
+		
+		// Load aircraft
+		GetAircraft acdao = new GetAircraft(_c);
+		_allAC.addAll(acdao.getAircraftTypes());
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		_c.rollback();
+		_c.close();
+		LogManager.shutdown();
+		super.tearDown();
+	}
+	
 	private RawScheduleEntry parse(int ln, CSVTokens csv, String airlineCode) {
-		Flight f = FlightCodeParser.parse(csv.get(3), airlineCode);
+		FlightNumber f = FlightCodeParser.parse(csv.get(3), airlineCode);
 		if (f == null) {
 			log.warn("Unparseable flight {} at Line {}", csv.get(3), Integer.valueOf(ln));
 			return null;
@@ -163,14 +208,12 @@ public class LoadCSVSchedule extends ScheduleTestCase {
 		
 		List<RawScheduleEntry> entries = dedupe(buckets);
 		log.info("Loaded {} schedule entries", Integer.valueOf(entries.size()));
-		try (Connection c = getConnection()) {
-			SetSchedule swdao = new SetSchedule(c);
-			for (RawScheduleEntry rse : entries)
-				swdao.writeRaw(rse, false);
+		SetSchedule swdao = new SetSchedule(_c);
+		for (RawScheduleEntry rse : entries)
+			swdao.writeRaw(rse, false);
 		
-			if (COMMIT)
-				c.commit();
-		}
+		if (COMMIT)
+			_c.commit();
 	}
 
 	public void testDelta() throws Exception {
@@ -197,14 +240,13 @@ public class LoadCSVSchedule extends ScheduleTestCase {
 		List<RawScheduleEntry> entries = dedupe(buckets);
 		entries.stream().filter(rse -> "B737-900".equals(rse.getEquipmentType())).forEach(rse -> rse.setEquipmentType("B737-900ER"));
 		log.info("Loaded {} schedule entries", Integer.valueOf(entries.size()));
-		try (Connection c = getConnection()) {
-			SetSchedule swdao = new SetSchedule(c);
-			for (RawScheduleEntry rse : entries)
-				swdao.writeRaw(rse, false);
 		
-			if (COMMIT)
-				c.commit();
-		}
+		SetSchedule swdao = new SetSchedule(_c);
+		for (RawScheduleEntry rse : entries)
+			swdao.writeRaw(rse, false);
+		
+		if (COMMIT)
+			_c.commit();
 	}
 	
 	public void testAeromexico() throws Exception {
@@ -233,14 +275,12 @@ public class LoadCSVSchedule extends ScheduleTestCase {
 		
 		List<RawScheduleEntry> entries = dedupe(buckets);
 		log.info("Loaded {} schedule entries", Integer.valueOf(entries.size()));
-		try (Connection c = getConnection()) {
-			SetSchedule swdao = new SetSchedule(c);
-			for (RawScheduleEntry rse : entries)
-				swdao.writeRaw(rse, false);
+		SetSchedule swdao = new SetSchedule(_c);
+		for (RawScheduleEntry rse : entries)
+			swdao.writeRaw(rse, false);
 		
-			if (COMMIT)
-				c.commit();
-		}
+		if (COMMIT)
+			_c.commit();
 	}
 	
 	public void testKLM() throws Exception {
@@ -269,14 +309,12 @@ public class LoadCSVSchedule extends ScheduleTestCase {
 		
 		List<RawScheduleEntry> entries = dedupe(buckets);
 		log.info("Loaded {} schedule entries", Integer.valueOf(entries.size()));
-		try (Connection c = getConnection()) {
-			SetSchedule swdao = new SetSchedule(c);
-			for (RawScheduleEntry rse : entries)
-				swdao.writeRaw(rse, false);
+		SetSchedule swdao = new SetSchedule(_c);
+		for (RawScheduleEntry rse : entries)
+			swdao.writeRaw(rse, false);
 
-			if (COMMIT)
-				c.commit();
-		}
+		if (COMMIT)
+			_c.commit();
 	}
 	
 	public void testAirFrance() throws Exception {
@@ -305,13 +343,11 @@ public class LoadCSVSchedule extends ScheduleTestCase {
 		
 		List<RawScheduleEntry> entries = dedupe(buckets);
 		log.info("Loaded {} schedule entries", Integer.valueOf(entries.size()));
-		try (Connection c = getConnection()) {
-			SetSchedule swdao = new SetSchedule(c);
-			for (RawScheduleEntry rse : entries)
-				swdao.writeRaw(rse, false);
+		SetSchedule swdao = new SetSchedule(_c);
+		for (RawScheduleEntry rse : entries)
+			swdao.writeRaw(rse, false);
 
-			if (COMMIT)
-				c.commit();
-		}
+		if (COMMIT)
+			_c.commit();
 	}
 }

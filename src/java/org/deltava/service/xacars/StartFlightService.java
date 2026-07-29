@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2018, 2019, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Start Flight service.
  * @author Luke
- * @version 8.6
+ * @version 12.5
  * @since 4.1
  */
 
@@ -58,7 +58,7 @@ public class StartFlightService extends XAService {
 		}
 		
 		// Parse the flight data
-		Flight f = FlightCodeParser.parse(data.get(2));
+		FlightNumber f = FlightCodeParser.parse(data.get(2));
 		if (f.getAirline() == null) {
 			ctx.print("0|Invalid Airline - " + data.get(2));
 			return SC_OK;
