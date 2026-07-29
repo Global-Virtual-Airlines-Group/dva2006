@@ -87,7 +87,7 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 		}
 		
 		// Load existing entries
-		Collection<RawScheduleEntry> results = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
+		Collection<RawScheduleEntry> results = new TreeSet<RawScheduleEntry>(RawScheduleHelper.getDupeChecker(false));
 		for (Hub h : processedHubs) {
 			log.info("Reloading cached data for {} / {}", h.getAirline().getCode(), h.getAirport().getIATA());
 			CacheableCollection<RawScheduleEntry> cachedEntries = _eCache.get(h.cacheKey());

@@ -118,7 +118,7 @@ public class TestPHPVMSSchedule extends TestCase {
 		rawEntries.forEach(rse -> CollectionUtils.addMapCollection(rawMap, rse.getAirportD(), rse, ArrayList::new));
 
 		// Purge based on departure time
-		Comparator<RawScheduleEntry> cmp = ScheduleLegHelper.getDupeChecker(true); int dupeLegs = 0;
+		Comparator<RawScheduleEntry> cmp = RawScheduleHelper.getDupeChecker(true); int dupeLegs = 0;
 		for (Collection<RawScheduleEntry> entries : rawMap.values()) {
 			Collection<RawScheduleEntry> apLegs = new TreeSet<RawScheduleEntry>(cmp);
 			for (RawScheduleEntry rse : entries) {

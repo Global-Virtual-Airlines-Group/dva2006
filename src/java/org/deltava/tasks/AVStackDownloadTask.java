@@ -132,7 +132,7 @@ public class AVStackDownloadTask extends Task {
 
 		// Walk through the Hubs. Load departures and arrivals
 		boolean isComplete = true;
-		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
+		SequencedCollection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		try {
 			log.info("Hub Airports = {}", hubs);
 			for (Hub h : hubs) {
@@ -157,13 +157,11 @@ public class AVStackDownloadTask extends Task {
 			log.atError().withThrowable(de).log(de.getMessage());
 		}
 		
-		// Remove code shares
-		/* int oldSize = results.size();
-		if (results.removeIf(ScheduleEntry::isCodeShare))
-			log.info("Removed {} code share flights", Integer.valueOf(oldSize - results.size())); */
-
+		// Merge code shares
+		RawScheduleHelper.mergeCodeShares(results);
+		
 		// Eliminate duplicates
-		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
+		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(RawScheduleHelper.getDupeChecker(false));
 		rawEntries.addAll(results);
 		log.info("Eliminated {}/{} duplicate flights", Integer.valueOf(results.size() - rawEntries.size()), Integer.valueOf(results.size()));
 		results.clear();
@@ -188,7 +186,7 @@ public class AVStackDownloadTask extends Task {
 			
 			// Update line numbers
 			todaysFlights.addAll(rawEntries);
-			ScheduleLegHelper.calculateLineNumbers(todaysFlights);
+			RawScheduleHelper.calculateLineNumbers(todaysFlights);
 			
 			// Purge and save
 			ctx.startTX();

@@ -71,7 +71,7 @@ public class MergeAVStackSchedule extends ScheduleTestCase {
 		}
 		
 		log.info("Loaded {} schedule entries", Integer.valueOf(entries.size()));
-		Collection<RawScheduleEntry> results = new TreeSet<RawScheduleEntry>(ScheduleLegHelper.getDupeChecker(false));
+		Collection<RawScheduleEntry> results = new TreeSet<RawScheduleEntry>(RawScheduleHelper.getDupeChecker(false));
 		results.addAll(entries);
 		log.info("Writing {} schedule entries", Integer.valueOf(results.size()));
 		

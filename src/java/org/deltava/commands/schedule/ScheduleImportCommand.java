@@ -222,7 +222,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Eliminate dupes
-			int rawEntryCount = entries.size(); Comparator<RawScheduleEntry> dd = ScheduleLegHelper.getDupeChecker(doDedupe);
+			int rawEntryCount = entries.size(); Comparator<RawScheduleEntry> dd = RawScheduleHelper.getDupeChecker(doDedupe);
 			Collection<RawScheduleEntry> dupeFilter = new TreeSet<RawScheduleEntry>(dd);
 			entries.removeIf(se -> !dupeFilter.add(se)); int dupeCount = rawEntryCount - entries.size(); 
 			log.info("Removed {} duplicate schedule entries", Integer.valueOf(dupeCount));

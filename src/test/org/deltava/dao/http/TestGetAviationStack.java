@@ -118,24 +118,39 @@ public class TestGetAviationStack extends ScheduleTestCase {
 	public void testCodeShares() throws Exception {
 	
 		LocalDate dt = LocalDate.now().plusDays(14);
-		try (InputStream is = ConfigLoader.getStream("/data/avstack/lax_cs.json")) {
+		List<RawScheduleEntry> allFlights = new ArrayList<RawScheduleEntry>();
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/lax_cs_dl.json")) {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("DL"), dt, false);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("DL"), dt, true);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
-
-			// Search for codeshares
-			List<RawScheduleEntry> csEntries = results.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
-			Collection<Airline> csAirlines = csEntries.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
-			assertFalse(csEntries.isEmpty());
-			assertFalse(csAirlines.isEmpty());
-			log.info(csAirlines);
-			for (RawScheduleEntry rse : csEntries) {
-				assertFalse(rse.getAirline().getCode().equals("DL"));
-				assertTrue(rse.getCodeShare().startsWith("DL"));
-			}
+			allFlights.addAll(results);
 		}
+		
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/lax_cs_af.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("AF"), dt, true);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+			allFlights.addAll(results);
+		}
+
+		// Set line numbers
+		RawScheduleHelper.calculateLineNumbers(allFlights);
+
+		// Search for codeshares
+		List<RawScheduleEntry> csEntries = allFlights.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
+		Collection<Airline> csAirlines = csEntries.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
+		assertFalse(csEntries.isEmpty());
+		assertFalse(csAirlines.isEmpty());
+			
+		// Merge code shares
+		int oldSize = allFlights.size();
+		RawScheduleHelper.mergeCodeShares(allFlights);
+		assertTrue(allFlights.size() < oldSize);
 	}
 }
