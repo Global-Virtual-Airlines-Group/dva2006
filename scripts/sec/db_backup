@@ -121,8 +121,8 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTA
 
 # Write raw schedule
 echo 'Writing raw schedule'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY | $arc_util > dva_raw_sched.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY | $arc_util > afv_raw_sched.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY SCHEDULE_HUBS | $arc_util > dva_raw_sched.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY SCHEDULE_HUBS| $arc_util > afv_raw_sched.sql.bz2
 
 # Dump DVA database
 echo 'Writing DVA database'
@@ -132,7 +132,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --igno
  --ignore-table=dva.PIREPS --ignore-table=dva.ACARS_PIREPS --ignore-table=dva.PIREP_COMMENT --ignore-table=dva.PIREP_ROUTE --ignore-table=dva.PIREP_DRAFT \
  --ignore-table=dva.PIREP_ELITE --ignore-table=dva.PIREP_ELITE_ENTRIES --ignore-table=dva.PROMO_EQ --ignore-table=dva.ACARS_ONTIME --ignore-table=dva.ONLINE_TRACK \
  --ignore-table=dva.PIREP_STATUS_HISTORY --ignore-table=dva.PIREP_SIMBRIEF --ignore-table=dva.ACARS_METADATA --ignore-table=dva.RAW_SCHEDULE \
- --ignore-table=dva.RAW_SCHEDULE_DATES --ignore-table=dva.RAW_SCHEDULE_AIRLINES --ignore-table=dva.HELPDESK_FILES --ignore-table=dva.HELPDESK \
+ --ignore-table=dva.RAW_SCHEDULE_DATES --ignore-table=dva.SCHEDULE_HUBS --ignore-table=dva.RAW_SCHEDULE_AIRLINES --ignore-table=dva.HELPDESK_FILES --ignore-table=dva.HELPDESK \
  --ignore-table=dva.HELPDESK_COMMENTS --ignore-table=dva.FLIGHTSTATS_PILOT_DAY --ignore-table=dva.PIREP_AGGERGATE_QUEUE dva | $arc_util > dva.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva GALLERYSCORE | $arc_util > dva_gscore.sql.bz2
 
@@ -149,7 +149,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --igno
  --ignore-table=afv.PIREPS --ignore-table=afv.ACARS_PIREPS --ignore-table=afv.PIREP_COMMENT --ignore-table=afv.PIREP_ROUTE \
  --ignore-table=afv.PIREP_DRAFT --ignore-table=afv.PROMO_EQ --ignore-table=afv.ACARS_ONTIME --ignore-table=afv.ONLINE_TRACK \
  --ignore-table=afv.PIREP_STATUS_HISTORY --ignore-table=afv.PIREP_SIMBRIEF --ignore-table=afv.ACARS_METADATA --ignore-table=afv.PIREP_AGGERGATE_QUEUE \
- --ignore-table=afv.RAW_SCHEDULE --ignore-table=afv.RAW_SCHEDULE_DATES --ignore-table=afv.RAW_SCHEDULE_AIRLINES \
+ --ignore-table=afv.RAW_SCHEDULE --ignore-table=afv.RAW_SCHEDULE_DATES --ignore-table=afv.RAW_SCHEDULE_AIRLINES --ignore-table=afv.SCHEDULE_HUBS \
  --ignore-table=afv.HELPDESK_FILES --ignore-table=afv.HELPDESK --ignore-table=afv.HELPDESK_COMMENTS \
  --ignore-table=afv.FLIGHTSTATS_PILOT_DAY --ignore-table=afv.ONLINE_TRACK afv | $arc_util > afv.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv GALLERYSCORE | $arc_util > afv_gscore.sql.bz2
