@@ -55,7 +55,7 @@ public class RawScheduleHelper {
 				tmpResult = rse1.getEndDate().compareTo(rse2.getEndDate());
 			if (tmpResult == 0) {
 				tmpResult = Boolean.compare(rse2.isCodeShare(), rse1.isCodeShare());
-				if (tmpResult == 0)
+				if ((tmpResult == 0) && rse1.isCodeShare())
 					tmpResult = rse1.getCodeShare().compareTo(rse2.getCodeShare());
 			}
 			
