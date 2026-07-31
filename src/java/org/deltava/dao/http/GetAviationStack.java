@@ -141,7 +141,7 @@ public class GetAviationStack extends DAO {
 				results.setTotal(po.getInt("total"));
 				results.setCount(po.getInt("count"));
 				if (results.getCount() == 0) {
-					log.warn("AviationStack returned {} / {} for {}", Integer.valueOf(results.getCount()), Integer.valueOf(results.getTotal()), a.getIATA());
+					log.warn("AviationStack returned {} / {} for {} - {}", Integer.valueOf(results.getCount()), Integer.valueOf(results.getTotal()), al.getCode(), a.getIATA());
 					return results;
 				}
 				
