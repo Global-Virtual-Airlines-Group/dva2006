@@ -173,7 +173,7 @@
 		<class>org.deltava.tasks.AVStackDownloadTask</class>
 		<time>
 			<min>20</min>
-			<hour>2,3</hour>
+			<hour>8,9</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
