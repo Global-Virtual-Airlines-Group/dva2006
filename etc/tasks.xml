@@ -145,7 +145,7 @@
 	</task>
 
 	<!-- Aviation Stack download -->
-	<task id="avstack" enabled="true">
+	<task id="avstack" enabled="false">
 		<class>org.deltava.tasks.AVStackDownloadTask</class>
 		<time>
 			<min>20</min>
