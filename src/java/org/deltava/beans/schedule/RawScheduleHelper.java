@@ -3,7 +3,8 @@ package org.deltava.beans.schedule;
 
 import java.util.*;
 import java.time.Duration;
-import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 
@@ -16,6 +17,8 @@ import org.deltava.beans.*;
 
 @Helper(RawScheduleEntry.class)
 public class RawScheduleHelper {
+	
+	private static final Logger log = LogManager.getLogger(RawScheduleHelper.class);
 	
 	/**
 	 * A comparator to sort based on soruce and line number.
@@ -34,13 +37,12 @@ public class RawScheduleHelper {
 	static class CodeShareComparator implements Comparator<RawScheduleEntry> {
 		@Override
 		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
-			int tmpResult = Boolean.compare(rse2.isCodeShare(), rse1.isCodeShare());
-			if ((tmpResult == 0) && rse1.isCodeShare())
-				tmpResult = rse1.getCodeShare().compareTo(rse2.getCodeShare());
+			int tmpResult = rse1.getAirline().compareTo(rse2.getAirline());
 			if (tmpResult == 0)
 				tmpResult = Integer.compare(rse1.getFlightNumber(), rse2.getFlightNumber());
-			
-			return (tmpResult == 0) ? rse1.getAirline().compareTo(rse2.getAirline()) : tmpResult;
+			if (tmpResult == 0)
+				tmpResult = Boolean.compare(rse2.isCodeShare(), rse1.isCodeShare());
+			return ((tmpResult == 0) && rse1.isCodeShare()) ? rse1.getCodeShare().compareTo(rse2.getCodeShare()) : tmpResult;
 		}
 	}
 	
@@ -66,11 +68,6 @@ public class RawScheduleHelper {
 				tmpResult = rse1.getStartDate().compareTo(rse2.getStartDate());
 			if (tmpResult == 0)
 				tmpResult = rse1.getEndDate().compareTo(rse2.getEndDate());
-			if (tmpResult == 0) {
-				tmpResult = Boolean.compare(rse2.isCodeShare(), rse1.isCodeShare());
-				if ((tmpResult == 0) && rse1.isCodeShare())
-					tmpResult = rse1.getCodeShare().compareTo(rse2.getCodeShare());
-			}
 			
 			return (tmpResult == 0) ? Integer.compare(rse1.getDayMap(), rse2.getDayMap()) : tmpResult;
 		}
@@ -127,12 +124,9 @@ public class RawScheduleHelper {
 	 * @param entries a Collection of RawScheduleEntry beans
 	 */
 	public static void mergeCodeShares(List<RawScheduleEntry> entries) {
-		List<RawScheduleEntry> csEntries = entries.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
-		if (csEntries.size() < 2) return;
 		entries.sort(new CodeShareComparator());
-		
-		// Loop through the entries
-		RawScheduleEntry lastCS = csEntries.getFirst();
+
+		RawScheduleEntry lastCS = entries.getFirst();
 		for (int ofs = 1; ofs < entries.size(); ofs++) {
 			RawScheduleEntry rse = entries.get(ofs);
 			if (!rse.isCodeShare() || !rse.matches(lastCS) || (FlightNumber.compare(rse, lastCS, false) != 0)) {
@@ -145,10 +139,13 @@ public class RawScheduleHelper {
 			buf.append(',').append(rse.getCodeShare());
 			lastCS.setCodeShare(buf.toString());
 			entries.set(ofs, null); // mark to be removed
+			log.info("Merged {}-{} {} codeshares {}", lastCS.getAirportD().getIATA(), lastCS.getAirportA().getIATA(), lastCS.getShortCode(), lastCS.getCodeShare());
 		}
 		
 		// Clean out removed entries
-		entries.removeIf(Objects::isNull);
+		int size = entries.size();
+		if (entries.removeIf(Objects::isNull))
+			log.info("Removed {} duplicate codeshares", Integer.valueOf(size - entries.size()));
 		
 		// Remove dupes and format the entries
 		for (RawScheduleEntry rse : entries) {
