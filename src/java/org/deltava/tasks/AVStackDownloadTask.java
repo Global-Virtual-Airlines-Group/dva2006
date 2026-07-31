@@ -123,7 +123,7 @@ public class AVStackDownloadTask extends Task {
 			
 			// Load aircraft types for IATA/ICAO lookup
 			GetAircraft acdao = new GetAircraft(con);
-			acTypes.addAll(acdao.getAll());
+			acTypes.addAll(acdao.getAircraftTypes());
 		} catch (DAOException de) {
 			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
