@@ -132,7 +132,7 @@ public class AVStackDownloadTask extends Task {
 
 		// Walk through the Hubs. Load departures and arrivals
 		boolean isComplete = true;
-		SequencedCollection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
+		List<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		try {
 			log.info("Hub Airports = {}", hubs);
 			for (Hub h : hubs) {
