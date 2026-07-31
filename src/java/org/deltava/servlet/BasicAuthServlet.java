@@ -1,8 +1,9 @@
-// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017, 2018, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017, 2018, 2020, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 import java.io.IOException;
 
 import jakarta.servlet.http.*;
@@ -19,13 +20,28 @@ import org.gvagroup.pool.*;
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 11.3
+ * @version 12.5
  * @since 1.0
  */
 
 abstract class BasicAuthServlet extends GenericServlet {
 
 	private static final Logger log = LogManager.getLogger(BasicAuthServlet.class);
+	
+	/**
+	 * Dummy system user class.
+	 */
+	static class SystemUser extends Pilot {
+		public SystemUser() {
+			super("Golgotha", "SYSTEM");
+			setLastLogin(Instant.now());
+		}
+		
+		@Override
+		public boolean isInRole(String roleName) {
+			return true;
+		}
+	}
 
 	/**
 	 * Authenticates the current web user.
@@ -44,6 +60,14 @@ abstract class BasicAuthServlet extends GenericServlet {
 		StringTokenizer tkns = new StringTokenizer(userPwd, ":");
 		if (tkns.countTokens() != 2)
 			return null;
+		
+		// Check for Golgotha
+		String userID = tkns.nextToken(); String pwd = tkns.nextToken();
+		if ("Golgotha".equals(userID)) {
+			String sysPwd = SystemData.get("security.key.golgotha");
+			if (pwd.equals(sysPwd))
+				return new SystemUser();
+		}
 
 		// Get the JDBC Connection Pool
 		ConnectionPool<Connection> pool = SystemData.getJDBCPool();
@@ -55,15 +79,15 @@ abstract class BasicAuthServlet extends GenericServlet {
 
 			// Get the DAO and the directory name for this user
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			UserID id = new UserID(tkns.nextToken()); 
-			Pilot usr = id.hasAirlineCode() ? dao.getByCode(id.toString()) : dao.get(id.getUserID());
+			UserID id = new UserID(userID); 
+			Pilot usr = id.hasAirlineCode() ? dao.getByCode(userID) : dao.get(id.getUserID());
 			if (usr == null)
-				throw new SecurityException("Unknown User ID - " + id);
+				throw new SecurityException(String.format("Unknown User ID - %s", userID));
 			
 			// Authenticate the user
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
 				if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
-				auth.authenticate(usr, tkns.nextToken());
+				auth.authenticate(usr, pwd);
 			}
 			
 			p = usr;
@@ -87,7 +111,7 @@ abstract class BasicAuthServlet extends GenericServlet {
 	 * @throws IOException if a network error occurs
 	 */
 	protected static void challenge(HttpServletResponse rsp, String realm) throws IOException {
-		rsp.setHeader("WWW-Authenticate", "Basic realm=" + realm);
+		rsp.setHeader("WWW-Authenticate", String.format("Basic realm=%s", realm));
 		rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
 	}
 }
