@@ -18,12 +18,25 @@ import org.deltava.beans.*;
 public class RawScheduleHelper {
 	
 	/**
+	 * A comparator to sort based on soruce and line number.
+	 */
+	static class LineComparator implements Comparator<RawScheduleEntry> {
+		@Override
+		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
+			int tmpResult = ScheduleSource.comparator().compare(rse1.getSource(), rse2.getSource());
+			return (tmpResult == 0) ? Integer.compare(rse1.getLineNumber(), rse2.getLineNumber()) : tmpResult;
+		}
+	}
+	
+	/**
 	 * A comparator to sort based on code share flight value.
 	 */
 	static class CodeShareComparator implements Comparator<RawScheduleEntry> {
 		@Override
 		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
-			int tmpResult = rse1.getCodeShare().compareTo(rse2.getCodeShare());
+			int tmpResult = Boolean.compare(rse2.isCodeShare(), rse1.isCodeShare());
+			if ((tmpResult == 0) && rse1.isCodeShare())
+				tmpResult = rse1.getCodeShare().compareTo(rse2.getCodeShare());
 			if (tmpResult == 0)
 				tmpResult = Integer.compare(rse1.getFlightNumber(), rse2.getFlightNumber());
 			
@@ -113,19 +126,16 @@ public class RawScheduleHelper {
 	 * Merges code share flights, handling cases where there are duplicate entries if a flight is code shared under two different Airlines.
 	 * @param entries a Collection of RawScheduleEntry beans
 	 */
-	public static void mergeCodeShares(SequencedCollection<RawScheduleEntry> entries) {
+	public static void mergeCodeShares(List<RawScheduleEntry> entries) {
 		List<RawScheduleEntry> csEntries = entries.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
-		csEntries.sort(new CodeShareComparator());
 		if (csEntries.size() < 2) return;
+		entries.sort(new CodeShareComparator());
 		
-		// Remove the first entry, it by definition cannot be a dupe
+		// Loop through the entries
 		RawScheduleEntry lastCS = csEntries.getFirst();
-		csEntries.removeFirst();
-		
-		// Add list of dupes, and merge codeshare data
-		Collection<RawScheduleEntry> dupes = new HashSet<RawScheduleEntry>();
-		for (RawScheduleEntry rse : csEntries) {
-			if (!rse.matches(lastCS) || FlightNumber.compare(rse, lastCS, false) != 0) {
+		for (int ofs = 1; ofs < entries.size(); ofs++) {
+			RawScheduleEntry rse = entries.get(ofs);
+			if (!rse.isCodeShare() || !rse.matches(lastCS) || (FlightNumber.compare(rse, lastCS, false) != 0)) {
 				lastCS = rse;
 				continue;
 			}
@@ -134,15 +144,19 @@ public class RawScheduleHelper {
 			StringBuilder buf = new StringBuilder(lastCS.getCodeShare());
 			buf.append(',').append(rse.getCodeShare());
 			lastCS.setCodeShare(buf.toString());
-			dupes.add(rse);
+			entries.set(ofs, null); // mark to be removed
 		}
 		
+		// Clean out removed entries
+		entries.removeIf(Objects::isNull);
+		
 		// Remove dupes and format the entries
-		entries.removeAll(dupes);
-		for (RawScheduleEntry rse : csEntries) {
-			if (rse.getCodeShare().indexOf(',') == -1) continue;
+		for (RawScheduleEntry rse : entries) {
+			if (!rse.isCodeShare() || (rse.getCodeShare().indexOf(',') == -1)) continue;
 			rse.setRemarks(String.format("Multiple code shares (%s)", rse.getCodeShare()));
 			rse.setCodeShare("MULTI");
 		}
+		
+		entries.sort(new LineComparator());
 	}
 }

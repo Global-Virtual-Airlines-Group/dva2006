@@ -144,13 +144,14 @@ public class TestGetAviationStack extends ScheduleTestCase {
 
 		// Search for codeshares
 		List<RawScheduleEntry> csEntries = allFlights.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
-		Collection<Airline> csAirlines = csEntries.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
 		assertFalse(csEntries.isEmpty());
-		assertFalse(csAirlines.isEmpty());
+		assertEquals(2, csEntries.stream().filter(rse -> "VS024".equals(rse.getShortCode())).count());
 			
 		// Merge code shares
 		int oldSize = allFlights.size();
 		RawScheduleHelper.mergeCodeShares(allFlights);
 		assertTrue(allFlights.size() < oldSize);
+		assertEquals(1, allFlights.stream().filter(rse -> "VS024".equals(rse.getShortCode())).count());
+		assertTrue(allFlights.stream().filter(rse -> "MULTI".equals(rse.getCodeShare())).findAny().isPresent());
 	}
 }
