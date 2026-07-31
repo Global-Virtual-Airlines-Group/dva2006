@@ -2,7 +2,6 @@
 package org.deltava.tasks;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.LocalDate;
 
@@ -47,7 +46,6 @@ public class AVStackDownloadTask extends Task {
 		avdao.setReadTimeout(29500);
 		avdao.setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
 		avdao.setAircraft(acTypes);
-		avdao.setSaveData(SystemData.getBoolean("schedule.avstack.persist"));
 
 		// Load Departures
 		int ofs = 0; Airport ap = h.getAirport();
@@ -112,15 +110,6 @@ public class AVStackDownloadTask extends Task {
 			// Load Hubs
 			GetRawScheduleInfo rsdao = new GetRawScheduleInfo(con);
 			hubs.addAll(rsdao.getHubs());
-			
-			// Check for loaded airlines
-			Collection<Airline> airlines = hubs.stream().map(Hub::getAirline).collect(Collectors.toCollection(TreeSet::new));
-			for (Airline al : airlines) {
-				if (rsdao.isLoaded(ScheduleSource.AVSTACK, al, ld)) {
-					hubs.removeIf(h -> h.getAirline().equals(al));
-					log.info("Removing Hubs for already loaded {}", al.getName());
-				}
-			}
 			
 			// Load aircraft types for IATA/ICAO lookup
 			GetAircraft acdao = new GetAircraft(con);

@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.time.LocalDate;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.util.system.SystemData;
@@ -42,27 +41,6 @@ public class GetRawScheduleInfo extends DAO {
 			}
 			
 			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Checks whether any Flights have been loaded for a given start date and Airline.
-	 * @param src the ScheduleSource
-	 * @param al the Airline
-	 * @param ld the start day
-	 * @return TRUE if at least one flight is present, otherwise FALSE
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public boolean isLoaded(ScheduleSource src, Airline al, LocalDate ld) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT COUNT(*) FROM RAW_SCHEDULE WHERE (SRC=?) AND (STARTDATE=?) AND (AIRLINE=?)")) {
-			ps.setInt(1, src.ordinal());
-			ps.setTimestamp(2, Timestamp.valueOf(ld.atStartOfDay()));
-			ps.setString(3, al.getCode());
-			try (ResultSet rs = ps.executeQuery()) {
-				return rs.next() && (rs.getInt(1) > 0);
-			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
