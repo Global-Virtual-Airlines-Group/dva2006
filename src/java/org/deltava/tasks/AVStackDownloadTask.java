@@ -47,11 +47,12 @@ public class AVStackDownloadTask extends Task {
 		avdao.setReadTimeout(29500);
 		avdao.setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
 		avdao.setAircraft(acTypes);
+		avdao.setSaveData(SystemData.getBoolean("schedule.avstack.persist"));
 
 		// Load Departures
 		int ofs = 0; Airport ap = h.getAirport();
 		log.info("Loading {} Departures for {} ({}) (ofs={})", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
-		PaginatedList<RawScheduleEntry> entries = avdao.get(ap, h.getAirline(), dt, true);
+		PaginatedList<RawScheduleEntry> entries = avdao.get(ap, h.getAirline(), dt, true, 0);
 		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 		apEntries.addAll(entries);
 		log.info("Sleeping for {}ms", Integer.valueOf(SLEEP_INTERVAL));
@@ -73,7 +74,7 @@ public class AVStackDownloadTask extends Task {
 		// Load Arrivals
 		ofs = 0;
 		log.info("Loading {} Arrivals for {} ({}) (ofs={})", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
-		entries = avdao.get(ap, h.getAirline(), dt, false);
+		entries = avdao.get(ap, h.getAirline(), dt, false, 0);
 		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 		apEntries.addAll(entries);
 		log.info("Sleeping for {}ms", Integer.valueOf(SLEEP_INTERVAL));

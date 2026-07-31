@@ -462,6 +462,10 @@
 		</innovata>
 		<cache>/var/cache/sched</cache>
 
+		<avstack>
+			<persist type="Boolean">true</persist>
+		</avstack>
+
 		<!-- External Chart data -->
 		<chart>
 			<map name="sources">
