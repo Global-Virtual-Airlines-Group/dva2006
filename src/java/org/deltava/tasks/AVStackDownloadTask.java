@@ -48,7 +48,6 @@ public class AVStackDownloadTask extends Task {
 	/*
 	 * Helper method to load departure and arrival flights from a given Hub airport, handling pagination.
 	 */
-	// FIXME: Eat the DAO exceptions, but track errors and mark as incomplete
 	private APIResults loadFlights(LocalDate dt, Hub h, Collection<Aircraft> acTypes) {
 		boolean isLargeHub = (h.getDestinationCount() > 15);
 		APIResults apEntries = new APIResults();
@@ -91,8 +90,10 @@ public class AVStackDownloadTask extends Task {
 		}
 		
 		// Check for empty result for large hub - this is usually an error
-		if (isLargeHub && apEntries.isEmpty())
-			return apEntries;
+		if (isLargeHub && apEntries.isEmpty()) {
+			log.warn("Zero entries for {} {} ({}), assuming error", h.getAirline().getCode(), ap.getName(), ap.getIATA());
+			apEntries.IsError = true;
+		}
 
 		// Load Arrivals
 		try {
