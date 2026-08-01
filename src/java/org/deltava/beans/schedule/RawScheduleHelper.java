@@ -125,12 +125,14 @@ public class RawScheduleHelper {
 	 */
 	public static void mergeCodeShares(List<RawScheduleEntry> entries) {
 		entries.sort(new CodeShareComparator());
-
 		RawScheduleEntry lastCS = entries.getFirst();
 		for (int ofs = 1; ofs < entries.size(); ofs++) {
 			RawScheduleEntry rse = entries.get(ofs);
 			if (!rse.isCodeShare() || !rse.matches(lastCS) || (FlightNumber.compare(rse, lastCS, false) != 0)) {
 				lastCS = rse;
+				continue;
+			} else if (rse.getCodeShare().equals(lastCS.getCodeShare())) {
+				log.info("Duplicate codeshare {} for {}", rse.getCodeShare(), lastCS.getShortCode());
 				continue;
 			}
 			
