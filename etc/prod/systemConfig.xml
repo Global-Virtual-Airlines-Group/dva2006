@@ -464,6 +464,7 @@
 
 		<avstack>
 			<persist type="Boolean">true</persist>
+			<sleep type="Integer">10350</sleep>
 		</avstack>
 
 		<!-- External Chart data -->
