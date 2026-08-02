@@ -108,6 +108,14 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 			_hCache.add(processedHubs);
 		}
 		
+		// Adjust equipment codes
+		for (RawScheduleEntry rse : results) {
+			if ("B767-300".equals(rse.getEquipmentType()))
+				rse.setEquipmentType("B767-300ER");
+			else if ("B737-900".equals(rse.getEquipmentType()) && "DL".equals(rse.getAirline().getCode()))
+				rse.setEquipmentType("B737-900ER");
+		}
+		
 		// Export to JSON file
 		JSONScheduleFormatter fmt = new JSONScheduleFormatter(); 
 		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("C:\\Temp", String.format("avstack_%s.json", dt))), 131072))) {
