@@ -147,7 +147,7 @@ public class AVStackDownloadTask extends Task {
 			
 			// Check if we're complete
 			GetMetadata mddao = new GetMetadata(con);
-			Instant lastLoad = StringUtils.parseEpoch(mddao.get(String.format("%s.avstack.imort", SystemData.get("airline.code")), "0"));
+			Instant lastLoad = StringUtils.parseEpoch(mddao.get(String.format("%s.avstack.import", SystemData.get("airline.code")), "0"));
 			LocalDate lld = lastLoad.atZone(ZoneOffset.UTC).toLocalDate();
 			if (lld.equals(ld)) {
 				log.info("Already loaded AviationStack flights for {}", StringUtils.format(ld, "MM/dd/yyyy"));
@@ -201,6 +201,14 @@ public class AVStackDownloadTask extends Task {
 			return;
 		}
 		
+		// Adjust equipment codes
+		for (RawScheduleEntry rse : rawEntries) {
+			if ("B767-300".equals(rse.getEquipmentType()))
+				rse.setEquipmentType("B767-300ER");
+			else if ("B737-900".equals(rse.getEquipmentType()) && "DL".equals(rse.getAirline().getCode()))
+				rse.setEquipmentType("B737-900ER");
+		}
+		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -211,8 +219,10 @@ public class AVStackDownloadTask extends Task {
 			
 			// Clean out processed hubs
 			for (Hub h : hubs) {
-				if (todaysFlights.removeIf(rse -> rse.getStartDate().equals(ld) && h.hasRoute(rse)))
-					log.info("Removing {} Flights for {} ({})", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
+				int size = todaysFlights.size();
+				if (todaysFlights.removeIf(rse -> rse.getStartDate().equals(ld) && h.hasRoute(rse))) {
+					log.info("Removing {} {} Flights for {} ({})", Integer.valueOf(size - todaysFlights.size()), h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
+				}
 			}
 			
 			// Remove older flights
@@ -232,7 +242,7 @@ public class AVStackDownloadTask extends Task {
 			
 			// Write metadata and commit
 			SetMetadata mdwdao = new SetMetadata(con);
-			mdwdao.write(String.format("%s.avstack.imort", SystemData.get("airline.code")), String.valueOf(Instant.now().toEpochMilli()));
+			mdwdao.write(String.format("%s.avstack.import", SystemData.get("airline.code")), String.valueOf(Instant.now().toEpochMilli()));
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
