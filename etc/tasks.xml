@@ -156,6 +156,18 @@
 		</time>	
 	</task>
 
+	<!-- Raw Schedule transfer from Production -->
+	<task id="rawschedxfer" enabled="false">
+		<class>org.deltava.tasks.RawScheduleTransferTask</class>
+		<time>
+			<min>0</min>
+			<hour>11</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>	
+	</task>
+
 	<!-- Raw Schedule load -->
 	<task id="schedfilter" enabled="true">
 		<class>org.deltava.tasks.ScheduleFilterTask</class>
