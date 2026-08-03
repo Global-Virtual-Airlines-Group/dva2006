@@ -23,8 +23,16 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airline, t:'Airline'});
 	golgotha.form.validate({f:f.airport, t:'Airport'});
-	golgotha.form.validate({f:f.destCount, min:0, t:'Destination Flight Count'});
+	golgotha.form.validate({f:f.destCount, min:1, t:'Destination Flight Count'});
 	golgotha.form.submit(f);
+	return true;
+};
+
+golgotha.local.updateAirline = function(cb) {
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config.clone();
+	cfg.airline = golgotha.form.getCombo(cb);
+	golgotha.airportLoad.changeAirline([f.airport], cfg);
 	return true;
 };
 
@@ -34,8 +42,8 @@ golgotha.onDOMReady(function() {
 	cfg.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers([f.airport]);
 	golgotha.airportLoad.setText([f.airline,f.airport]);
-	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
-	f.airline.onchange();
+	if (f.airline.selectedIndex > 0)
+		f.airline.onchange();
 });
 </script>
 </head>
@@ -44,7 +52,6 @@ golgotha.onDOMReady(function() {
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
-<content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 <content:empty var="emptyList" />
 
 <!-- Main Body Frame -->
@@ -56,7 +63,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" required="true" options="${airlines}" firstEntry="[ AIRLINE ]" value="${hub.airline}" onChange="void this.updateAirlineCode();" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" required="true" options="${airlines}" firstEntry="[ AIRLINE ]" value="${hub.airline}" onChange="void golgotha.local.updateAirline(this);" /></td>
 </tr>
 <tr>
  <td class="label">Airport</td>

@@ -84,23 +84,10 @@ public class GetAviationStack extends DAO {
 	 */
 	private static Airport getAirport(String code) {
 		Airport a = SystemData.getAirport(code);
-		if (a == null) log.warn("Unknown Airport - {}", code);
+		if (a == null) log.warn("Unknown Airport - {}", code.toUpperCase());
 		return a;
 	}
 	
-	/**
-	 * Loads flights in or out of a particular Airport.
-	 * @param a the Airport
-	 * @param al the Airline
-	 * @param ld the departure date
-	 * @param isDeparture TRUE for departing flights, FALSE for arrivals
-	 * @return a PaginatedList of RawSCheduleEntry beans
-	 * @throws DAOException if an error occurs
-	 */
-	public PaginatedList<RawScheduleEntry> get(Airport a, Airline al, LocalDate ld, boolean isDeparture) throws DAOException {
-		return get(a, al, ld, isDeparture, 0);
-	}
-
 	/**
 	 * Loads flights in or out of a particular Airport.
 	 * @param a the Airport

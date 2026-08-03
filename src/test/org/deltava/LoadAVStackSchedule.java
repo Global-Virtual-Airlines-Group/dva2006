@@ -38,7 +38,7 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 		int ofs = 0;
 		Collection<RawScheduleEntry> apEntries = new ArrayList<RawScheduleEntry>();
 		log.info("Loading {} Departures for {} ({}) (ofs={})", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA(), Integer.valueOf(ofs));
-		PaginatedList<RawScheduleEntry> entries = avdao.get(h.getAirport(), h.getAirline(), ld, true);
+		PaginatedList<RawScheduleEntry> entries = avdao.get(h.getAirport(), h.getAirline(), ld, true, 0);
 		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), h.getAirport().getIATA());
 		apEntries.addAll(entries);
 		ThreadUtils.sleep(SLEEP_INTERVAL);
@@ -54,7 +54,7 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 		// Load the arrival flights
 		ofs = 0;
 		log.info("Loading {} Arrivals for {} ({}) (ofs={})", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA(), Integer.valueOf(ofs));
-		entries = avdao.get(h.getAirport(), h.getAirline(), ld, false);
+		entries = avdao.get(h.getAirport(), h.getAirline(), ld, false, 0);
 		log.info("Loaded {}/{} flights for {}", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), h.getAirport().getIATA());
 		apEntries.addAll(entries);
 		ThreadUtils.sleep(SLEEP_INTERVAL);
@@ -106,6 +106,14 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 			_eCache.add(new CacheableList<RawScheduleEntry>(h.getAirport().getIATA(), apEntries));
 			processedHubs.add(h);
 			_hCache.add(processedHubs);
+		}
+		
+		// Adjust equipment codes
+		for (RawScheduleEntry rse : results) {
+			if ("B767-300".equals(rse.getEquipmentType()))
+				rse.setEquipmentType("B767-300ER");
+			else if ("B737-900".equals(rse.getEquipmentType()) && "DL".equals(rse.getAirline().getCode()))
+				rse.setEquipmentType("B737-900ER");
 		}
 		
 		// Export to JSON file

@@ -2,6 +2,7 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 
@@ -61,22 +62,27 @@ public class HubCommand extends AbstractFormCommand {
 		
 		// Get the lookup keys
 		List<String> keys = StringUtils.split(ctx.getParameter("id"), "-");
-		Airline a = SystemData.getAirline(keys.getFirst());
-		Airport ap = SystemData.getAirport(keys.getLast());
-		if ((a == null) || (ap == null))
-			throw notFoundException("Invalid Airline/Airport", ctx.getParameter("id"));
+		if ((keys != null) && (keys.size() >= 2)) {
+			Airline a = SystemData.getAirline(keys.getFirst());
+			Airport ap = SystemData.getAirport(keys.getLast());
+			if ((a == null) || (ap == null))
+				throw notFoundException("Invalid Airline/Airport", ctx.getParameter("id"));
 		
-		// Get the Hub
-		try {
-			GetRawScheduleInfo dao = new GetRawScheduleInfo(ctx.getConnection());
-			Collection<Hub> hubs = dao.getHubs();
-			Optional<Hub> oh = hubs.stream().filter(h -> h.matches(a, ap)).findAny();
-			ctx.setAttribute("hub", oh.orElse(null), REQUEST);
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
+			// Get the Hub
+			try {
+				GetRawScheduleInfo dao = new GetRawScheduleInfo(ctx.getConnection());
+				Collection<Hub> hubs = dao.getHubs();
+				Optional<Hub> oh = hubs.stream().filter(h -> h.matches(a, ap)).findAny();
+				ctx.setAttribute("hub", oh.orElse(null), REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
 		}
+		
+		// Get current airlines
+		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(al -> !al.getHistoric()).collect(Collectors.toList()), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

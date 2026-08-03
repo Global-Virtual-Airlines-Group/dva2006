@@ -38,7 +38,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("ATL"), SystemData.getAirline("DL"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("ATL"), SystemData.getAirline("DL"), dt, true, 0);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
 			assertEquals(results.getTotal(), results.getCount());
@@ -51,7 +51,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, true, 0);
 			assertNotNull(results);
 			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
@@ -64,7 +64,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, false);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("JFK"), SystemData.getAirline("DL"), dt, false, 0);
 			assertNotNull(results);
 			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
@@ -77,7 +77,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, true, 0);
 			assertNotNull(results);
 			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
@@ -90,7 +90,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, false);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, false, 0);
 			assertNotNull(results);
 			assertEquals(results.getTotal(), results.getCount());
 			assertFalse(results.isEmpty());
@@ -107,7 +107,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("CDG"), SystemData.getAirline("AF"), dt, false);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("PVR"), SystemData.getAirline("AF"), dt, false, 0);
 			assertNotNull(results);
 			assertEquals(0, results.getCount());
 			assertEquals(results.getTotal(), results.getCount());
@@ -123,7 +123,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("DL"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("DL"), dt, true, 0);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
 			allFlights.addAll(results);
@@ -133,24 +133,25 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
 			dao.setStream(is);
-			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("AF"), dt, true);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("AF"), dt, true, 0);
 			assertNotNull(results);
 			assertFalse(results.isEmpty());
 			allFlights.addAll(results);
 		}
 
-		// Set line numbers
-		RawScheduleHelper.calculateLineNumbers(allFlights);
-
 		// Search for codeshares
 		List<RawScheduleEntry> csEntries = allFlights.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
-		Collection<Airline> csAirlines = csEntries.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
 		assertFalse(csEntries.isEmpty());
-		assertFalse(csAirlines.isEmpty());
+		assertEquals(2, csEntries.stream().filter(rse -> "VS024".equals(rse.getShortCode())).count());
 			
 		// Merge code shares
 		int oldSize = allFlights.size();
 		RawScheduleHelper.mergeCodeShares(allFlights);
 		assertTrue(allFlights.size() < oldSize);
+		assertEquals(1, allFlights.stream().filter(rse -> "VS024".equals(rse.getShortCode())).count());
+		assertTrue(allFlights.stream().filter(rse -> "MULTI".equals(rse.getCodeShare())).findAny().isPresent());
+		
+		// Set line numbers
+		RawScheduleHelper.calculateLineNumbers(allFlights);
 	}
 }
