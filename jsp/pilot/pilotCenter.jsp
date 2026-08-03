@@ -885,6 +885,10 @@ pilot Certification.</td>
  <td class="data">You can filter multiple Raw schedule sources based on effective date and day of week into the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="avmerge">AviationStack Schedule merge</el:cmd></td>
+ <td class="data">You can append a single day's AviationStack schedule data.</td> 
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="usvcairports">Unserviced Airports</el:cmd></td>
  <td class="data">As the <content:airline /> Flight Schedule is updated, certain airports may no longer be served by a particular Airline. This will display Airports with no corresponding flights in the
  Flight Schedule so that their servicing Airlines may be updated.</td>

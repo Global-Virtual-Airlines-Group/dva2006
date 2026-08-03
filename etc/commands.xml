@@ -816,6 +816,12 @@
 		<class>org.deltava.commands.schedule.ScheduleExportCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
+	
+	<command id="avmerge">
+		<name>AVStack Schedule Merge</name>
+		<class>org.deltava.commands.schedule.AVStackMergeCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
 
 	<command id="airlines">
 		<name>Airline List</name>
