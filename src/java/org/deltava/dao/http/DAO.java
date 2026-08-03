@@ -155,7 +155,7 @@ abstract class DAO {
 	 * @param userID the user ID
 	 * @param pwd the password
 	 */
-	protected void setAuthentication(String userID, String pwd) {
+	public void setAuthentication(String userID, String pwd) {
 		StringBuilder authBuf = new StringBuilder(userID);
 		authBuf.append(':').append(pwd);
 		Base64.Encoder enc = Base64.getEncoder();
