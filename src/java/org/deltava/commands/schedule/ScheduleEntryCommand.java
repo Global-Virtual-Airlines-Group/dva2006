@@ -103,7 +103,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			// Get a line number if manual entry
 			if ((src == ScheduleSource.MANUAL) && (srcLine <= 0)) {
 				GetRawScheduleInfo ridao = new GetRawScheduleInfo(con);
-				entry.setLineNumber(ridao.getNextManualEntryLine());
+				entry.setLineNumber(ridao.getNextLine(ScheduleSource.MANUAL));
 			}
 			
 			// Get comments and remarks

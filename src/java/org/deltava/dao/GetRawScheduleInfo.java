@@ -47,13 +47,14 @@ public class GetRawScheduleInfo extends DAO {
 	}
 
 	/**
-	 * Returns the first available &quot;line number&quot; for manually entered raw schedule entries.
+	 * Returns the first available &quot;line number&quot; for a particular Raw Schedule source.
+	 * @param src the ScheduleSource
 	 * @return the next line number
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getNextManualEntryLine() throws DAOException {
+	public int getNextLine(ScheduleSource src) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT MAX(SRCLINE) FROM RAW_SCHEDULE WHERE (SRC=?)")) {
-			ps.setInt(1, ScheduleSource.MANUAL.ordinal());
+			ps.setInt(1, src.ordinal());
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) + 1 : 1;
 			}
