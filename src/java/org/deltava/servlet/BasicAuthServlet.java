@@ -63,7 +63,7 @@ abstract class BasicAuthServlet extends GenericServlet {
 		
 		// Check for Golgotha
 		String userID = tkns.nextToken(); String pwd = tkns.nextToken();
-		if ("Golgotha".equals(userID)) {
+		if ("Golgotha".equalsIgnoreCase(userID)) {
 			String sysPwd = SystemData.get("security.key.golgotha");
 			if (pwd.equals(sysPwd))
 				return new SystemUser();
