@@ -226,8 +226,8 @@ public class AVStackDownloadTask extends Task {
 			}
 			
 			// Remove older flights
-			final LocalDate today = LocalDate.now();
-			todaysFlights.removeIf(rse -> rse.getEndDate().isBefore(today));
+			final LocalDate yesterday = LocalDate.now().minusDays(1);
+			todaysFlights.removeIf(rse -> rse.getEndDate().isBefore(yesterday));
 			
 			// Update line numbers
 			todaysFlights.addAll(rawEntries);
