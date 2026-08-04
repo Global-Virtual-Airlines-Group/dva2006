@@ -67,7 +67,7 @@ public class TestFAAChartLoader extends TestCase {
 
 	public void testLoadMetadata() {
 		
-		TaskContext ctx = new TaskContext();
+		TaskContext ctx = new TaskContext(new TaskLog(MockFAALoaderTask.class));
 		assertNotNull(ctx);
 		
 		MockFAALoaderTask task = new MockFAALoaderTask();
