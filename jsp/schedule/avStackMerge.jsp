@@ -38,7 +38,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="avmerge.do" method="post" op="save" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="avmerge.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">AVIATIONSTACK SCHEDULE MERGE</td>
