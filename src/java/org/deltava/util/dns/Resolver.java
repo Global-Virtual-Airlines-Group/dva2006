@@ -21,8 +21,8 @@ public class Resolver {
 	private final Cache<DNSEntry> _cache = CacheManager.get(DNSEntry.class, "ReverseDNS");
 	private static final Logger log = LogManager.getLogger(Resolver.class);
 	
-	private static final BlockingQueue<Runnable> _work = new ArrayBlockingQueue<Runnable>(24);
-	private final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 6, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
+	private static final BlockingQueue<Runnable> _work = new ArrayBlockingQueue<Runnable>(32);
+	private final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 8, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
 	
 	private final AtomicLong _hits = new AtomicLong();
 	private final AtomicLong _reqs = new AtomicLong();
