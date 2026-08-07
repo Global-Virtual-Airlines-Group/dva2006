@@ -816,6 +816,12 @@
 		<class>org.deltava.commands.schedule.ScheduleExportCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
+
+	<command id="avdl">
+		<name>AVStack Schedule Download</name>
+		<class>org.deltava.commands.schedule.AVStackDownloadeCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
 	
 	<command id="avmerge">
 		<name>AVStack Schedule Merge</name>
