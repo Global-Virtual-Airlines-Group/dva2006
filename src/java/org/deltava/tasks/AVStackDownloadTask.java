@@ -3,6 +3,7 @@ package org.deltava.tasks;
 
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.apache.logging.log4j.Level;
@@ -200,8 +201,14 @@ public class AVStackDownloadTask extends Task {
 			return;
 		}
 		
+		// Get operators and codeshares to use
+		Collection<String> opCodes = hubs.stream().map(h -> h.getAirline().getCode()).collect(Collectors.toSet());
+		Collection<String> csCodes = SystemData.getCollection(String.class, "schedule.avstack.codeshares");
+		if (csCodes == null) csCodes = Collections.emptySet();
+		
 		// Merge code shares
-		RawScheduleHelper.mergeCodeShares(results);
+		CodeShareFilter csf = new CodeShareFilter(opCodes, csCodes);
+		RawScheduleHelper.mergeCodeShares(results, csf);
 		
 		// Eliminate duplicates
 		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(RawScheduleHelper.getDupeChecker(false));
