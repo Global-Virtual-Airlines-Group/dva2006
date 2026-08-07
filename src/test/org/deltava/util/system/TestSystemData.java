@@ -50,4 +50,14 @@ public class TestSystemData extends TestCase {
     	assertNotNull(SystemData.getAirline("DAL"));
     	assertNull(SystemData.getAirline("foo"));
     }
+    
+    public void testCollection() {
+    	SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
+    	assertTrue(SystemData.has("security.roles"));
+    	
+    	Collection<String> roles = SystemData.getCollection(String.class, "security.roles");
+    	assertNotNull(roles);
+    	assertFalse(roles.isEmpty());
+    	assertTrue(roles.contains("HR"));
+    }
 }

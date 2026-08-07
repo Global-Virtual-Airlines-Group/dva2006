@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
@@ -18,7 +19,7 @@ import org.gvagroup.pool.*;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 11.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -93,10 +94,24 @@ public final class SystemData implements Serializable {
 	/**
 	 * Returns a property value.
 	 * @param propertyName the property name
-	 * @return the property
+	 * @return the property, or null if not found
 	 */
 	public static Object getObject(String propertyName) {
 		return _properties.get(propertyName);
+	}
+	
+	/**
+	 * Returns a collection value. This method takes a class parameter to cast values to their proper type. If the collection exists
+	 * but values are of a different classs, the returned collection will be empty, not null.
+	 * This always returns a List. If they actual stored Collection type is important to preserve, call {@link SystemData#getObject(String)}
+	 * can cast it your damned self.
+	 * @param c the property value Class
+	 * @param propertyName the property name
+	 * @return a Collection of values, or null if not found
+	 */
+	public static <T> Collection<T> getCollection(Class<T> c, String propertyName) {
+		Collection<?> data = (Collection<?>) getObject(propertyName);
+		return (data == null) ? null : data.stream().filter(c::isInstance).map(c::cast).collect(Collectors.toList());
 	}
 
 	/**
