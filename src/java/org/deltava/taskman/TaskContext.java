@@ -1,15 +1,18 @@
-// Copyright 2007, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2011, 2016, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
+import java.util.*;
 import java.time.Instant;
 
-import org.deltava.beans.Pilot;
+import org.apache.logging.log4j.Level;
+
+import org.deltava.beans.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * The execution context for a scheduled task.
  * @author Luke
- * @version 10.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -17,12 +20,15 @@ public class TaskContext extends org.deltava.jdbc.ConnectionContext {
 	
 	private Pilot _user;
 	private Instant _lastRun;
+	private final TaskLog _log;
 
 	/**
 	 * Initializes the task context.
+	 * @param log the TaskLog
 	 */
-	TaskContext() {
+	TaskContext(TaskLog log) {
 		super();
+		_log = log;
 		setDB(SystemData.get("airline.db"));
 	}
 	
@@ -40,6 +46,21 @@ public class TaskContext extends org.deltava.jdbc.ConnectionContext {
 	 */
 	public Pilot getUser() {
 		return _user;
+	}
+	
+	public Collection<LogEntry> getLogEntries() {
+		return Collections.unmodifiableCollection(_log.getEntries());
+	}
+	
+	/**
+	 * Logs a message to the Task logger.
+	 * @param l the Log4J severity Level
+	 * @param fmt the format string
+	 * @param args the arguments
+	 * @see String#format(String, Object...)
+	 */
+	public void log(Level l, String fmt, Object... args) {
+		_log.log(null, fmt, args);
 	}
 	
 	/**

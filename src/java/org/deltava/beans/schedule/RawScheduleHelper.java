@@ -122,8 +122,9 @@ public class RawScheduleHelper {
 	/**
 	 * Merges code share flights, handling cases where there are duplicate entries if a flight is code shared under two different Airlines.
 	 * @param entries a Collection of RawScheduleEntry beans
+	 * @param f a CodeShareFilter
 	 */
-	public static void mergeCodeShares(List<RawScheduleEntry> entries) {
+	public static void mergeCodeShares(List<RawScheduleEntry> entries, CodeShareFilter f) {
 		entries.sort(new CodeShareComparator());
 		RawScheduleEntry lastCS = entries.getFirst();
 		for (int ofs = 1; ofs < entries.size(); ofs++) {
@@ -146,14 +147,14 @@ public class RawScheduleHelper {
 		
 		// Clean out removed entries
 		int size = entries.size();
-		if (entries.removeIf(Objects::isNull))
-			log.info("Removed {} duplicate codeshares", Integer.valueOf(size - entries.size()));
+		if (entries.removeIf(e -> !f.test(e)))
+			log.info("Removed {} duplicate/invalid codeshares", Integer.valueOf(size - entries.size()));
 		
 		// Remove dupes and format the entries
 		for (RawScheduleEntry rse : entries) {
 			if (!rse.isCodeShare() || (rse.getCodeShare().indexOf(',') == -1)) continue;
 			rse.setRemarks(String.format("Multiple code shares (%s)", rse.getCodeShare()));
-			rse.setCodeShare("MULTI");
+			rse.setCodeShare(ScheduleEntry.MULTI_CS);
 		}
 		
 		entries.sort(new LineComparator());

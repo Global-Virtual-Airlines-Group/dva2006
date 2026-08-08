@@ -119,6 +119,7 @@ public class TestGetAviationStack extends ScheduleTestCase {
 	
 		LocalDate dt = LocalDate.now().plusDays(14);
 		List<RawScheduleEntry> allFlights = new ArrayList<RawScheduleEntry>();
+		
 		try (InputStream is = ConfigLoader.getStream("/data/avstack/lax_cs_dl.json")) {
 			GetAviationStack dao = new GetAviationStack();
 			dao.setAircraft(_acTypes);
@@ -138,18 +139,72 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			assertFalse(results.isEmpty());
 			allFlights.addAll(results);
 		}
-
+		
 		// Search for codeshares
 		List<RawScheduleEntry> csEntries = allFlights.stream().filter(ScheduleEntry::isCodeShare).collect(Collectors.toList());
 		assertFalse(csEntries.isEmpty());
 		assertEquals(2, csEntries.stream().filter(rse -> "VS024".equals(rse.getShortCode())).count());
 			
-		// Merge code shares
+		// Merge code shares, allowing DL and AF
 		int oldSize = allFlights.size();
-		RawScheduleHelper.mergeCodeShares(allFlights);
+		RawScheduleHelper.mergeCodeShares(allFlights, new CodeShareFilter(Set.of("DL","AF")));
 		assertTrue(allFlights.size() < oldSize);
-		assertEquals(1, allFlights.stream().filter(rse -> "VS024".equals(rse.getShortCode())).count());
-		assertTrue(allFlights.stream().filter(rse -> "MULTI".equals(rse.getCodeShare())).findAny().isPresent());
+		assertFalse(allFlights.isEmpty());
+		
+		// Test multi-code shares
+		List<RawScheduleEntry> mcs = allFlights.stream().filter(rse -> ScheduleEntry.MULTI_CS.equals(rse.getCodeShare())).collect(Collectors.toList());
+		Optional<RawScheduleEntry> ose = mcs.stream().filter(rse -> "VS024".equals(rse.getShortCode())).findAny();
+		assertTrue(ose.isPresent());
+		
+		// Test multi code-share
+		RawScheduleEntry rse = ose.get();
+		Collection<String> alCodes = rse.getCodeShareOperators();
+		assertEquals(2, alCodes.size());
+		assertTrue(alCodes.contains("DL"));
+		assertTrue(alCodes.contains("AF"));
+		
+		// Set line numbers
+		RawScheduleHelper.calculateLineNumbers(allFlights);
+	}
+	
+	public void testCodeShareFilter() throws Exception {
+		
+		LocalDate dt = LocalDate.now().plusDays(14);
+		List<RawScheduleEntry> allFlights = new ArrayList<RawScheduleEntry>();
+		
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/lax_cs_kl.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("KL"), dt, true, 0);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+			allFlights.addAll(results);
+		}
+		
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/lax_cs_dl.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("LAX"), SystemData.getAirline("DL"), dt, true, 0);
+			assertNotNull(results);
+			assertFalse(results.isEmpty());
+			allFlights.addAll(results);
+		}
+		
+		// Filter code shares, DL only
+		int oldSize = allFlights.size();
+		RawScheduleHelper.mergeCodeShares(allFlights, new CodeShareFilter(Set.of("DL")));
+		assertTrue(allFlights.size() < oldSize);
+		assertFalse(allFlights.isEmpty());
+		assertEquals(0, allFlights.stream().filter(rse -> "AF25".equals(rse.getShortCode())).count());
+		
+		// Validate codeshares
+		for (RawScheduleEntry rse : allFlights) {
+			if ("DL".equals(rse.getAirline().getCode())) continue;
+			Collection<String> cs = rse.getCodeShareOperators();
+			assertTrue(cs.contains("DL"));
+		}
 		
 		// Set line numbers
 		RawScheduleHelper.calculateLineNumbers(allFlights);

@@ -1,6 +1,7 @@
 // Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
+import java.util.*;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
@@ -22,6 +23,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 * Variable equipment code.
 	 */
 	public static final String EQ_VARIES = "EQV";
+	
+	/**
+	 * Multiple codeshare code.
+	 */
+	public static final String MULTI_CS = "MULTI";
 	
 	private ZonedDateTime _timeD;
 	private ZonedDateTime _timeA;
@@ -148,6 +154,26 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 */
 	public String getCodeShare() {
 		return _codeShare;
+	}
+	
+	/**
+	 * Returns the code share operator code(s) for this flight.
+	 * @return a Collection of IATA airline codes of code share operators
+	 */
+	public Collection<String> getCodeShareOperators() {
+		if (MULTI_CS.equals(_codeShare) && (_remarks != null) && (_remarks.indexOf('(') > 0)) {
+			int spos = _remarks.indexOf('('); int epos = _remarks.indexOf(')', spos);
+			StringBuilder buf = new StringBuilder();
+			for (int x = spos; x < epos; x++) {
+				char c = _remarks.charAt(x);
+				if (Character.isLetter(c) || (c == ','))
+					buf.append(c);
+			}
+			
+			return new TreeSet<String>(StringUtils.split(buf.toString(), ","));
+		}
+		
+		return isCodeShare() ? Set.of(_codeShare.substring(0, 2)) : Collections.emptySet();
 	}
 	
 	/**

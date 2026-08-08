@@ -68,6 +68,7 @@
 	<service id="schedexport" class="org.deltava.service.schedule.ExportService" />
 	<service id="rawschedxfer" class="org.deltava.service.schedule.RawScheduleTransferService" />
 	<service id="tourleg" class="org.deltava.service.schedule.TourLegService" />
+	<service id="avstatus" class="org.deltava.service.schedule.AVStackStatusService" />
 	
 	<!-- Logbook Services -->
 	<service id="mylogbook" class="org.deltava.service.logbook.LogbookService" />

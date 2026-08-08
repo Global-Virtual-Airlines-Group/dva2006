@@ -1,0 +1,69 @@
+// Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.service.schedule;
+
+import static jakarta.servlet.http.HttpServletResponse.*;
+
+import org.json.*;
+
+import org.deltava.beans.LogEntry;
+
+import org.deltava.service.*;
+
+import org.deltava.util.JSONUtils;
+import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Service to display AviationStack real-time import status.
+ * @author Luke
+ * @version 12.5
+ * @since 12.5
+ */
+
+public class AVStackStatusService extends WebService {
+	
+	private static final Cache<CacheableCollection<LogEntry>> _cache = CacheManager.getCollection(LogEntry.class, "AVStackStatus");
+
+	/**
+	 * Executes the Web Service.
+	 * @param ctx the Web Service Context
+	 * @return the HTTP status code
+	 * @throws ServiceException if an error occurs
+	 */
+	@Override
+	public int execute(ServiceContext ctx) throws ServiceException {
+		
+		// Get the entries
+		CacheableCollection<LogEntry> entries = _cache.get(SystemData.get("airline.code"));
+		if (entries == null)
+			return SC_NOT_FOUND;
+		
+		// Convert to JSON
+		JSONObject jo = new JSONObject();
+		for (LogEntry le : entries) {
+			JSONObject lo = new JSONObject();
+			lo.put("created", le.getCreatedOn().toEpochMilli());
+			lo.put("level", le.getLeve().name());
+			lo.put("msg", le.toString());
+			jo.accumulate("entries", lo);
+		}
+		
+		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "entries");
+		try {
+			ctx.setContentType("application/json", "utf-8");
+			ctx.setExpiry(10);
+			ctx.println(jo.toString(2));
+			ctx.commit();
+		} catch (Exception ie) {
+			throw error(SC_CONFLICT, "I/O Error", false);
+		}
+		
+		return SC_OK;
+	}
+
+	@Override
+	public final boolean isSecure() {
+		return true;
+	}
+}
