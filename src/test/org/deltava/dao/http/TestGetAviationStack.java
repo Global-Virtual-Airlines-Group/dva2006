@@ -199,6 +199,13 @@ public class TestGetAviationStack extends ScheduleTestCase {
 		assertFalse(allFlights.isEmpty());
 		assertEquals(0, allFlights.stream().filter(rse -> "AF25".equals(rse.getShortCode())).count());
 		
+		// Validate codeshares
+		for (RawScheduleEntry rse : allFlights) {
+			if ("DL".equals(rse.getAirline().getCode())) continue;
+			Collection<String> cs = rse.getCodeShareOperators();
+			assertTrue(cs.contains("DL"));
+		}
+		
 		// Set line numbers
 		RawScheduleHelper.calculateLineNumbers(allFlights);
 	}
