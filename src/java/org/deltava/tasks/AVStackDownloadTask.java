@@ -208,6 +208,8 @@ public class AVStackDownloadTask extends Task {
 		
 		// Merge code shares
 		CodeShareFilter csf = new CodeShareFilter(opCodes, csCodes);
+		ctx.log(Level.INFO, "Code Share Operators = {}, Marketers = {}", csf.getOperatorCodes(), csf.getMarketerCodes());
+		
 		RawScheduleHelper.mergeCodeShares(results, csf);
 		
 		// Eliminate duplicates

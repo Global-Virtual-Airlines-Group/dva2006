@@ -37,6 +37,22 @@ public class CodeShareFilter implements Predicate<ScheduleEntry> {
 		_codeShareCodes.addAll(csCodes);
 	}
 	
+	/**
+	 * Returns the Operator Airline codes for this filter.
+	 * @return a list of Operator IATA codes
+	 */
+	public Collection<String> getOperatorCodes() {
+		return _operatorCodes;
+	}
+	
+	/**
+	 * Returns the Marketer Airline codes for this filter.
+	 * @return a list of Marketer IATA codes
+	 */
+	public Collection<String> getMarketerCodes() {
+		return _codeShareCodes;
+	}
+	
 	@Override
 	public boolean test(ScheduleEntry se) {
 		if (se == null) return false;
