@@ -50,7 +50,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="avimport.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="avdl.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">AVIATIONSTACK SCHEDULE IMPORT</td>
