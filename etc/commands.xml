@@ -819,7 +819,7 @@
 
 	<command id="avdl">
 		<name>AVStack Schedule Download</name>
-		<class>org.deltava.commands.schedule.AVStackDownloadeCommand</class>
+		<class>org.deltava.commands.schedule.AVStackDownloadCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
 	
