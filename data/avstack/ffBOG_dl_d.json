@@ -1,0 +1,940 @@
+{
+    "pagination": {
+        "limit": 100,
+        "offset": 0,
+        "count": 30,
+        "total": 30
+    },
+    "data": [
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 08:40:00"
+            },
+            "arrival": {
+                "iataCode": "mia",
+                "icaoCode": "kmia",
+                "terminal": "s",
+                "gate": "j3",
+                "scheduledTime": "2026-08-25 13:35:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6076",
+                "iataNumber": "dl6076",
+                "icaoNumber": "dal6076"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 10:35:00"
+            },
+            "arrival": {
+                "iataCode": "mco",
+                "icaoCode": "kmco",
+                "terminal": "b",
+                "gate": "83",
+                "scheduledTime": "2026-08-25 15:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6043",
+                "iataNumber": "dl6043",
+                "icaoNumber": "dal6043"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "a1",
+                "scheduledTime": "2026-08-25 09:00:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "i",
+                "gate": "e4",
+                "scheduledTime": "2026-08-25 14:55:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "980",
+                "iataNumber": "dl980",
+                "icaoNumber": "dal980"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 08:40:00"
+            },
+            "arrival": {
+                "iataCode": "mco",
+                "icaoCode": "kmco",
+                "terminal": "b",
+                "gate": "81",
+                "scheduledTime": "2026-08-25 13:55:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6074",
+                "iataNumber": "dl6074",
+                "icaoNumber": "dal6074"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "b3",
+                "scheduledTime": "2026-08-25 11:00:00"
+            },
+            "arrival": {
+                "iataCode": "mia",
+                "icaoCode": "kmia",
+                "terminal": "s",
+                "gate": "j3",
+                "scheduledTime": "2026-08-25 15:55:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6080",
+                "iataNumber": "dl6080",
+                "icaoNumber": "dal6080"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "a1",
+                "scheduledTime": "2026-08-25 14:55:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "i",
+                "gate": "",
+                "scheduledTime": "2026-08-25 20:59:00"
+            },
+            "aircraft": {
+                "modelCode": "b752",
+                "modelText": "boeing 757-232"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "983",
+                "iataNumber": "dl983",
+                "icaoNumber": "dal983"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 17:15:00"
+            },
+            "arrival": {
+                "iataCode": "lim",
+                "icaoCode": "spjc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 20:20:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6284",
+                "iataNumber": "dl6284",
+                "icaoNumber": "dal6284"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 17:00:00"
+            },
+            "arrival": {
+                "iataCode": "mde",
+                "icaoCode": "skrg",
+                "terminal": "",
+                "gate": "3a",
+                "scheduledTime": "2026-08-25 18:00:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-233"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6198",
+                "iataNumber": "dl6198",
+                "icaoNumber": "dal6198"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c2",
+                "scheduledTime": "2026-08-25 18:15:00"
+            },
+            "arrival": {
+                "iataCode": "mde",
+                "icaoCode": "skrg",
+                "terminal": "",
+                "gate": "2a",
+                "scheduledTime": "2026-08-25 19:15:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6150",
+                "iataNumber": "dl6150",
+                "icaoNumber": "dal6150"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 20:30:00"
+            },
+            "arrival": {
+                "iataCode": "mde",
+                "icaoCode": "skrg",
+                "terminal": "1",
+                "gate": "1a",
+                "scheduledTime": "2026-08-25 21:30:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-233"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6104",
+                "iataNumber": "dl6104",
+                "icaoNumber": "dal6104"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 23:10:00"
+            },
+            "arrival": {
+                "iataCode": "scl",
+                "icaoCode": "scel",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-25 06:00:00"
+            },
+            "aircraft": {
+                "modelCode": "b788",
+                "modelText": "boeing 787-8 dreamliner"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6286",
+                "iataNumber": "dl6286",
+                "icaoNumber": "dal6286"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c6",
+                "scheduledTime": "2026-08-25 18:05:00"
+            },
+            "arrival": {
+                "iataCode": "ctg",
+                "icaoCode": "skcg",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 19:35:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6086",
+                "iataNumber": "dl6086",
+                "icaoNumber": "dal6086"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c5",
+                "scheduledTime": "2026-08-25 17:00:00"
+            },
+            "arrival": {
+                "iataCode": "ctg",
+                "icaoCode": "skcg",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 18:30:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-233"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6087",
+                "iataNumber": "dl6087",
+                "icaoNumber": "dal6087"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c7a",
+                "scheduledTime": "2026-08-25 23:40:00"
+            },
+            "arrival": {
+                "iataCode": "clo",
+                "icaoCode": "skcl",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 00:45:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-233"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7408",
+                "iataNumber": "dl7408",
+                "icaoNumber": "dal7408"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 19:40:00"
+            },
+            "arrival": {
+                "iataCode": "ctg",
+                "icaoCode": "skcg",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 21:10:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7380",
+                "iataNumber": "dl7380",
+                "icaoNumber": "dal7380"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c1",
+                "scheduledTime": "2026-08-25 19:50:00"
+            },
+            "arrival": {
+                "iataCode": "smr",
+                "icaoCode": "sksm",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 21:20:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6098",
+                "iataNumber": "dl6098",
+                "icaoNumber": "dal6098"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c4d",
+                "scheduledTime": "2026-08-25 20:25:00"
+            },
+            "arrival": {
+                "iataCode": "cuc",
+                "icaoCode": "skcc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 21:40:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6008",
+                "iataNumber": "dl6008",
+                "icaoNumber": "dal6008"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c2",
+                "scheduledTime": "2026-08-25 21:30:00"
+            },
+            "arrival": {
+                "iataCode": "pei",
+                "icaoCode": "skpe",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 22:30:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6095",
+                "iataNumber": "dl6095",
+                "icaoNumber": "dal6095"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 23:15:00"
+            },
+            "arrival": {
+                "iataCode": "baq",
+                "icaoCode": "skbq",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 00:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6262",
+                "iataNumber": "dl6262",
+                "icaoNumber": "dal6262"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 05:00:00"
+            },
+            "arrival": {
+                "iataCode": "bga",
+                "icaoCode": "skbg",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 06:05:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7398",
+                "iataNumber": "dl7398",
+                "icaoNumber": "dal7398"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c7a",
+                "scheduledTime": "2026-08-25 05:25:00"
+            },
+            "arrival": {
+                "iataCode": "cuc",
+                "icaoCode": "skcc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 06:35:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6101",
+                "iataNumber": "dl6101",
+                "icaoNumber": "dal6101"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c5",
+                "scheduledTime": "2026-08-25 06:10:00"
+            },
+            "arrival": {
+                "iataCode": "pei",
+                "icaoCode": "skpe",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 07:15:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-233"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6009",
+                "iataNumber": "dl6009",
+                "icaoNumber": "dal6009"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c2",
+                "scheduledTime": "2026-08-25 16:05:00"
+            },
+            "arrival": {
+                "iataCode": "adz",
+                "icaoCode": "sksp",
+                "terminal": "1",
+                "gate": "4",
+                "scheduledTime": "2026-08-25 18:15:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6261",
+                "iataNumber": "dl6261",
+                "icaoNumber": "dal6261"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c1",
+                "scheduledTime": "2026-08-25 17:20:00"
+            },
+            "arrival": {
+                "iataCode": "pei",
+                "icaoCode": "skpe",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 18:20:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-233"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6094",
+                "iataNumber": "dl6094",
+                "icaoNumber": "dal6094"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c8",
+                "scheduledTime": "2026-08-25 17:55:00"
+            },
+            "arrival": {
+                "iataCode": "smr",
+                "icaoCode": "sksm",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 19:25:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-233"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6096",
+                "iataNumber": "dl6096",
+                "icaoNumber": "dal6096"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 18:50:00"
+            },
+            "arrival": {
+                "iataCode": "bga",
+                "icaoCode": "skbg",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 19:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6210",
+                "iataNumber": "dl6210",
+                "icaoNumber": "dal6210"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "a2",
+                "scheduledTime": "2026-08-25 05:00:00"
+            },
+            "arrival": {
+                "iataCode": "lim",
+                "icaoCode": "spjc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 08:05:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6288",
+                "iataNumber": "dl6288",
+                "icaoNumber": "dal6288"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c5",
+                "scheduledTime": "2026-08-25 15:10:00"
+            },
+            "arrival": {
+                "iataCode": "baq",
+                "icaoCode": "skbq",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 16:45:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6097",
+                "iataNumber": "dl6097",
+                "icaoNumber": "dal6097"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "c7b",
+                "scheduledTime": "2026-08-25 17:00:00"
+            },
+            "arrival": {
+                "iataCode": "clo",
+                "icaoCode": "skcl",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-25 18:05:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6164",
+                "iataNumber": "dl6164",
+                "icaoNumber": "dal6164"
+            }
+        },
+        {
+            "weekday": "2",
+            "departure": {
+                "iataCode": "bog",
+                "icaoCode": "skbo",
+                "terminal": "1",
+                "gate": "a8",
+                "scheduledTime": "2026-08-25 18:30:00"
+            },
+            "arrival": {
+                "iataCode": "lim",
+                "icaoCode": "spjc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-25 21:35:00"
+            },
+            "aircraft": {
+                "modelCode": "a320",
+                "modelText": "airbus a320-214"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6287",
+                "iataNumber": "dl6287",
+                "icaoNumber": "dal6287"
+            }
+        }
+    ]
+}

@@ -28,6 +28,7 @@ public class GetAviationStack extends DAO {
 	
 	private static final Logger log = LogManager.getLogger(GetAviationStack.class);
 	
+	private final DateTimeFormatter _dtf = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H[H]:mm[:ss]").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
 	private boolean _saveData;
@@ -181,9 +182,11 @@ public class GetAviationStack extends DAO {
 					try {
 						String stD = dpo.optString("scheduledTime"); String stA = aro.optString("scheduledTime");
 						if (StringUtils.isEmpty(stD) || StringUtils.isEmpty(stA)) continue;
-
-						LocalTime tD = LocalTime.parse(stD, _tf);
-						LocalTime tA = LocalTime.parse(stA, _tf);
+						DateTimeFormatter dp = (stD.indexOf(' ') > 0) ? _dtf : _tf;
+						DateTimeFormatter ap = (stA.indexOf(' ') > 0) ? _dtf : _tf;
+						
+						LocalTime tD = LocalTime.parse(stD, dp);
+						LocalTime tA = LocalTime.parse(stA, ap);
 						rse.setTimeD(LocalDateTime.of(ld, tD));
 						rse.setTimeA(LocalDateTime.of(ld, tA));
 					} catch (DateTimeException dtpe) {

@@ -98,6 +98,20 @@ public class TestGetAviationStack extends ScheduleTestCase {
 			assertTrue(results.size() <= results.getTotal());
 			validateFlights(results);
 		}
+		
+		// Test times with seconds
+		try (InputStream is = ConfigLoader.getStream("/data/avstack/ffBOG_dl_d.json")) {
+			GetAviationStack dao = new GetAviationStack();
+			dao.setAircraft(_acTypes);
+			dao.setStream(is);
+			PaginatedList<RawScheduleEntry> results = dao.get(SystemData.getAirport("BOD"), SystemData.getAirline("DL"), dt, true, 0);
+			assertNotNull(results);
+			assertEquals(results.getTotal(), results.getCount());
+			assertFalse(results.isEmpty());
+			assertTrue(results.size() <= results.getCount());
+			assertTrue(results.size() <= results.getTotal());
+			validateFlights(results);
+		}
 	}
 	
 	public void testEmpty() throws Exception {
