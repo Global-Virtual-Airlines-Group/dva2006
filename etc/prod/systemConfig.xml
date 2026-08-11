@@ -465,6 +465,7 @@
 		<avstack>
 			<persist type="Boolean">true</persist>
 			<sleep type="Integer">10350</sleep>
+			<days type="Integer">14</days>
 
 			<!-- Pull flights that are codeshares of these airlines -->
 			<list name="codeshares" attr="code" unique="true">

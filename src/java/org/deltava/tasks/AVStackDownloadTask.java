@@ -138,7 +138,7 @@ public class AVStackDownloadTask extends Task {
 
 		// Get the effective date
 		IntervalTaskTimer tt = new IntervalTaskTimer();
-		LocalDate ld = LocalDate.now().plusDays(14);
+		LocalDate ld = LocalDate.now().plusDays(SystemData.getInt("schedule.avstack.days", 14));
 		ctx.log(Level.WARN, "Loading Schedules for %s", StringUtils.format(ld, "MM/dd/yyyy"));
 
 		// Load Hub airports and Airlines
