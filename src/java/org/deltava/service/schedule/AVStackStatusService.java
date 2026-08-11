@@ -48,6 +48,9 @@ public class AVStackStatusService extends WebService {
 			jo.accumulate("entries", lo);
 		}
 		
+		// Check if we're complete
+		jo.put("isComplete", entries.stream().anyMatch(le -> "Complete".equals(le.getMessage())));
+		
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "entries");
 		try {

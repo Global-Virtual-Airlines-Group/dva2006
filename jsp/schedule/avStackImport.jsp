@@ -21,7 +21,7 @@ golgotha.local.refresh = function() {
 	const p = fetch('avstatus.ws', {signal:AbortSignal.timeout(2500)});
 	p.then(function(rsp) {
 		if (!rsp.ok) return false;
-		window.setTimeout(golgotha.local.refresh, 1000);
+		window.setTimeout(golgotha.local.refresh, 2500);
 		rsp.json().then(function(js) {
 			let msgs = '';
 			js.entries.forEach(function(msg) { msgs += msg; msgs += '\n'; });
