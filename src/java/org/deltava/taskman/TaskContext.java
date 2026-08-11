@@ -60,7 +60,7 @@ public class TaskContext extends org.deltava.jdbc.ConnectionContext {
 	 * @see String#format(String, Object...)
 	 */
 	public void log(Level l, String fmt, Object... args) {
-		_log.log(null, fmt, args);
+		_log.log(l, fmt, args);
 	}
 	
 	/**
