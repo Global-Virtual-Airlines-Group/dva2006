@@ -16,7 +16,7 @@ import org.deltava.beans.schedule.Airline;
 public class GetAirline extends DAO {
 
 	/**
-	 * Creates the DAO with a JDBC connection.
+	 * Creates the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
 	public GetAirline(Connection c) {
@@ -79,43 +79,38 @@ public class GetAirline extends DAO {
 				Airline a = new Airline(rs.getString(1), rs.getString(2));
 				a.setICAO(rs.getString(3));
 				a.setColor(rs.getString(4));
-				a.setActive(rs.getBoolean(5));
-				a.setScheduleSync(rs.getBoolean(6));
-				a.setHistoric(rs.getBoolean(7));
+				a.setMinimumCodeShare(rs.getInt(5));
+				a.setActive(rs.getBoolean(6));
+				a.setScheduleSync(rs.getBoolean(7));
+				a.setHistoric(rs.getBoolean(8));
 				results.put(a.getCode(), a);
 			}
 		}
 
 		// Load alternate codes
-		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT * FROM common.AIRLINE_CODES")) {
-			try (ResultSet rs = ps2.executeQuery()) {
-				while (rs.next()) {
-					Airline a = results.get(rs.getString(1).trim());
-					if (a != null)
-						a.addCode(rs.getString(2));
-				}
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT * FROM common.AIRLINE_CODES"); ResultSet rs = ps2.executeQuery()) {
+			while (rs.next()) {
+				Airline a = results.get(rs.getString(1).trim());
+				if (a != null)
+					a.addCode(rs.getString(2));
 			}
 		}
 		
 		// Load web app information
-		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT CODE, APPCODE FROM common.APP_AIRLINES")) {
-			try (ResultSet rs = ps2.executeQuery()) {
-				while (rs.next()) {
-					Airline a = results.get(rs.getString(1).trim());
-					if (a != null)
-						a.addApp(rs.getString(2));
-				}
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT CODE, APPCODE FROM common.APP_AIRLINES"); ResultSet rs = ps2.executeQuery()) {
+			while (rs.next()) {
+				Airline a = results.get(rs.getString(1).trim());
+				if (a != null)
+					a.addApp(rs.getString(2));
 			}
 		}
 		
 		// Load airline link information
-		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT CODE, ASSOC FROM common.AIRLINE_LINKS")) {
-			try (ResultSet rs = ps2.executeQuery()) {
-				while (rs.next()) {
-					Airline a = results.get(rs.getString(1).trim());
-					if (a != null)
-						a.addAssociatedAirline(rs.getString(2));
-				}
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT CODE, ASSOC FROM common.AIRLINE_LINKS"); ResultSet rs = ps2.executeQuery()) {
+			while (rs.next()) {
+				Airline a = results.get(rs.getString(1).trim());
+				if (a != null)
+					a.addAssociatedAirline(rs.getString(2));
 			}
 		}
 

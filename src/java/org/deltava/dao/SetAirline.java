@@ -33,14 +33,15 @@ public class SetAirline extends DAO {
 			startTransaction();
 			
 			// Write the airline data
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINES (CODE, NAME, ICAO, COLOR, ACTIVE, SYNC, HISTORIC) VALUES (?,?,?,?,?,?,?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINES (CODE, NAME, ICAO, COLOR, MIN_CS, ACTIVE, SYNC, HISTORIC) VALUES (?,?,?,?,?,?,?,?)")) {
 				ps.setString(1, al.getCode());
 				ps.setString(2, al.getName());
 				ps.setString(3, al.getICAO());
 				ps.setString(4, al.getColor());
-				ps.setBoolean(5, al.getActive());
-				ps.setBoolean(6, al.getScheduleSync());
-				ps.setBoolean(7, al.getHistoric());
+				ps.setInt(5, al.getMinimumCodeShare());
+				ps.setBoolean(6, al.getActive());
+				ps.setBoolean(7, al.getScheduleSync());
+				ps.setBoolean(8, al.getHistoric());
 				executeUpdate(ps, 1);
 			}
 			
@@ -115,7 +116,7 @@ public class SetAirline extends DAO {
 			}
 			
 			// Write the airline data
-			try (PreparedStatement ps = prepare("UPDATE common.AIRLINES SET NAME=?, ICAO=?, COLOR=?, ACTIVE=?, CODE=?, SYNC=?, HISTORIC=? WHERE (CODE=?)")) {
+			try (PreparedStatement ps = prepare("UPDATE common.AIRLINES SET NAME=?, ICAO=?, COLOR=?, ACTIVE=?, CODE=?, SYNC=?, HISTORIC=?, MIN_CS=? WHERE (CODE=?)")) {
 				ps.setString(1, al.getName());
 				ps.setString(2, al.getICAO());
 				ps.setString(3, al.getColor());
@@ -123,7 +124,8 @@ public class SetAirline extends DAO {
 				ps.setString(5, al.getCode());
 				ps.setBoolean(6, al.getScheduleSync());
 				ps.setBoolean(7, al.getHistoric());
-				ps.setString(8, oldCode);
+				ps.setInt(8, al.getMinimumCodeShare());
+				ps.setString(9, oldCode);
 				executeUpdate(ps, 1);
 			}
 			
