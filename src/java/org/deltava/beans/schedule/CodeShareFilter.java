@@ -66,4 +66,18 @@ public class CodeShareFilter implements Predicate<ScheduleEntry> {
 		
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder("OP=");
+		buf.append(_operatorCodes);
+		buf.append(", CS=");
+		buf.append(_codeShareCodes);
+		return buf.toString();
+	}
 }
