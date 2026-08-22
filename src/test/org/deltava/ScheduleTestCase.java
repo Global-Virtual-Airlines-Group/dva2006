@@ -54,6 +54,23 @@ public class ScheduleTestCase extends TestCase {
 		super.tearDown();
 	}
 	
+	protected static void validateFlights(Collection<RawScheduleEntry> entries) {
+		for (RawScheduleEntry rse : entries) {
+			assertNotNull(rse);
+			assertEquals(ScheduleSource.AVSTACK, rse.getSource());
+			assertNotNull(rse.getAirline());
+			assertNotNull(rse.getAirportD());
+			assertNotNull(rse.getAirportA());
+			assertTrue(rse.getFlightNumber() > 0);
+			assertEquals(1, rse.getLeg());
+			assertNotNull(rse.getEquipmentType());
+			assertNotNull(rse.getTimeD());
+			assertNotNull(rse.getTimeA());
+			assertTrue(rse.getTimeD().isBefore(rse.getTimeA()));
+			assertEquals(1, rse.getDays().size());
+		}
+	}
+	
 	protected static Connection getConnection() throws Exception {
 		
 		// Connect to the database
