@@ -48,12 +48,6 @@ public class ScheduleTestCase extends TestCase {
 		if (!FileUtils.exists(DATADIR, "hub.dat")) saveHubs(); else loadHubs();
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
-	}
-	
 	protected static void validateFlights(Collection<RawScheduleEntry> entries) {
 		for (RawScheduleEntry rse : entries) {
 			assertNotNull(rse);
