@@ -154,19 +154,18 @@ golgotha.form.resize = function(textbox) {
 };
 
 golgotha.form.comboSet = function(combo) { return ((combo) && (combo.selectedIndex > 0)); };
-golgotha.form.setCombo = function(combo, entryValue)
-{
-if (!combo) return false;
-for (var x = 0; x < combo.options.length; x++) {
-	const opt = combo.options[x];
-	if ((opt.value == entryValue) || (opt.text == entryValue)) {
-		combo.selectedIndex = x;
-		return true;
+golgotha.form.setCombo = function(combo, entryValue) {
+	if (!combo) return false;
+	for (var x = 0; x < combo.options.length; x++) {
+		const opt = combo.options[x];
+		if ((opt.value == entryValue) || (opt.text == entryValue)) {
+			combo.selectedIndex = x;
+			return true;
+		}
 	}
-}
 
-combo.selectedIndex = -1;
-return false;
+	combo.selectedIndex = -1;
+	return false;
 };
 
 golgotha.form.getCombo = function(combo) {
