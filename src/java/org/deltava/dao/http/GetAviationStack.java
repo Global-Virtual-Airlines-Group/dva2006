@@ -31,7 +31,6 @@ public class GetAviationStack extends DAO {
 	private final DateTimeFormatter _dtf = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H[H]:mm[:ss]").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
-	private boolean _saveData;
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 	private String _accessKey;
 
@@ -41,20 +40,6 @@ public class GetAviationStack extends DAO {
 	 */
 	public void setAccessKey(String key) {
 		_accessKey = key;
-	}
-	
-	/**
-	 * Updates whether to persist the returned JSON data to disk.
-	 * @param doSave TRUE to persist data, otherwise FALSE
-	 */
-	public void setSaveData(boolean doSave) {
-		_saveData = doSave;
-	}
-	
-	@Override
-	public void setStream(InputStream is) {
-		super.setStream(is);
-		_saveData = (is == null);
 	}
 	
 	/**
@@ -150,7 +135,8 @@ public class GetAviationStack extends DAO {
 					if (StringUtils.isEmpty(eqType)) continue;
 					
 					// Check for codeshares - this is the 'real' flight number, so if we know the airline, swap it out.
-					ScheduleEntry f = new ScheduleEntry(al, fo.getJSONObject("flight").getInt("number"), 1);
+					Airline fa = SystemData.getAirline(fo.getJSONObject("airline").getString("iataCode"));
+					ScheduleEntry f = new ScheduleEntry(fa, fo.getJSONObject("flight").getInt("number"), 1);
 					ScheduleEntry cs = null;
 					JSONObject cso = fo.optJSONObject("codeshared");
 					if (cso != null) {
@@ -158,6 +144,7 @@ public class GetAviationStack extends DAO {
 						if (ca != null) {
 							cs = f;
 							f = new ScheduleEntry(ca, cso.getJSONObject("flight").getInt("number"), 1);
+							log.debug("Codeshare {} (marketed as {}) - Line {}", f.getShortCode(), cs.getShortCode(), Integer.valueOf(x));
 						} else {
 							String flightCode = cso.getJSONObject("flight").getString("iataNumber");
 							log.info("Skipping unknown codeshare {} for {}", flightCode.toUpperCase(), f.getShortCode());
@@ -174,8 +161,15 @@ public class GetAviationStack extends DAO {
 					rse.setStartDate(ld);
 					rse.setEndDate(ld.plusDays(1));
 					rse.setEquipmentType(getEquipmentType(eqType, x));
+					rse.setLineNumber(ofs+x);
 					if (StringUtils.isEmpty(rse.getEquipmentType()))
 						log.warn(fo.getJSONObject("aircraft").toString());
+					
+					// Check for potential code share
+					if (!rse.isCodeShare() && (rse.getFlightNumber() >= rse.getAirline().getMinimumCodeShare())) {
+						log.debug("Detected potential code share {}", rse.getShortCode());
+						rse.setCodeShare(ScheduleEntry.POTENTIAL_CS);
+					}
 					
 					// Get local departure/arrival times
 					boolean isOK = rse.isPopulated();
@@ -202,14 +196,6 @@ public class GetAviationStack extends DAO {
 						
 					if (isOK)
 						results.add(rse);
-				}
-				
-				// Persist JSON document
-				if (_saveData) {
-					File of = new File(SystemData.get("schedule.cache"), String.format("avstack_%s_%s_%s_%s.json", al.getCode(), a.getIATA(), isDeparture ? "d" : "a", dt));
-					try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(of), 131072))) {
-						pw.println(jo.toString(2));
-					}
 				}
 			}
 		} catch (IOException ie) {

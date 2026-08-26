@@ -29,6 +29,8 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	private boolean _historic;
 	private boolean _schedSync;
 	
+	private int _minCodeShare = 6000;
+	
 	private final Collection<String> _apps = new TreeSet<String>();
 	private final Collection<String> _codes = new HashSet<String>();
 	
@@ -139,6 +141,24 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	 */
 	public String getColor() {
 		return _color;
+	}
+	
+	/**
+	 * Returns the minimum code share flight number. Flights for this airline above this number are assumed to be code shares.
+	 * @return the flight number
+	 * @see Airline#setMinimumCodeShare(int)
+	 */
+	public int getMinimumCodeShare() {
+		return _minCodeShare;
+	}
+	
+	/**
+	 * Updates the minimum code share flight number. Flights for this airline above this number are assumed to be code shares.
+	 * @param flightNumber the flight number
+	 * @see Airline#getMinimumCodeShare()
+	 */
+	public void setMinimumCodeShare(int flightNumber) {
+		_minCodeShare = flightNumber;
 	}
 	
 	/**
