@@ -28,6 +28,8 @@ import org.deltava.util.system.SystemData;
 
 public class FindFlightCommand extends AbstractCommand {
 	
+	private static final int DEFAULT_MAX_RESULTS = 25;
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -79,7 +81,7 @@ public class FindFlightCommand extends AbstractCommand {
 					LogbookHistoryHelper lh = new LogbookHistoryHelper(pireps);
 					if (lh.isContinuous(3)) {
 						ssc.setAirportD(lh.getLastFlight().getAirportA());
-						ssc.setMaxResults(25);
+						ssc.setMaxResults(DEFAULT_MAX_RESULTS);
 						ctx.setAttribute("fafCriteria", ssc, SESSION);
 						ctx.setAttribute("airportsA", adao.getConnectingAirports(ssc.getAirportD(), true, a), REQUEST);
 					}
@@ -129,7 +131,7 @@ public class FindFlightCommand extends AbstractCommand {
 		ssc.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		ssc.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
 		ssc.setDistanceRange(StringUtils.parse(ctx.getParameter("distRange"), 150));
-		ssc.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), 0));
+		ssc.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), DEFAULT_MAX_RESULTS));
 		ssc.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
 		ssc.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		ssc.setDBName(ctx.getDB());
@@ -171,6 +173,7 @@ public class FindFlightCommand extends AbstractCommand {
 		// Save the search criteria in the session
 		ssc.setSortBy(sortType);
 		ctx.setAttribute("fafCriteria", ssc, SESSION);
+		ctx.setAttribute("hasCriteria", Boolean.valueOf(hasCriteria), REQUEST);
 
 		// Check if we're doing a new search or returning back existing criteria
 		String opName = (String) ctx.getCmdParameter(OPERATION, "search");
