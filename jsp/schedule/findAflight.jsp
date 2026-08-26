@@ -59,12 +59,9 @@ golgotha.onDOMReady(function() {
 	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	golgotha.airportLoad.setText([f.airline,f.airportD,f.airportA]);
 	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
-	<c:if test="${!empty fafCriteria}">
+	<c:if test="${!hasCriteria}">golgotha.ff.load(f);</c:if>
 	f.airportD.updateAirportCode();
-	f.airportA.updateAirportCode();</c:if>
-	<c:if test="${empty fafCriteria}">
-	golgotha.ff.load(f);
-	f.airline.onchange();</c:if>
+	f.airportA.updateAirportCode();
 	f.airportD.notVisited = f.nVD.checked;
 	f.airportA.notVisited = f.nVA.checked;
 	golgotha.ff.updateSort(f.sortType);

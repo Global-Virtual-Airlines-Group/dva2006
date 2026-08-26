@@ -59,25 +59,30 @@ golgotha.ff.getData = function() {
 		const d = JSON.parse(dd);
 		return d;
 	} catch (err) {
+		console.log('Cannot parse parameters - ' + err.message);
+		localStorage.removeItem('ff.settings');
 		return null;
 	}
 };
 
 golgotha.ff.load = function(f) {
 	const d = golgotha.ff.getData();
-	if (!d) return false; 
-	golgotha.form.setCombo(f.airline, d.airline);
-	f.flightNumber.value = df.fn;
+	if (!d) return false;
+	f.nVD.checked = d.nv.d;
+	f.nVA.checked = d.nv.a;
+	f.flightNumber.value = d.fn;
 	f.distance.value = d.distance;
-	golgotha.form.setCombo(f.family, d.family);
-	golgotha.form.setCombo(f.eqType, d.eqType);
-	golgotha.form.setCombo(f.airportD, d.airportD);
-	golgotha.form.setCombo(f.airportA, d.airportA);
+	f.maxResults.value = d.maxResults;
+	f.maxFlights.value = d.maxFlights;
 	golgotha.form.setCombo(f.hourD, d.hourD);
 	golgotha.form.setCombo(f.hourA, d.hourA);
 	golgotha.form.setCombo(f.sortType, d.sortType);
-	f.maxresults.value = d.maxReuslts;
-	f.maxFlights.value = d.maxFlights;
+	golgotha.form.setCombo(f.airline, d.airline);
+	f.airline.onchange();
+	golgotha.form.setCombo(f.family, d.family);
+	golgotha.form.setCombo(f.eqType, d.eqType);
+	golgotha.form.setCombo(f.airportD, d.airportD);
+	window.setTimeout(function() { golgotha.form.setCombo(f.airportA, d.airportA); f.airportA.onchange(); }, 450);
 	console.log('Restored search parameters');
 	return true;
 };
@@ -96,7 +101,7 @@ golgotha.ff.save = function(f) {
 	d.sortType = golgotha.form.getCombo(f.sortType);
 	d.maxResults = f.maxResults.value;
 	d.maxFlights = f.maxFlights.value;
+	d.nv = {a:f.nVA.checked, d:f.nVD.checked};
 	localStorage.setItem('ff.settings', JSON.stringify(d));
-	console.log('Saved search parameters');
 	return true;
 };

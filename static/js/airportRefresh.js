@@ -42,14 +42,14 @@ golgotha.airportLoad.setText = function(combos) {
 };
 
 golgotha.airportLoad.updateAirlineCode = function() {
-	if (!this.txt) return false;
+	if ((!this.txt) || (this.selectedIndex < 0)) return false;
 	const o = this.options[this.selectedIndex];
 	this.txt.value = o.value;
 	return true;
 };
 
 golgotha.airportLoad.updateAirportCode = function() {
-	if (!this.txt) return false;
+	if ((!this.txt) || (this.selectedIndex < 0)) return false;
 	const o = this.options[this.selectedIndex];
 	this.txt.value = golgotha.airportLoad.config.getCode(o);
 	return true;
