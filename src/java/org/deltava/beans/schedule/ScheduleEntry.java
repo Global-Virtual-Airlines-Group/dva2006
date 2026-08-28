@@ -29,6 +29,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 */
 	public static final String MULTI_CS = "MULTI";
 	
+	/**
+	 * Potential codeshare (by flight number) code.
+	 */
+	public static final String POTENTIAL_CS = "TBD";
+	
 	private ZonedDateTime _timeD;
 	private ZonedDateTime _timeA;
 	private int _length;

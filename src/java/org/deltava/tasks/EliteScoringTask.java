@@ -43,7 +43,7 @@ public class EliteScoringTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		
-		Collection<Integer> pilotIDs = new HashSet<Integer>();
+		int processCount = 0;
 		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
@@ -73,7 +73,7 @@ public class EliteScoringTask extends Task {
 			
 			// Get lifetime Elite status levels
 			TreeSet<EliteLifetime> ltLvls = eldao.getLifetimeLevels();
-			
+		
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>(); int pendingCount = 0;
 			for (Iterator<ApprovalStatus> i = flights.iterator(); i.hasNext(); ) {
 				ApprovalStatus ap = i.next();
@@ -177,7 +177,6 @@ public class EliteScoringTask extends Task {
 				
 				// Check for score - write the score and status history
 				tt.mark("score");
-				pilotIDs.add(Integer.valueOf(fr.getAuthorID()));
 				if (sc == null) {
 					log.warn("Cannot Score Flight Report {} - {}", Integer.valueOf(fr.getID()), fr.getStatus());
 					i.remove();
@@ -230,6 +229,7 @@ public class EliteScoringTask extends Task {
 				ctx.commitTX();
 				i.remove();
 				log.log((tt.stop() > 1250) ? Level.WARN : Level.INFO, "Scored Flight Report #{} - {} pts {}", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), tt);
+				processCount++;
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
@@ -238,6 +238,6 @@ public class EliteScoringTask extends Task {
 			ctx.release();
 		}
 		
-		log.info("Processing Complete");
+		log.log((processCount > 0) ? Level.WARN : Level.INFO, "Processing Complete - {} Flights Scored", Integer.valueOf(processCount));
 	}
 }

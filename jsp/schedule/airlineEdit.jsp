@@ -23,13 +23,21 @@ golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.code, l:2, t:'IATA Code'});
 	golgotha.form.validate({f:f.icao, l:3, t:'ICAO Code'});
 	golgotha.form.validate({f:f.color, t:'Airline Google Map Color'});
+	golgotha.form.validate({f:f.minCS, min:0, t:'Minimum Code Share Flihgt Number'});
 	golgotha.form.submit(f);
+	return true;
+};
+
+golgotha.local.toggleHistoric = function(cb) {
+	const r = document.getElementById('minCSRow');
+	golgotha.util.display(r, !cb.checked);
 	return true;
 };
 
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	f.airlines.forEach(function(cb) { cb.disabled = golgotha.local.airlines.contains(cb.value); });
+	golgotha.local.toggleHistoric(f.historic);
 	return true;
 });
 </script>
@@ -64,6 +72,10 @@ golgotha.onDOMReady(function() {
  <td class="label">Map Color</td>
  <td class="data"><el:combo name="color" idx="*" size="1" required="true" options="${colors}" firstEntry="-" value="${airline.color}" /></td>
 </tr>
+<tr id="minCSRow">
+ <td class="label">Minimum Code Share</td>
+ <td class="data"><el:text name="minCS" idx="*" size="3" max="4" required="true" value="${airline.minimumCodeShare}" />&nbsp;<span class="small ita">(Flights at and above this number are assumed to be code shares.)</span></td>
+</tr>
 <tr>
  <td class="label top">Web Applications</td>
  <td class="data"><c:if test="${!empty autoAppCodes}">
@@ -88,7 +100,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" idx="*" value="true" label="Airline is Active" checked="${airline.active}" /><br>
- <el:box name="historic" idx="*" value="true" label="This is a Historic Airline" checked="${airline.historic}" /><br>
+ <el:box name="historic" idx="*" value="true" label="This is a Historic Airline" checked="${airline.historic}" onChange="void golgotha.local.toggleHistoric(this) "/><br>
  <el:box name="sync" idx="*" value="true" label="Synchronize schedule with other Web Applications" checked="${airline.scheduleSync}" /> </td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>

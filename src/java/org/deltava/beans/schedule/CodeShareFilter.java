@@ -17,6 +17,8 @@ public class CodeShareFilter implements Predicate<ScheduleEntry> {
 	
 	private final Collection<String> _operatorCodes = new HashSet<String>();
 	private final Collection<String> _codeShareCodes = new HashSet<String>();
+	
+	private boolean _removePotential;
 
 	/**
 	 * Creates the Filter, allowing flights for a set of Operators, or their code shares.
@@ -53,11 +55,21 @@ public class CodeShareFilter implements Predicate<ScheduleEntry> {
 		return _codeShareCodes;
 	}
 	
+	/**
+	 * Sets whether potential code shares should be removed.
+	 * @param doRemove TRUE to remove potential code share flights, otherwise FALSE
+	 * @see ScheduleEntry#POTENTIAL_CS
+	 */
+	public void setRemovePotential(boolean doRemove) {
+		_removePotential = doRemove;
+	}
+	
 	@Override
 	public boolean test(ScheduleEntry se) {
 		if (se == null) return false;
 		if (_operatorCodes.contains(se.getAirline().getCode())) return true; // if we're by a primary oeperator, we're good
 		if (!se.isCodeShare()) return false;
+		if (ScheduleEntry.POTENTIAL_CS.equals(se.getCodeShare()) && _removePotential) return false;
 		
 		// Check codeshare operators
 		Collection<String> csOperators = se.getCodeShareOperators();
@@ -65,5 +77,19 @@ public class CodeShareFilter implements Predicate<ScheduleEntry> {
 			if (csOperators.contains(csCode)) return true;
 		
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder("OP=");
+		buf.append(_operatorCodes);
+		buf.append(", CS=");
+		buf.append(_codeShareCodes);
+		return buf.toString();
 	}
 }

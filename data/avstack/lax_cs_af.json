@@ -1,1 +1,2284 @@
-{"pagination":{"limit":null,"offset":null,"count":54,"total":54},"data":[{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"32","scheduledTime":"18:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"13:50"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8985","iataNumber":"af8985","icaoNumber":"afr8985"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"290","iataNumber":"dl290","icaoNumber":"dal290"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"141","scheduledTime":"18:35"},"arrival":{"iataCode":"hnl","icaoCode":"phnl","terminal":"2","gate":"e8","scheduledTime":"21:14"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"7922","iataNumber":"af7922","icaoNumber":"afr7922"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"443","iataNumber":"dl443","icaoNumber":"dal443"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"18:15"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"37","scheduledTime":"19:16"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5965","iataNumber":"af5965","icaoNumber":"afr5965"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4087","iataNumber":"dl4087","icaoNumber":"dal4087"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"28","scheduledTime":"18:16"},"arrival":{"iataCode":"sjc","icaoCode":"ksjc","terminal":"a","gate":"13","scheduledTime":"19:35"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8557","iataNumber":"af8557","icaoNumber":"afr8557"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3883","iataNumber":"dl3883","icaoNumber":"dal3883"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"202","scheduledTime":"18:25"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"14:15"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"25","iataNumber":"af25","icaoNumber":"afr25"}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"","scheduledTime":"19:10"},"arrival":{"iataCode":"cph","icaoCode":"ekch","terminal":"3","gate":"","scheduledTime":"15:10"},"aircraft":{"modelCode":"a333","modelText":"airbus a330-343"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"4352","iataNumber":"af4352","icaoNumber":"afr4352"},"codeshared":{"airline":{"name":"sas","iataCode":"sk","icaoCode":"sas"},"flight":{"number":"932","iataNumber":"sk932","icaoNumber":"sas932"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"27","scheduledTime":"21:59"},"arrival":{"iataCode":"rno","icaoCode":"krno","terminal":"","gate":"b9","scheduledTime":"23:27"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2827","iataNumber":"af2827","icaoNumber":"afr2827"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3929","iataNumber":"dl3929","icaoNumber":"dal3929"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"22","scheduledTime":"21:00"},"arrival":{"iataCode":"bos","icaoCode":"kbos","terminal":"a","gate":"","scheduledTime":"05:28"},"aircraft":{"modelCode":"b752","modelText":"boeing 757-2q8"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2445","iataNumber":"af2445","icaoNumber":"afr2445"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"507","iataNumber":"dl507","icaoNumber":"dal507"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26b","scheduledTime":"22:35"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"f6","scheduledTime":"00:10"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2760","iataNumber":"af2760","icaoNumber":"afr2760"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3827","iataNumber":"dl3827","icaoNumber":"dal3827"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"30","scheduledTime":"21:10"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"05:25"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2918","iataNumber":"af2918","icaoNumber":"afr2918"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"960","iataNumber":"dl960","icaoNumber":"dal960"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"21:55"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"a20","scheduledTime":"05:01"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2543","iataNumber":"af2543","icaoNumber":"afr2543"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"783","iataNumber":"dl783","icaoNumber":"dal783"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"22:35"},"arrival":{"iataCode":"mco","icaoCode":"kmco","terminal":"b","gate":"71","scheduledTime":"06:23"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8565","iataNumber":"af8565","icaoNumber":"afr8565"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"547","iataNumber":"dl547","icaoNumber":"dal547"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"22:40"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"49","scheduledTime":"23:40"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2258","iataNumber":"af2258","icaoNumber":"afr2258"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3746","iataNumber":"dl3746","icaoNumber":"dal3746"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"22:55"},"arrival":{"iataCode":"cvg","icaoCode":"kcvg","terminal":"3","gate":"","scheduledTime":"06:07"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2242","iataNumber":"af2242","icaoNumber":"afr2242"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"458","iataNumber":"dl458","icaoNumber":"dal458"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"21:25"},"arrival":{"iataCode":"tpa","icaoCode":"ktpa","terminal":"","gate":"e68","scheduledTime":"05:10"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2198","iataNumber":"af2198","icaoNumber":"afr2198"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"910","iataNumber":"dl910","icaoNumber":"dal910"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"32","scheduledTime":"22:55"},"arrival":{"iataCode":"syd","icaoCode":"yssy","terminal":"1","gate":"","scheduledTime":"06:50"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8958","iataNumber":"af8958","icaoNumber":"afr8958"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"41","iataNumber":"dl41","icaoNumber":"dal41"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"133","scheduledTime":"23:15"},"arrival":{"iataCode":"lhr","icaoCode":"egll","terminal":"3","gate":"","scheduledTime":"17:35"},"aircraft":{"modelCode":"b789","modelText":"boeing 787-9 dreamliner"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"9654","iataNumber":"af9654","icaoNumber":"afr9654"},"codeshared":{"airline":{"name":"virgin atlantic","iataCode":"vs","icaoCode":"vir"},"flight":{"number":"24","iataNumber":"vs24","icaoNumber":"vir24"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"22:45"},"arrival":{"iataCode":"fll","icaoCode":"kfll","terminal":"2","gate":"d7","scheduledTime":"06:46"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8599","iataNumber":"af8599","icaoNumber":"afr8599"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"477","iataNumber":"dl477","icaoNumber":"dal477"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"34","scheduledTime":"06:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"a72","scheduledTime":"13:28"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5749","iataNumber":"af5749","icaoNumber":"afr5749"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"733","iataNumber":"dl733","icaoNumber":"dal733"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"30","scheduledTime":"06:00"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"14:30"},"aircraft":{"modelCode":"b764","modelText":"boeing 767-432(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8756","iataNumber":"af8756","icaoNumber":"afr8756"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"934","iataNumber":"dl934","icaoNumber":"dal934"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26","scheduledTime":"06:40"},"arrival":{"iataCode":"bos","icaoCode":"kbos","terminal":"a","gate":"a19","scheduledTime":"15:15"},"aircraft":{"modelCode":"b752","modelText":"boeing 757-231"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2354","iataNumber":"af2354","icaoNumber":"afr2354"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"639","iataNumber":"dl639","icaoNumber":"dal639"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"20","scheduledTime":"11:45"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"","scheduledTime":"19:09"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2092","iataNumber":"af2092","icaoNumber":"afr2092"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"802","iataNumber":"dl802","icaoNumber":"dal802"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"13:48"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"f7","scheduledTime":"15:19"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5699","iataNumber":"af5699","icaoNumber":"afr5699"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3894","iataNumber":"dl3894","icaoNumber":"dal3894"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"14:00"},"arrival":{"iataCode":"sea","icaoCode":"ksea","terminal":"","gate":"a12","scheduledTime":"16:47"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"3459","iataNumber":"af3459","icaoNumber":"afr3459"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2606","iataNumber":"dl2606","icaoNumber":"dal2606"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"07:05"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"14:30"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2873","iataNumber":"af2873","icaoNumber":"afr2873"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"515","iataNumber":"dl515","icaoNumber":"dal515"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"08:20"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"","scheduledTime":"14:02"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5888","iataNumber":"af5888","icaoNumber":"afr5888"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"799","iataNumber":"dl799","icaoNumber":"dal799"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"20","scheduledTime":"08:15"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"a29","scheduledTime":"15:45"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2939","iataNumber":"af2939","icaoNumber":"afr2939"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"782","iataNumber":"dl782","icaoNumber":"dal782"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"36","scheduledTime":"09:45"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"","scheduledTime":"17:10"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2186","iataNumber":"af2186","icaoNumber":"afr2186"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"494","iataNumber":"dl494","icaoNumber":"dal494"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"131","scheduledTime":"09:30"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"16:45"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2916","iataNumber":"af2916","icaoNumber":"afr2916"},"codeshared":{"airline":{"name":"delta air lines (team usa livery)","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"327","iataNumber":"dl327","icaoNumber":"dal327"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"11:48"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"","scheduledTime":"14:43"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8561","iataNumber":"af8561","icaoNumber":"afr8561"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1194","iataNumber":"dl1194","icaoNumber":"dal1194"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"14:30"},"arrival":{"iataCode":"sfo","icaoCode":"ksfo","terminal":"1","gate":"","scheduledTime":"15:53"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5816","iataNumber":"af5816","icaoNumber":"afr5816"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2267","iataNumber":"dl2267","icaoNumber":"dal2267"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"38","scheduledTime":"13:55"},"arrival":{"iataCode":"hnl","icaoCode":"phnl","terminal":"2","gate":"f2","scheduledTime":"16:45"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5956","iataNumber":"af5956","icaoNumber":"afr5956"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"465","iataNumber":"dl465","icaoNumber":"dal465"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"204","scheduledTime":"14:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"09:50"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"21","iataNumber":"af21","icaoNumber":"afr21"}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"14:19"},"arrival":{"iataCode":"pdx","icaoCode":"kpdx","terminal":"","gate":"d9","scheduledTime":"16:42"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8670","iataNumber":"af8670","icaoNumber":"afr8670"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2551","iataNumber":"dl2551","icaoNumber":"dal2551"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"206","scheduledTime":"13:50"},"arrival":{"iataCode":"ams","icaoCode":"eham","terminal":"","gate":"d10","scheduledTime":"09:05"},"aircraft":{"modelCode":"b78x","modelText":"boeing 787-10 dreamliner"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8250","iataNumber":"af8250","icaoNumber":"afr8250"},"codeshared":{"airline":{"name":"klm","iataCode":"kl","icaoCode":"klm"},"flight":{"number":"602","iataNumber":"kl602","icaoNumber":"klm602"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"14:50"},"arrival":{"iataCode":"lih","icaoCode":"phli","terminal":"","gate":"05","scheduledTime":"17:40"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2128","iataNumber":"af2128","icaoNumber":"afr2128"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"428","iataNumber":"dl428","icaoNumber":"dal428"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"14:11"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"38","scheduledTime":"15:11"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175ll"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"3707","iataNumber":"af3707","icaoNumber":"afr3707"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4001","iataNumber":"dl4001","icaoNumber":"dal4001"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"15:00"},"arrival":{"iataCode":"abq","icaoCode":"kabq","terminal":"","gate":"b8","scheduledTime":"18:05"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5910","iataNumber":"af5910","icaoNumber":"afr5910"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4091","iataNumber":"dl4091","icaoNumber":"dal4091"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"15:32"},"arrival":{"iataCode":"las","icaoCode":"klas","terminal":"1","gate":"","scheduledTime":"16:46"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-932(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2867","iataNumber":"af2867","icaoNumber":"afr2867"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2120","iataNumber":"dl2120","icaoNumber":"dal2120"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"37a","scheduledTime":"13:15"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"21:29"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8513","iataNumber":"af8513","icaoNumber":"afr8513"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"991","iataNumber":"dl991","icaoNumber":"dal991"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"202","scheduledTime":"15:15"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"11:10"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"23","iataNumber":"af23","icaoNumber":"afr23"}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"133","scheduledTime":"15:50"},"arrival":{"iataCode":"lhr","icaoCode":"egll","terminal":"3","gate":"","scheduledTime":"10:15"},"aircraft":{"modelCode":"a35k","modelText":"airbus a350-1041"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"6757","iataNumber":"af6757","icaoNumber":"afr6757"},"codeshared":{"airline":{"name":"virgin atlantic","iataCode":"vs","icaoCode":"vir"},"flight":{"number":"8","iataNumber":"vs8","icaoNumber":"vir8"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"206","scheduledTime":"16:45"},"arrival":{"iataCode":"ams","icaoCode":"eham","terminal":"","gate":"","scheduledTime":"12:00"},"aircraft":{"modelCode":"b78x","modelText":"boeing 787-10 dreamliner"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8252","iataNumber":"af8252","icaoNumber":"afr8252"},"codeshared":{"airline":{"name":"klm","iataCode":"kl","icaoCode":"klm"},"flight":{"number":"604","iataNumber":"kl604","icaoNumber":"klm604"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"18:51"},"arrival":{"iataCode":"smf","icaoCode":"ksmf","terminal":"a","gate":"3","scheduledTime":"20:25"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2130","iataNumber":"af2130","icaoNumber":"afr2130"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3759","iataNumber":"dl3759","icaoNumber":"dal3759"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"36","scheduledTime":"16:55"},"arrival":{"iataCode":"ogg","icaoCode":"phog","terminal":"","gate":"35","scheduledTime":"19:29"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2494","iataNumber":"af2494","icaoNumber":"afr2494"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"418","iataNumber":"dl418","icaoNumber":"dal418"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"204","scheduledTime":"21:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"16:45"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"29","iataNumber":"af29","icaoNumber":"afr29"}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"21:55"},"arrival":{"iataCode":"las","icaoCode":"klas","terminal":"1","gate":"d37","scheduledTime":"22:47"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2275","iataNumber":"af2275","icaoNumber":"afr2275"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2653","iataNumber":"dl2653","icaoNumber":"dal2653"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"18:59"},"arrival":{"iataCode":"sat","icaoCode":"ksat","terminal":"a","gate":"7","scheduledTime":"23:54"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2972","iataNumber":"af2972","icaoNumber":"afr2972"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2686","iataNumber":"dl2686","icaoNumber":"dal2686"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"37a","scheduledTime":"12:35"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"f13","scheduledTime":"18:11"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5793","iataNumber":"af5793","icaoNumber":"afr5793"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"914","iataNumber":"dl914","icaoNumber":"dal914"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"30","scheduledTime":"13:15"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"20:56"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8704","iataNumber":"af8704","icaoNumber":"afr8704"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"395","iataNumber":"dl395","icaoNumber":"dal395"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"14:12"},"arrival":{"iataCode":"tus","icaoCode":"ktus","terminal":"","gate":"b1","scheduledTime":"15:50"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175ll"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2288","iataNumber":"af2288","icaoNumber":"afr2288"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3776","iataNumber":"dl3776","icaoNumber":"dal3776"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"25","scheduledTime":"23:00"},"arrival":{"iataCode":"mel","icaoCode":"ymml","terminal":"2","gate":"","scheduledTime":"07:50"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5883","iataNumber":"af5883","icaoNumber":"afr5883"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"11","iataNumber":"dl11","icaoNumber":"dal11"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"27","scheduledTime":"20:47"},"arrival":{"iataCode":"abq","icaoCode":"kabq","terminal":"","gate":"b6","scheduledTime":"23:48"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8904","iataNumber":"af8904","icaoNumber":"afr8904"},"codeshared":{"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4098","iataNumber":"dl4098","icaoNumber":"dal4098"}}},{"weekday":"3","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"25","scheduledTime":"18:25"},"arrival":{"iataCode":"mci","icaoCode":"kmci","terminal":"","gate":"b46","scheduledTime":"23:41"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2894","iataNumber":"af2894","icaoNumber":"afr2894"},"codeshared":{"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2243","iataNumber":"dl2243","icaoNumber":"dal2243"}}}]}
+{
+    "pagination": {
+        "limit": null,
+        "offset": null,
+        "count": 54,
+        "total": 54
+    },
+    "data": [
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "32",
+                "scheduledTime": "18:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "13:50"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8985",
+                "iataNumber": "af8985",
+                "icaoNumber": "afr8985"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "290",
+                    "iataNumber": "dl290",
+                    "icaoNumber": "dal290"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "141",
+                "scheduledTime": "18:35"
+            },
+            "arrival": {
+                "iataCode": "hnl",
+                "icaoCode": "phnl",
+                "terminal": "2",
+                "gate": "e8",
+                "scheduledTime": "21:14"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "7922",
+                "iataNumber": "af7922",
+                "icaoNumber": "afr7922"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "443",
+                    "iataNumber": "dl443",
+                    "icaoNumber": "dal443"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "18:15"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "37",
+                "scheduledTime": "19:16"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5965",
+                "iataNumber": "af5965",
+                "icaoNumber": "afr5965"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "4087",
+                    "iataNumber": "dl4087",
+                    "icaoNumber": "dal4087"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "28",
+                "scheduledTime": "18:16"
+            },
+            "arrival": {
+                "iataCode": "sjc",
+                "icaoCode": "ksjc",
+                "terminal": "a",
+                "gate": "13",
+                "scheduledTime": "19:35"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8557",
+                "iataNumber": "af8557",
+                "icaoNumber": "afr8557"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "3883",
+                    "iataNumber": "dl3883",
+                    "icaoNumber": "dal3883"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "202",
+                "scheduledTime": "18:25"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "14:15"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "25",
+                "iataNumber": "af25",
+                "icaoNumber": "afr25"
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "",
+                "scheduledTime": "19:10"
+            },
+            "arrival": {
+                "iataCode": "cph",
+                "icaoCode": "ekch",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "15:10"
+            },
+            "aircraft": {
+                "modelCode": "a333",
+                "modelText": "airbus a330-343"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "4352",
+                "iataNumber": "af4352",
+                "icaoNumber": "afr4352"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "sas",
+                    "iataCode": "sk",
+                    "icaoCode": "sas"
+                },
+                "flight": {
+                    "number": "932",
+                    "iataNumber": "sk932",
+                    "icaoNumber": "sas932"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "27",
+                "scheduledTime": "21:59"
+            },
+            "arrival": {
+                "iataCode": "rno",
+                "icaoCode": "krno",
+                "terminal": "",
+                "gate": "b9",
+                "scheduledTime": "23:27"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2827",
+                "iataNumber": "af2827",
+                "icaoNumber": "afr2827"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "3929",
+                    "iataNumber": "dl3929",
+                    "icaoNumber": "dal3929"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "22",
+                "scheduledTime": "21:00"
+            },
+            "arrival": {
+                "iataCode": "bos",
+                "icaoCode": "kbos",
+                "terminal": "a",
+                "gate": "",
+                "scheduledTime": "05:28"
+            },
+            "aircraft": {
+                "modelCode": "b752",
+                "modelText": "boeing 757-2q8"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2445",
+                "iataNumber": "af2445",
+                "icaoNumber": "afr2445"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "507",
+                    "iataNumber": "dl507",
+                    "icaoNumber": "dal507"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26b",
+                "scheduledTime": "22:35"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "f6",
+                "scheduledTime": "00:10"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2760",
+                "iataNumber": "af2760",
+                "icaoNumber": "afr2760"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "3827",
+                    "iataNumber": "dl3827",
+                    "icaoNumber": "dal3827"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "30",
+                "scheduledTime": "21:10"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "05:25"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2918",
+                "iataNumber": "af2918",
+                "icaoNumber": "afr2918"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "960",
+                    "iataNumber": "dl960",
+                    "icaoNumber": "dal960"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "21:55"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "a20",
+                "scheduledTime": "05:01"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2543",
+                "iataNumber": "af2543",
+                "icaoNumber": "afr2543"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "783",
+                    "iataNumber": "dl783",
+                    "icaoNumber": "dal783"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "22:35"
+            },
+            "arrival": {
+                "iataCode": "mco",
+                "icaoCode": "kmco",
+                "terminal": "b",
+                "gate": "71",
+                "scheduledTime": "06:23"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8565",
+                "iataNumber": "af8565",
+                "icaoNumber": "afr8565"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "547",
+                    "iataNumber": "dl547",
+                    "icaoNumber": "dal547"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "22:40"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "49",
+                "scheduledTime": "23:40"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2258",
+                "iataNumber": "af2258",
+                "icaoNumber": "afr2258"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "3746",
+                    "iataNumber": "dl3746",
+                    "icaoNumber": "dal3746"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "22:55"
+            },
+            "arrival": {
+                "iataCode": "cvg",
+                "icaoCode": "kcvg",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "06:07"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2242",
+                "iataNumber": "af2242",
+                "icaoNumber": "afr2242"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "458",
+                    "iataNumber": "dl458",
+                    "icaoNumber": "dal458"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "21:25"
+            },
+            "arrival": {
+                "iataCode": "tpa",
+                "icaoCode": "ktpa",
+                "terminal": "",
+                "gate": "e68",
+                "scheduledTime": "05:10"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2198",
+                "iataNumber": "af2198",
+                "icaoNumber": "afr2198"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "910",
+                    "iataNumber": "dl910",
+                    "icaoNumber": "dal910"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "32",
+                "scheduledTime": "22:55"
+            },
+            "arrival": {
+                "iataCode": "syd",
+                "icaoCode": "yssy",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "06:50"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8958",
+                "iataNumber": "af8958",
+                "icaoNumber": "afr8958"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "41",
+                    "iataNumber": "dl41",
+                    "icaoNumber": "dal41"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "133",
+                "scheduledTime": "23:15"
+            },
+            "arrival": {
+                "iataCode": "lhr",
+                "icaoCode": "egll",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "17:35"
+            },
+            "aircraft": {
+                "modelCode": "b789",
+                "modelText": "boeing 787-9 dreamliner"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "9654",
+                "iataNumber": "af9654",
+                "icaoNumber": "afr9654"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "virgin atlantic",
+                    "iataCode": "vs",
+                    "icaoCode": "vir"
+                },
+                "flight": {
+                    "number": "24",
+                    "iataNumber": "vs24",
+                    "icaoNumber": "vir24"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "22:45"
+            },
+            "arrival": {
+                "iataCode": "fll",
+                "icaoCode": "kfll",
+                "terminal": "2",
+                "gate": "d7",
+                "scheduledTime": "06:46"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8599",
+                "iataNumber": "af8599",
+                "icaoNumber": "afr8599"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "477",
+                    "iataNumber": "dl477",
+                    "icaoNumber": "dal477"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "34",
+                "scheduledTime": "06:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "a72",
+                "scheduledTime": "13:28"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5749",
+                "iataNumber": "af5749",
+                "icaoNumber": "afr5749"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "733",
+                    "iataNumber": "dl733",
+                    "icaoNumber": "dal733"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "30",
+                "scheduledTime": "06:00"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "14:30"
+            },
+            "aircraft": {
+                "modelCode": "b764",
+                "modelText": "boeing 767-432(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8756",
+                "iataNumber": "af8756",
+                "icaoNumber": "afr8756"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "934",
+                    "iataNumber": "dl934",
+                    "icaoNumber": "dal934"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26",
+                "scheduledTime": "06:40"
+            },
+            "arrival": {
+                "iataCode": "bos",
+                "icaoCode": "kbos",
+                "terminal": "a",
+                "gate": "a19",
+                "scheduledTime": "15:15"
+            },
+            "aircraft": {
+                "modelCode": "b752",
+                "modelText": "boeing 757-231"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2354",
+                "iataNumber": "af2354",
+                "icaoNumber": "afr2354"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "639",
+                    "iataNumber": "dl639",
+                    "icaoNumber": "dal639"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "20",
+                "scheduledTime": "11:45"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "",
+                "scheduledTime": "19:09"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2092",
+                "iataNumber": "af2092",
+                "icaoNumber": "afr2092"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "802",
+                    "iataNumber": "dl802",
+                    "icaoNumber": "dal802"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "13:48"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "f7",
+                "scheduledTime": "15:19"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5699",
+                "iataNumber": "af5699",
+                "icaoNumber": "afr5699"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "3894",
+                    "iataNumber": "dl3894",
+                    "icaoNumber": "dal3894"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "14:00"
+            },
+            "arrival": {
+                "iataCode": "sea",
+                "icaoCode": "ksea",
+                "terminal": "",
+                "gate": "a12",
+                "scheduledTime": "16:47"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "3459",
+                "iataNumber": "af3459",
+                "icaoNumber": "afr3459"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "2606",
+                    "iataNumber": "dl2606",
+                    "icaoNumber": "dal2606"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "07:05"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "14:30"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2873",
+                "iataNumber": "af2873",
+                "icaoNumber": "afr2873"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "515",
+                    "iataNumber": "dl515",
+                    "icaoNumber": "dal515"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "08:20"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "14:02"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5888",
+                "iataNumber": "af5888",
+                "icaoNumber": "afr5888"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "799",
+                    "iataNumber": "dl799",
+                    "icaoNumber": "dal799"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "20",
+                "scheduledTime": "08:15"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "a29",
+                "scheduledTime": "15:45"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2939",
+                "iataNumber": "af2939",
+                "icaoNumber": "afr2939"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "782",
+                    "iataNumber": "dl782",
+                    "icaoNumber": "dal782"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "36",
+                "scheduledTime": "09:45"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "",
+                "scheduledTime": "17:10"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2186",
+                "iataNumber": "af2186",
+                "icaoNumber": "afr2186"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "494",
+                    "iataNumber": "dl494",
+                    "icaoNumber": "dal494"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "131",
+                "scheduledTime": "09:30"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "16:45"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2916",
+                "iataNumber": "af2916",
+                "icaoNumber": "afr2916"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines (team usa livery)",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "327",
+                    "iataNumber": "dl327",
+                    "icaoNumber": "dal327"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "11:48"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "14:43"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8561",
+                "iataNumber": "af8561",
+                "icaoNumber": "afr8561"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "1194",
+                    "iataNumber": "dl1194",
+                    "icaoNumber": "dal1194"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "14:30"
+            },
+            "arrival": {
+                "iataCode": "sfo",
+                "icaoCode": "ksfo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "15:53"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5816",
+                "iataNumber": "af5816",
+                "icaoNumber": "afr5816"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "2267",
+                    "iataNumber": "dl2267",
+                    "icaoNumber": "dal2267"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "38",
+                "scheduledTime": "13:55"
+            },
+            "arrival": {
+                "iataCode": "hnl",
+                "icaoCode": "phnl",
+                "terminal": "2",
+                "gate": "f2",
+                "scheduledTime": "16:45"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5956",
+                "iataNumber": "af5956",
+                "icaoNumber": "afr5956"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "465",
+                    "iataNumber": "dl465",
+                    "icaoNumber": "dal465"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "204",
+                "scheduledTime": "14:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "09:50"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "21",
+                "iataNumber": "af21",
+                "icaoNumber": "afr21"
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "14:19"
+            },
+            "arrival": {
+                "iataCode": "pdx",
+                "icaoCode": "kpdx",
+                "terminal": "",
+                "gate": "d9",
+                "scheduledTime": "16:42"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8670",
+                "iataNumber": "af8670",
+                "icaoNumber": "afr8670"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "2551",
+                    "iataNumber": "dl2551",
+                    "icaoNumber": "dal2551"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "206",
+                "scheduledTime": "13:50"
+            },
+            "arrival": {
+                "iataCode": "ams",
+                "icaoCode": "eham",
+                "terminal": "",
+                "gate": "d10",
+                "scheduledTime": "09:05"
+            },
+            "aircraft": {
+                "modelCode": "b78x",
+                "modelText": "boeing 787-10 dreamliner"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8250",
+                "iataNumber": "af8250",
+                "icaoNumber": "afr8250"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "klm",
+                    "iataCode": "kl",
+                    "icaoCode": "klm"
+                },
+                "flight": {
+                    "number": "602",
+                    "iataNumber": "kl602",
+                    "icaoNumber": "klm602"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "14:50"
+            },
+            "arrival": {
+                "iataCode": "lih",
+                "icaoCode": "phli",
+                "terminal": "",
+                "gate": "05",
+                "scheduledTime": "17:40"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2128",
+                "iataNumber": "af2128",
+                "icaoNumber": "afr2128"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "428",
+                    "iataNumber": "dl428",
+                    "icaoNumber": "dal428"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "14:11"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "38",
+                "scheduledTime": "15:11"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175ll"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "3707",
+                "iataNumber": "af3707",
+                "icaoNumber": "afr3707"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "4001",
+                    "iataNumber": "dl4001",
+                    "icaoNumber": "dal4001"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "15:00"
+            },
+            "arrival": {
+                "iataCode": "abq",
+                "icaoCode": "kabq",
+                "terminal": "",
+                "gate": "b8",
+                "scheduledTime": "18:05"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5910",
+                "iataNumber": "af5910",
+                "icaoNumber": "afr5910"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "4091",
+                    "iataNumber": "dl4091",
+                    "icaoNumber": "dal4091"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "15:32"
+            },
+            "arrival": {
+                "iataCode": "las",
+                "icaoCode": "klas",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "16:46"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2867",
+                "iataNumber": "af2867",
+                "icaoNumber": "afr2867"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "2120",
+                    "iataNumber": "dl2120",
+                    "icaoNumber": "dal2120"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "37a",
+                "scheduledTime": "13:15"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "21:29"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8513",
+                "iataNumber": "af8513",
+                "icaoNumber": "afr8513"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "991",
+                    "iataNumber": "dl991",
+                    "icaoNumber": "dal991"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "202",
+                "scheduledTime": "15:15"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "11:10"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "23",
+                "iataNumber": "af23",
+                "icaoNumber": "afr23"
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "133",
+                "scheduledTime": "15:50"
+            },
+            "arrival": {
+                "iataCode": "lhr",
+                "icaoCode": "egll",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "10:15"
+            },
+            "aircraft": {
+                "modelCode": "a35k",
+                "modelText": "airbus a350-1041"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "6757",
+                "iataNumber": "af6757",
+                "icaoNumber": "afr6757"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "virgin atlantic",
+                    "iataCode": "vs",
+                    "icaoCode": "vir"
+                },
+                "flight": {
+                    "number": "8",
+                    "iataNumber": "vs8",
+                    "icaoNumber": "vir8"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "206",
+                "scheduledTime": "16:45"
+            },
+            "arrival": {
+                "iataCode": "ams",
+                "icaoCode": "eham",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "12:00"
+            },
+            "aircraft": {
+                "modelCode": "b78x",
+                "modelText": "boeing 787-10 dreamliner"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8252",
+                "iataNumber": "af8252",
+                "icaoNumber": "afr8252"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "klm",
+                    "iataCode": "kl",
+                    "icaoCode": "klm"
+                },
+                "flight": {
+                    "number": "604",
+                    "iataNumber": "kl604",
+                    "icaoNumber": "klm604"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "18:51"
+            },
+            "arrival": {
+                "iataCode": "smf",
+                "icaoCode": "ksmf",
+                "terminal": "a",
+                "gate": "3",
+                "scheduledTime": "20:25"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2130",
+                "iataNumber": "af2130",
+                "icaoNumber": "afr2130"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "3759",
+                    "iataNumber": "dl3759",
+                    "icaoNumber": "dal3759"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "36",
+                "scheduledTime": "16:55"
+            },
+            "arrival": {
+                "iataCode": "ogg",
+                "icaoCode": "phog",
+                "terminal": "",
+                "gate": "35",
+                "scheduledTime": "19:29"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2494",
+                "iataNumber": "af2494",
+                "icaoNumber": "afr2494"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "418",
+                    "iataNumber": "dl418",
+                    "icaoNumber": "dal418"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "204",
+                "scheduledTime": "21:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "16:45"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "29",
+                "iataNumber": "af29",
+                "icaoNumber": "afr29"
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "21:55"
+            },
+            "arrival": {
+                "iataCode": "las",
+                "icaoCode": "klas",
+                "terminal": "1",
+                "gate": "d37",
+                "scheduledTime": "22:47"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2275",
+                "iataNumber": "af2275",
+                "icaoNumber": "afr2275"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "2653",
+                    "iataNumber": "dl2653",
+                    "icaoNumber": "dal2653"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "18:59"
+            },
+            "arrival": {
+                "iataCode": "sat",
+                "icaoCode": "ksat",
+                "terminal": "a",
+                "gate": "7",
+                "scheduledTime": "23:54"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2972",
+                "iataNumber": "af2972",
+                "icaoNumber": "afr2972"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "2686",
+                    "iataNumber": "dl2686",
+                    "icaoNumber": "dal2686"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "37a",
+                "scheduledTime": "12:35"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "f13",
+                "scheduledTime": "18:11"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5793",
+                "iataNumber": "af5793",
+                "icaoNumber": "afr5793"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "914",
+                    "iataNumber": "dl914",
+                    "icaoNumber": "dal914"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "30",
+                "scheduledTime": "13:15"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "20:56"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8704",
+                "iataNumber": "af8704",
+                "icaoNumber": "afr8704"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "395",
+                    "iataNumber": "dl395",
+                    "icaoNumber": "dal395"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "14:12"
+            },
+            "arrival": {
+                "iataCode": "tus",
+                "icaoCode": "ktus",
+                "terminal": "",
+                "gate": "b1",
+                "scheduledTime": "15:50"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175ll"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2288",
+                "iataNumber": "af2288",
+                "icaoNumber": "afr2288"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "3776",
+                    "iataNumber": "dl3776",
+                    "icaoNumber": "dal3776"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "25",
+                "scheduledTime": "23:00"
+            },
+            "arrival": {
+                "iataCode": "mel",
+                "icaoCode": "ymml",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "07:50"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5883",
+                "iataNumber": "af5883",
+                "icaoNumber": "afr5883"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "11",
+                    "iataNumber": "dl11",
+                    "icaoNumber": "dal11"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "27",
+                "scheduledTime": "20:47"
+            },
+            "arrival": {
+                "iataCode": "abq",
+                "icaoCode": "kabq",
+                "terminal": "",
+                "gate": "b6",
+                "scheduledTime": "23:48"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8904",
+                "iataNumber": "af8904",
+                "icaoNumber": "afr8904"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta connection",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "4098",
+                    "iataNumber": "dl4098",
+                    "icaoNumber": "dal4098"
+                }
+            }
+        },
+        {
+            "weekday": "3",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "25",
+                "scheduledTime": "18:25"
+            },
+            "arrival": {
+                "iataCode": "mci",
+                "icaoCode": "kmci",
+                "terminal": "",
+                "gate": "b46",
+                "scheduledTime": "23:41"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2894",
+                "iataNumber": "af2894",
+                "icaoNumber": "afr2894"
+            },
+            "codeshared": {
+                "airline": {
+                    "name": "delta air lines",
+                    "iataCode": "dl",
+                    "icaoCode": "dal"
+                },
+                "flight": {
+                    "number": "2243",
+                    "iataNumber": "dl2243",
+                    "icaoNumber": "dal2243"
+                }
+            }
+        }
+    ]
+}

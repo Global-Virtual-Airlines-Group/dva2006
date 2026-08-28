@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
 	<Appenders>
-		<Console name="STDOUT" target="SYSTEM_OUT">
+		<Console name="STDOUT" target="SYSTEM_OUT" direct="true" immediateFlush="true">
 			<PatternLayout pattern="%d %-5p %-19c{1} %m%n"/>
 		</Console>
 	</Appenders>

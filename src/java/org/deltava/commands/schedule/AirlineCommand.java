@@ -61,9 +61,10 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 			a.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 			a.setApps(ctx.getParameters("airlines"));
 			a.setColor(ctx.getParameter("color"));
+			a.setHistoric(Boolean.parseBoolean(ctx.getParameter("historic")));
+			a.setMinimumCodeShare(a.getHistoric() ? 0 : StringUtils.parse(ctx.getParameter("minCS"), 0));
 			a.setCodes(StringUtils.split(ctx.getParameter("altCodes"), "\n"));
 			a.setScheduleSync(Boolean.parseBoolean(ctx.getParameter("sync")));
-			a.setHistoric(Boolean.parseBoolean(ctx.getParameter("historic")));
 			
 			// Get the linked airlines that don't exist at this VA
 			Collection<String> ourAirlineCodes = SystemData.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet());
