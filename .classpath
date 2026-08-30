@@ -23,16 +23,12 @@
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javacord-api-3.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/okhttp-4.11.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.15.2.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.15.2.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.28.0.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-6.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api-6.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jakarta.servlet.jsp.jstl-api-3.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/java-jwt-4.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-9.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.26.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-api-2.26.0.jar"/>
@@ -45,5 +41,8 @@
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-2.0.18.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-2.0.18.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-3.16.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jackson-core-3.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jackson-databind-3.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/java-jwt-4.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
