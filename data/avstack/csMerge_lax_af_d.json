@@ -1,1 +1,1312 @@
-{"pagination":{"limit":100,"offset":0,"count":42,"total":42},"data":[{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"","scheduledTime":"2026-08-31 18:35:00"},"arrival":{"iataCode":"hnl","icaoCode":"phnl","terminal":"2","gate":"","scheduledTime":"2026-08-31 21:14:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"7922","iataNumber":"af7922","icaoNumber":"afr7922"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23a","scheduledTime":"2026-08-31 18:15:00"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"47","scheduledTime":"2026-08-31 19:16:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5965","iataNumber":"af5965","icaoNumber":"afr5965"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"202","scheduledTime":"2026-08-31 18:25:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"2026-08-31 14:15:00"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"25","iataNumber":"af25","icaoNumber":"afr25"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"148","scheduledTime":"2026-08-31 19:10:00"},"arrival":{"iataCode":"cph","icaoCode":"ekch","terminal":"3","gate":"e135","scheduledTime":"2026-08-31 15:10:00"},"aircraft":{"modelCode":"a333","modelText":"airbus a330-343"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"4352","iataNumber":"af4352","icaoNumber":"afr4352"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26b","scheduledTime":"2026-08-31 21:59:00"},"arrival":{"iataCode":"rno","icaoCode":"krno","terminal":"","gate":"b9","scheduledTime":"2026-08-31 23:28:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2123","iataNumber":"af2123","icaoNumber":"afr2123"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"22","scheduledTime":"2026-08-31 21:00:00"},"arrival":{"iataCode":"bos","icaoCode":"kbos","terminal":"a","gate":"a14","scheduledTime":"2026-08-31 05:30:00"},"aircraft":{"modelCode":"b752","modelText":"boeing 757-231"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2257","iataNumber":"af2257","icaoNumber":"afr2257"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 22:35:00"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"","scheduledTime":"2026-08-31 00:10:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2760","iataNumber":"af2760","icaoNumber":"afr2760"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 22:27:00"},"arrival":{"iataCode":"mco","icaoCode":"kmco","terminal":"b","gate":"73","scheduledTime":"2026-08-31 06:25:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8565","iataNumber":"af8565","icaoNumber":"afr8565"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26","scheduledTime":"2026-08-31 21:24:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"a20","scheduledTime":"2026-08-31 05:00:00"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2543","iataNumber":"af2543","icaoNumber":"afr2543"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21a","scheduledTime":"2026-08-31 22:45:00"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"47","scheduledTime":"2026-08-31 23:42:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"3057","iataNumber":"af3057","icaoNumber":"afr3057"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 22:45:00"},"arrival":{"iataCode":"cvg","icaoCode":"kcvg","terminal":"3","gate":"b5","scheduledTime":"2026-08-31 05:59:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2422","iataNumber":"af2422","icaoNumber":"afr2422"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"37a","scheduledTime":"2026-08-31 22:55:00"},"arrival":{"iataCode":"syd","icaoCode":"yssy","terminal":"1","gate":"","scheduledTime":"2026-08-31 06:50:00"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8958","iataNumber":"af8958","icaoNumber":"afr8958"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"30","scheduledTime":"2026-08-31 22:59:00"},"arrival":{"iataCode":"fll","icaoCode":"kfll","terminal":"2","gate":"d6","scheduledTime":"2026-08-31 07:05:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8599","iataNumber":"af8599","icaoNumber":"afr8599"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 07:15:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"a17","scheduledTime":"2026-08-31 14:40:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5749","iataNumber":"af5749","icaoNumber":"afr5749"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 07:00:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 14:35:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2873","iataNumber":"af2873","icaoNumber":"afr2873"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 08:05:00"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"d3","scheduledTime":"2026-08-31 13:42:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5888","iataNumber":"af5888","icaoNumber":"afr5888"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 09:45:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"","scheduledTime":"2026-08-31 17:08:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2186","iataNumber":"af2186","icaoNumber":"afr2186"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"131","scheduledTime":"2026-08-31 09:50:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 16:50:00"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2318","iataNumber":"af2318","icaoNumber":"afr2318"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"31a","scheduledTime":"2026-08-31 11:41:00"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"a22","scheduledTime":"2026-08-31 14:30:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8561","iataNumber":"af8561","icaoNumber":"afr8561"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"34","scheduledTime":"2026-08-31 12:35:00"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"f13","scheduledTime":"2026-08-31 18:13:00"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5793","iataNumber":"af5793","icaoNumber":"afr5793"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"35","scheduledTime":"2026-08-31 13:55:00"},"arrival":{"iataCode":"hnl","icaoCode":"phnl","terminal":"2","gate":"f2","scheduledTime":"2026-08-31 16:43:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5956","iataNumber":"af5956","icaoNumber":"afr5956"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"202","scheduledTime":"2026-08-31 14:00:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"2026-08-31 09:50:00"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"21","iataNumber":"af21","icaoNumber":"afr21"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 14:19:00"},"arrival":{"iataCode":"pdx","icaoCode":"kpdx","terminal":"","gate":"d7","scheduledTime":"2026-08-31 16:34:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8670","iataNumber":"af8670","icaoNumber":"afr8670"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"204","scheduledTime":"2026-08-31 13:50:00"},"arrival":{"iataCode":"ams","icaoCode":"eham","terminal":"","gate":"","scheduledTime":"2026-08-31 09:05:00"},"aircraft":{"modelCode":"b78x","modelText":"boeing 787-10 dreamliner"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8250","iataNumber":"af8250","icaoNumber":"afr8250"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23a","scheduledTime":"2026-08-31 13:46:00"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"f7","scheduledTime":"2026-08-31 15:21:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5699","iataNumber":"af5699","icaoNumber":"afr5699"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 14:45:00"},"arrival":{"iataCode":"lih","icaoCode":"phli","terminal":"","gate":"05","scheduledTime":"2026-08-31 17:41:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2883","iataNumber":"af2883","icaoNumber":"afr2883"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 14:11:00"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"36","scheduledTime":"2026-08-31 15:08:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175ll"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"3707","iataNumber":"af3707","icaoNumber":"afr3707"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21a","scheduledTime":"2026-08-31 17:12:00"},"arrival":{"iataCode":"ase","icaoCode":"kase","terminal":"","gate":"05","scheduledTime":"2026-08-31 20:25:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175ll"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8752","iataNumber":"af8752","icaoNumber":"afr8752"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23a","scheduledTime":"2026-08-31 15:00:00"},"arrival":{"iataCode":"abq","icaoCode":"kabq","terminal":"","gate":"b8","scheduledTime":"2026-08-31 18:07:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2664","iataNumber":"af2664","icaoNumber":"afr2664"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"206","scheduledTime":"2026-08-31 15:15:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"2026-08-31 11:10:00"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"23","iataNumber":"af23","icaoNumber":"afr23"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"133","scheduledTime":"2026-08-31 15:50:00"},"arrival":{"iataCode":"lhr","icaoCode":"egll","terminal":"3","gate":"","scheduledTime":"2026-08-31 10:15:00"},"aircraft":{"modelCode":"a35k","modelText":"airbus a350-1041"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"6757","iataNumber":"af6757","icaoNumber":"afr6757"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 16:44:00"},"arrival":{"iataCode":"koa","icaoCode":"phko","terminal":"","gate":"12","scheduledTime":"2026-08-31 19:17:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2798","iataNumber":"af2798","icaoNumber":"afr2798"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 16:44:00"},"arrival":{"iataCode":"koa","icaoCode":"phko","terminal":"","gate":"12","scheduledTime":"2026-08-31 19:17:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2550","iataNumber":"af2550","icaoNumber":"afr2550"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"204","scheduledTime":"2026-08-31 16:45:00"},"arrival":{"iataCode":"ams","icaoCode":"eham","terminal":"","gate":"","scheduledTime":"2026-08-31 12:00:00"},"aircraft":{"modelCode":"b78x","modelText":"boeing 787-10 dreamliner"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8252","iataNumber":"af8252","icaoNumber":"afr8252"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21a","scheduledTime":"2026-08-31 18:51:00"},"arrival":{"iataCode":"smf","icaoCode":"ksmf","terminal":"a","gate":"3","scheduledTime":"2026-08-31 20:25:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2630","iataNumber":"af2630","icaoNumber":"afr2630"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"36","scheduledTime":"2026-08-31 16:55:00"},"arrival":{"iataCode":"ogg","icaoCode":"phog","terminal":"","gate":"35","scheduledTime":"2026-08-31 19:34:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2099","iataNumber":"af2099","icaoNumber":"afr2099"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"32","scheduledTime":"2026-08-31 21:00:00"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"2026-08-31 05:16:00"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2918","iataNumber":"af2918","icaoNumber":"afr2918"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 21:25:00"},"arrival":{"iataCode":"las","icaoCode":"klas","terminal":"1","gate":"","scheduledTime":"2026-08-31 22:45:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2275","iataNumber":"af2275","icaoNumber":"afr2275"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 22:34:00"},"arrival":{"iataCode":"tpa","icaoCode":"ktpa","terminal":"","gate":"e65","scheduledTime":"2026-08-31 06:16:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"2198","iataNumber":"af2198","icaoNumber":"afr2198"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"25","scheduledTime":"2026-08-31 23:00:00"},"arrival":{"iataCode":"mel","icaoCode":"ymml","terminal":"2","gate":"4","scheduledTime":"2026-08-31 07:50:00"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"5883","iataNumber":"af5883","icaoNumber":"afr5883"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 19:59:00"},"arrival":{"iataCode":"boi","icaoCode":"kboi","terminal":"","gate":"b14","scheduledTime":"2026-08-31 22:58:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"3063","iataNumber":"af3063","icaoNumber":"afr3063"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 20:47:00"},"arrival":{"iataCode":"abq","icaoCode":"kabq","terminal":"","gate":"b6","scheduledTime":"2026-08-31 23:48:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"air france","iataCode":"af","icaoCode":"afr"},"flight":{"number":"8904","iataNumber":"af8904","icaoNumber":"afr8904"}}]}
+{
+    "pagination": {
+        "limit": 100,
+        "offset": 0,
+        "count": 42,
+        "total": 42
+    },
+    "data": [
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "",
+                "scheduledTime": "2026-08-31 18:35:00"
+            },
+            "arrival": {
+                "iataCode": "hnl",
+                "icaoCode": "phnl",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 21:14:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "7922",
+                "iataNumber": "af7922",
+                "icaoNumber": "afr7922"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23a",
+                "scheduledTime": "2026-08-31 18:15:00"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "47",
+                "scheduledTime": "2026-08-31 19:16:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5965",
+                "iataNumber": "af5965",
+                "icaoNumber": "afr5965"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "202",
+                "scheduledTime": "2026-08-31 18:25:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:15:00"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "25",
+                "iataNumber": "af25",
+                "icaoNumber": "afr25"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "148",
+                "scheduledTime": "2026-08-31 19:10:00"
+            },
+            "arrival": {
+                "iataCode": "cph",
+                "icaoCode": "ekch",
+                "terminal": "3",
+                "gate": "e135",
+                "scheduledTime": "2026-08-31 15:10:00"
+            },
+            "aircraft": {
+                "modelCode": "a333",
+                "modelText": "airbus a330-343"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "4352",
+                "iataNumber": "af4352",
+                "icaoNumber": "afr4352"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26b",
+                "scheduledTime": "2026-08-31 21:59:00"
+            },
+            "arrival": {
+                "iataCode": "rno",
+                "icaoCode": "krno",
+                "terminal": "",
+                "gate": "b9",
+                "scheduledTime": "2026-08-31 23:28:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2123",
+                "iataNumber": "af2123",
+                "icaoNumber": "afr2123"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "22",
+                "scheduledTime": "2026-08-31 21:00:00"
+            },
+            "arrival": {
+                "iataCode": "bos",
+                "icaoCode": "kbos",
+                "terminal": "a",
+                "gate": "a14",
+                "scheduledTime": "2026-08-31 05:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b752",
+                "modelText": "boeing 757-231"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2257",
+                "iataNumber": "af2257",
+                "icaoNumber": "afr2257"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 22:35:00"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 00:10:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2760",
+                "iataNumber": "af2760",
+                "icaoNumber": "afr2760"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 22:27:00"
+            },
+            "arrival": {
+                "iataCode": "mco",
+                "icaoCode": "kmco",
+                "terminal": "b",
+                "gate": "73",
+                "scheduledTime": "2026-08-31 06:25:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8565",
+                "iataNumber": "af8565",
+                "icaoNumber": "afr8565"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26",
+                "scheduledTime": "2026-08-31 21:24:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "a20",
+                "scheduledTime": "2026-08-31 05:00:00"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2543",
+                "iataNumber": "af2543",
+                "icaoNumber": "afr2543"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21a",
+                "scheduledTime": "2026-08-31 22:45:00"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "47",
+                "scheduledTime": "2026-08-31 23:42:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "3057",
+                "iataNumber": "af3057",
+                "icaoNumber": "afr3057"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 22:45:00"
+            },
+            "arrival": {
+                "iataCode": "cvg",
+                "icaoCode": "kcvg",
+                "terminal": "3",
+                "gate": "b5",
+                "scheduledTime": "2026-08-31 05:59:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2422",
+                "iataNumber": "af2422",
+                "icaoNumber": "afr2422"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "37a",
+                "scheduledTime": "2026-08-31 22:55:00"
+            },
+            "arrival": {
+                "iataCode": "syd",
+                "icaoCode": "yssy",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-31 06:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8958",
+                "iataNumber": "af8958",
+                "icaoNumber": "afr8958"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "30",
+                "scheduledTime": "2026-08-31 22:59:00"
+            },
+            "arrival": {
+                "iataCode": "fll",
+                "icaoCode": "kfll",
+                "terminal": "2",
+                "gate": "d6",
+                "scheduledTime": "2026-08-31 07:05:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8599",
+                "iataNumber": "af8599",
+                "icaoNumber": "afr8599"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:15:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "a17",
+                "scheduledTime": "2026-08-31 14:40:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5749",
+                "iataNumber": "af5749",
+                "icaoNumber": "afr5749"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:00:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:35:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2873",
+                "iataNumber": "af2873",
+                "icaoNumber": "afr2873"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:05:00"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "d3",
+                "scheduledTime": "2026-08-31 13:42:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5888",
+                "iataNumber": "af5888",
+                "icaoNumber": "afr5888"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:45:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "",
+                "scheduledTime": "2026-08-31 17:08:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2186",
+                "iataNumber": "af2186",
+                "icaoNumber": "afr2186"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "131",
+                "scheduledTime": "2026-08-31 09:50:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2318",
+                "iataNumber": "af2318",
+                "icaoNumber": "afr2318"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "31a",
+                "scheduledTime": "2026-08-31 11:41:00"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "a22",
+                "scheduledTime": "2026-08-31 14:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8561",
+                "iataNumber": "af8561",
+                "icaoNumber": "afr8561"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "34",
+                "scheduledTime": "2026-08-31 12:35:00"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "f13",
+                "scheduledTime": "2026-08-31 18:13:00"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5793",
+                "iataNumber": "af5793",
+                "icaoNumber": "afr5793"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "35",
+                "scheduledTime": "2026-08-31 13:55:00"
+            },
+            "arrival": {
+                "iataCode": "hnl",
+                "icaoCode": "phnl",
+                "terminal": "2",
+                "gate": "f2",
+                "scheduledTime": "2026-08-31 16:43:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5956",
+                "iataNumber": "af5956",
+                "icaoNumber": "afr5956"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "202",
+                "scheduledTime": "2026-08-31 14:00:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:50:00"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "21",
+                "iataNumber": "af21",
+                "icaoNumber": "afr21"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:19:00"
+            },
+            "arrival": {
+                "iataCode": "pdx",
+                "icaoCode": "kpdx",
+                "terminal": "",
+                "gate": "d7",
+                "scheduledTime": "2026-08-31 16:34:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8670",
+                "iataNumber": "af8670",
+                "icaoNumber": "afr8670"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "204",
+                "scheduledTime": "2026-08-31 13:50:00"
+            },
+            "arrival": {
+                "iataCode": "ams",
+                "icaoCode": "eham",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:05:00"
+            },
+            "aircraft": {
+                "modelCode": "b78x",
+                "modelText": "boeing 787-10 dreamliner"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8250",
+                "iataNumber": "af8250",
+                "icaoNumber": "afr8250"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23a",
+                "scheduledTime": "2026-08-31 13:46:00"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "f7",
+                "scheduledTime": "2026-08-31 15:21:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5699",
+                "iataNumber": "af5699",
+                "icaoNumber": "afr5699"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:45:00"
+            },
+            "arrival": {
+                "iataCode": "lih",
+                "icaoCode": "phli",
+                "terminal": "",
+                "gate": "05",
+                "scheduledTime": "2026-08-31 17:41:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2883",
+                "iataNumber": "af2883",
+                "icaoNumber": "afr2883"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 14:11:00"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "36",
+                "scheduledTime": "2026-08-31 15:08:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175ll"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "3707",
+                "iataNumber": "af3707",
+                "icaoNumber": "afr3707"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21a",
+                "scheduledTime": "2026-08-31 17:12:00"
+            },
+            "arrival": {
+                "iataCode": "ase",
+                "icaoCode": "kase",
+                "terminal": "",
+                "gate": "05",
+                "scheduledTime": "2026-08-31 20:25:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175ll"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8752",
+                "iataNumber": "af8752",
+                "icaoNumber": "afr8752"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23a",
+                "scheduledTime": "2026-08-31 15:00:00"
+            },
+            "arrival": {
+                "iataCode": "abq",
+                "icaoCode": "kabq",
+                "terminal": "",
+                "gate": "b8",
+                "scheduledTime": "2026-08-31 18:07:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2664",
+                "iataNumber": "af2664",
+                "icaoNumber": "afr2664"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "206",
+                "scheduledTime": "2026-08-31 15:15:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "2026-08-31 11:10:00"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "23",
+                "iataNumber": "af23",
+                "icaoNumber": "afr23"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "133",
+                "scheduledTime": "2026-08-31 15:50:00"
+            },
+            "arrival": {
+                "iataCode": "lhr",
+                "icaoCode": "egll",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 10:15:00"
+            },
+            "aircraft": {
+                "modelCode": "a35k",
+                "modelText": "airbus a350-1041"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "6757",
+                "iataNumber": "af6757",
+                "icaoNumber": "afr6757"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:44:00"
+            },
+            "arrival": {
+                "iataCode": "koa",
+                "icaoCode": "phko",
+                "terminal": "",
+                "gate": "12",
+                "scheduledTime": "2026-08-31 19:17:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2798",
+                "iataNumber": "af2798",
+                "icaoNumber": "afr2798"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:44:00"
+            },
+            "arrival": {
+                "iataCode": "koa",
+                "icaoCode": "phko",
+                "terminal": "",
+                "gate": "12",
+                "scheduledTime": "2026-08-31 19:17:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2550",
+                "iataNumber": "af2550",
+                "icaoNumber": "afr2550"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "204",
+                "scheduledTime": "2026-08-31 16:45:00"
+            },
+            "arrival": {
+                "iataCode": "ams",
+                "icaoCode": "eham",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 12:00:00"
+            },
+            "aircraft": {
+                "modelCode": "b78x",
+                "modelText": "boeing 787-10 dreamliner"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8252",
+                "iataNumber": "af8252",
+                "icaoNumber": "afr8252"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21a",
+                "scheduledTime": "2026-08-31 18:51:00"
+            },
+            "arrival": {
+                "iataCode": "smf",
+                "icaoCode": "ksmf",
+                "terminal": "a",
+                "gate": "3",
+                "scheduledTime": "2026-08-31 20:25:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2630",
+                "iataNumber": "af2630",
+                "icaoNumber": "afr2630"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "36",
+                "scheduledTime": "2026-08-31 16:55:00"
+            },
+            "arrival": {
+                "iataCode": "ogg",
+                "icaoCode": "phog",
+                "terminal": "",
+                "gate": "35",
+                "scheduledTime": "2026-08-31 19:34:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2099",
+                "iataNumber": "af2099",
+                "icaoNumber": "afr2099"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "32",
+                "scheduledTime": "2026-08-31 21:00:00"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "2026-08-31 05:16:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2918",
+                "iataNumber": "af2918",
+                "icaoNumber": "afr2918"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 21:25:00"
+            },
+            "arrival": {
+                "iataCode": "las",
+                "icaoCode": "klas",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-31 22:45:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2275",
+                "iataNumber": "af2275",
+                "icaoNumber": "afr2275"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 22:34:00"
+            },
+            "arrival": {
+                "iataCode": "tpa",
+                "icaoCode": "ktpa",
+                "terminal": "",
+                "gate": "e65",
+                "scheduledTime": "2026-08-31 06:16:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "2198",
+                "iataNumber": "af2198",
+                "icaoNumber": "afr2198"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "25",
+                "scheduledTime": "2026-08-31 23:00:00"
+            },
+            "arrival": {
+                "iataCode": "mel",
+                "icaoCode": "ymml",
+                "terminal": "2",
+                "gate": "4",
+                "scheduledTime": "2026-08-31 07:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "5883",
+                "iataNumber": "af5883",
+                "icaoNumber": "afr5883"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 19:59:00"
+            },
+            "arrival": {
+                "iataCode": "boi",
+                "icaoCode": "kboi",
+                "terminal": "",
+                "gate": "b14",
+                "scheduledTime": "2026-08-31 22:58:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "3063",
+                "iataNumber": "af3063",
+                "icaoNumber": "afr3063"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 20:47:00"
+            },
+            "arrival": {
+                "iataCode": "abq",
+                "icaoCode": "kabq",
+                "terminal": "",
+                "gate": "b6",
+                "scheduledTime": "2026-08-31 23:48:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "air france",
+                "iataCode": "af",
+                "icaoCode": "afr"
+            },
+            "flight": {
+                "number": "8904",
+                "iataNumber": "af8904",
+                "icaoNumber": "afr8904"
+            }
+        }
+    ]
+}

@@ -1,1 +1,3110 @@
-{"pagination":{"limit":100,"offset":0,"count":100,"total":145},"data":[{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 17:05:00"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"","scheduledTime":"2026-08-31 19:58:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2311","iataNumber":"dl2311","icaoNumber":"dal2311"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"32","scheduledTime":"2026-08-31 18:05:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"2026-08-31 13:50:00"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"290","iataNumber":"dl290","icaoNumber":"dal290"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 16:40:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 00:10:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"471","iataNumber":"dl471","icaoNumber":"dal471"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"","scheduledTime":"2026-08-31 18:35:00"},"arrival":{"iataCode":"hnl","icaoCode":"phnl","terminal":"2","gate":"","scheduledTime":"2026-08-31 21:14:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"443","iataNumber":"dl443","icaoNumber":"dal443"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"137","scheduledTime":"2026-08-31 18:24:00"},"arrival":{"iataCode":"mex","icaoCode":"mmmx","terminal":"2","gate":"","scheduledTime":"2026-08-31 23:20:00"},"aircraft":{"modelCode":"b38m","modelText":"boeing 737 max 8"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7949","iataNumber":"dl7949","icaoNumber":"dal7949"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23a","scheduledTime":"2026-08-31 18:15:00"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"47","scheduledTime":"2026-08-31 19:16:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4087","iataNumber":"dl4087","icaoNumber":"dal4087"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"202","scheduledTime":"2026-08-31 18:25:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"2026-08-31 14:15:00"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"8727","iataNumber":"dl8727","icaoNumber":"dal8727"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26b","scheduledTime":"2026-08-31 19:21:00"},"arrival":{"iataCode":"tus","icaoCode":"ktus","terminal":"","gate":"b1","scheduledTime":"2026-08-31 21:00:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175ll"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3846","iataNumber":"dl3846","icaoNumber":"dal3846"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"148","scheduledTime":"2026-08-31 19:10:00"},"arrival":{"iataCode":"cph","icaoCode":"ekch","terminal":"3","gate":"e135","scheduledTime":"2026-08-31 15:10:00"},"aircraft":{"modelCode":"a333","modelText":"airbus a330-343"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7697","iataNumber":"dl7697","icaoNumber":"dal7697"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 20:00:00"},"arrival":{"iataCode":"pdx","icaoCode":"kpdx","terminal":"","gate":"d15","scheduledTime":"2026-08-31 22:22:00"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2457","iataNumber":"dl2457","icaoNumber":"dal2457"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26b","scheduledTime":"2026-08-31 21:59:00"},"arrival":{"iataCode":"rno","icaoCode":"krno","terminal":"","gate":"b9","scheduledTime":"2026-08-31 23:28:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3929","iataNumber":"dl3929","icaoNumber":"dal3929"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"22","scheduledTime":"2026-08-31 21:00:00"},"arrival":{"iataCode":"bos","icaoCode":"kbos","terminal":"a","gate":"a14","scheduledTime":"2026-08-31 05:30:00"},"aircraft":{"modelCode":"b752","modelText":"boeing 757-231"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"507","iataNumber":"dl507","icaoNumber":"dal507"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"156","scheduledTime":"2026-08-31 21:30:00"},"arrival":{"iataCode":"lim","icaoCode":"spjc","terminal":"","gate":"","scheduledTime":"2026-08-31 08:05:00"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-316(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"6071","iataNumber":"dl6071","icaoNumber":"dal6071"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 22:35:00"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"","scheduledTime":"2026-08-31 00:10:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3827","iataNumber":"dl3827","icaoNumber":"dal3827"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 22:27:00"},"arrival":{"iataCode":"mco","icaoCode":"kmco","terminal":"b","gate":"73","scheduledTime":"2026-08-31 06:25:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"547","iataNumber":"dl547","icaoNumber":"dal547"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26","scheduledTime":"2026-08-31 21:24:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"a20","scheduledTime":"2026-08-31 05:00:00"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"783","iataNumber":"dl783","icaoNumber":"dal783"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21a","scheduledTime":"2026-08-31 22:45:00"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"47","scheduledTime":"2026-08-31 23:42:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3746","iataNumber":"dl3746","icaoNumber":"dal3746"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 22:45:00"},"arrival":{"iataCode":"cvg","icaoCode":"kcvg","terminal":"3","gate":"b5","scheduledTime":"2026-08-31 05:59:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"458","iataNumber":"dl458","icaoNumber":"dal458"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"37a","scheduledTime":"2026-08-31 22:55:00"},"arrival":{"iataCode":"syd","icaoCode":"yssy","terminal":"1","gate":"","scheduledTime":"2026-08-31 06:50:00"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"41","iataNumber":"dl41","icaoNumber":"dal41"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"30","scheduledTime":"2026-08-31 22:59:00"},"arrival":{"iataCode":"fll","icaoCode":"kfll","terminal":"2","gate":"d6","scheduledTime":"2026-08-31 07:05:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"477","iataNumber":"dl477","icaoNumber":"dal477"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"148","scheduledTime":"2026-08-31 23:50:00"},"arrival":{"iataCode":"icn","icaoCode":"rksi","terminal":"2","gate":"232","scheduledTime":"2026-08-31 04:40:00"},"aircraft":{"modelCode":"a388","modelText":"airbus a380-861"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7834","iataNumber":"dl7834","icaoNumber":"dal7834"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 23:55:00"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"2026-08-31 08:25:00"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"915","iataNumber":"dl915","icaoNumber":"dal915"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 07:15:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"a17","scheduledTime":"2026-08-31 14:40:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"733","iataNumber":"dl733","icaoNumber":"dal733"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"30","scheduledTime":"2026-08-31 06:00:00"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"2026-08-31 14:33:00"},"aircraft":{"modelCode":"b764","modelText":"boeing 767-432(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"934","iataNumber":"dl934","icaoNumber":"dal934"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"38","scheduledTime":"2026-08-31 05:35:00"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"a22","scheduledTime":"2026-08-31 08:30:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2906","iataNumber":"dl2906","icaoNumber":"dal2906"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 07:35:00"},"arrival":{"iataCode":"aus","icaoCode":"kaus","terminal":"","gate":"","scheduledTime":"2026-08-31 12:25:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"946","iataNumber":"dl946","icaoNumber":"dal946"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 06:00:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 13:35:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"390","iataNumber":"dl390","icaoNumber":"dal390"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 07:00:00"},"arrival":{"iataCode":"sfo","icaoCode":"ksfo","terminal":"1","gate":"","scheduledTime":"2026-08-31 08:23:00"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1421","iataNumber":"dl1421","icaoNumber":"dal1421"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"37a","scheduledTime":"2026-08-31 06:40:00"},"arrival":{"iataCode":"bos","icaoCode":"kbos","terminal":"a","gate":"a19","scheduledTime":"2026-08-31 15:15:00"},"aircraft":{"modelCode":"b752","modelText":"boeing 757-231"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"639","iataNumber":"dl639","icaoNumber":"dal639"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 06:00:00"},"arrival":{"iataCode":"bna","icaoCode":"kbna","terminal":"","gate":"b9","scheduledTime":"2026-08-31 12:06:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"768","iataNumber":"dl768","icaoNumber":"dal768"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 07:05:00"},"arrival":{"iataCode":"pdx","icaoCode":"kpdx","terminal":"","gate":"d5","scheduledTime":"2026-08-31 09:23:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2975","iataNumber":"dl2975","icaoNumber":"dal2975"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"137","scheduledTime":"2026-08-31 09:09:00"},"arrival":{"iataCode":"mex","icaoCode":"mmmx","terminal":"2","gate":"","scheduledTime":"2026-08-31 14:05:00"},"aircraft":{"modelCode":"b38m","modelText":"boeing 737 max 8"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7952","iataNumber":"dl7952","icaoNumber":"dal7952"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 07:35:00"},"arrival":{"iataCode":"mco","icaoCode":"kmco","terminal":"b","gate":"","scheduledTime":"2026-08-31 15:22:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"482","iataNumber":"dl482","icaoNumber":"dal482"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"32","scheduledTime":"2026-08-31 07:00:00"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"2026-08-31 15:39:00"},"aircraft":{"modelCode":"b764","modelText":"boeing 767-432(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"979","iataNumber":"dl979","icaoNumber":"dal979"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 07:15:00"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"a22","scheduledTime":"2026-08-31 10:29:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1318","iataNumber":"dl1318","icaoNumber":"dal1318"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 07:15:00"},"arrival":{"iataCode":"sea","icaoCode":"ksea","terminal":"","gate":"","scheduledTime":"2026-08-31 10:00:00"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2980","iataNumber":"dl2980","icaoNumber":"dal2980"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 07:15:00"},"arrival":{"iataCode":"las","icaoCode":"klas","terminal":"1","gate":"d34","scheduledTime":"2026-08-31 08:27:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2253","iataNumber":"dl2253","icaoNumber":"dal2253"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 08:21:00"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"f7","scheduledTime":"2026-08-31 09:56:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4119","iataNumber":"dl4119","icaoNumber":"dal4119"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 07:00:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 14:35:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"515","iataNumber":"dl515","icaoNumber":"dal515"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"24","scheduledTime":"2026-08-31 05:30:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"","scheduledTime":"2026-08-31 12:56:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2399","iataNumber":"dl2399","icaoNumber":"dal2399"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"20","scheduledTime":"2026-08-31 07:35:00"},"arrival":{"iataCode":"dca","icaoCode":"kdca","terminal":"2","gate":"b21","scheduledTime":"2026-08-31 15:35:00"},"aircraft":{"modelCode":"b752","modelText":"boeing 757-231"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"392","iataNumber":"dl392","icaoNumber":"dal392"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 08:30:00"},"arrival":{"iataCode":"ogg","icaoCode":"phog","terminal":"","gate":"39","scheduledTime":"2026-08-31 11:04:00"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"425","iataNumber":"dl425","icaoNumber":"dal425"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 08:05:00"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"d3","scheduledTime":"2026-08-31 13:42:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"799","iataNumber":"dl799","icaoNumber":"dal799"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 08:30:00"},"arrival":{"iataCode":"hnl","icaoCode":"phnl","terminal":"2","gate":"e8","scheduledTime":"2026-08-31 11:20:00"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"480","iataNumber":"dl480","icaoNumber":"dal480"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 07:35:00"},"arrival":{"iataCode":"dfw","icaoCode":"kdfw","terminal":"e","gate":"e17","scheduledTime":"2026-08-31 12:48:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"521","iataNumber":"dl521","icaoNumber":"dal521"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"22","scheduledTime":"2026-08-31 08:05:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 15:41:00"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"782","iataNumber":"dl782","icaoNumber":"dal782"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21a","scheduledTime":"2026-08-31 09:40:00"},"arrival":{"iataCode":"iah","icaoCode":"kiah","terminal":"a","gate":"10","scheduledTime":"2026-08-31 15:05:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1143","iataNumber":"dl1143","icaoNumber":"dal1143"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23b","scheduledTime":"2026-08-31 10:00:00"},"arrival":{"iataCode":"pdx","icaoCode":"kpdx","terminal":"","gate":"d9","scheduledTime":"2026-08-31 12:20:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2766","iataNumber":"dl2766","icaoNumber":"dal2766"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"38","scheduledTime":"2026-08-31 09:40:00"},"arrival":{"iataCode":"mia","icaoCode":"kmia","terminal":"s","gate":"h5","scheduledTime":"2026-08-31 18:07:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"811","iataNumber":"dl811","icaoNumber":"dal811"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"30","scheduledTime":"2026-08-31 08:10:00"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"2026-08-31 17:00:00"},"aircraft":{"modelCode":"a333","modelText":"airbus a330-323"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"958","iataNumber":"dl958","icaoNumber":"dal958"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 09:45:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"","scheduledTime":"2026-08-31 17:08:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"494","iataNumber":"dl494","icaoNumber":"dal494"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"131","scheduledTime":"2026-08-31 09:50:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 16:50:00"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"delta air lines (la28 olympics livery)","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"327","iataNumber":"dl327","icaoNumber":"dal327"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 09:55:00"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"a35","scheduledTime":"2026-08-31 12:45:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1434","iataNumber":"dl1434","icaoNumber":"dal1434"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"20","scheduledTime":"2026-08-31 09:45:00"},"arrival":{"iataCode":"sea","icaoCode":"ksea","terminal":"","gate":"b8","scheduledTime":"2026-08-31 12:30:00"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1714","iataNumber":"dl1714","icaoNumber":"dal1714"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 08:20:00"},"arrival":{"iataCode":"rno","icaoCode":"krno","terminal":"","gate":"b8","scheduledTime":"2026-08-31 09:53:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4099","iataNumber":"dl4099","icaoNumber":"dal4099"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 09:55:00"},"arrival":{"iataCode":"gdl","icaoCode":"mmgl","terminal":"1","gate":"","scheduledTime":"2026-08-31 14:14:00"},"aircraft":{"modelCode":"b38m","modelText":"boeing 737 max 8"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"9018","iataNumber":"dl9018","icaoNumber":"dal9018"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 10:01:00"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"f7","scheduledTime":"2026-08-31 11:34:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3951","iataNumber":"dl3951","icaoNumber":"dal3951"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"25","scheduledTime":"2026-08-31 10:11:00"},"arrival":{"iataCode":"tpa","icaoCode":"ktpa","terminal":"","gate":"e68","scheduledTime":"2026-08-31 18:05:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"749","iataNumber":"dl749","icaoNumber":"dal749"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"32","scheduledTime":"2026-08-31 15:15:00"},"arrival":{"iataCode":"jfk","icaoCode":"kjfk","terminal":"4","gate":"","scheduledTime":"2026-08-31 23:47:00"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-332(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"938","iataNumber":"dl938","icaoNumber":"dal938"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 09:35:00"},"arrival":{"iataCode":"rdu","icaoCode":"krdu","terminal":"2","gate":"d5","scheduledTime":"2026-08-31 17:30:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"508","iataNumber":"dl508","icaoNumber":"dal508"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 10:05:00"},"arrival":{"iataCode":"cun","icaoCode":"mmun","terminal":"3","gate":"43","scheduledTime":"2026-08-31 16:55:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-9gp(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"615","iataNumber":"dl615","icaoNumber":"dal615"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 09:05:00"},"arrival":{"iataCode":"smf","icaoCode":"ksmf","terminal":"a","gate":"10","scheduledTime":"2026-08-31 10:37:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3755","iataNumber":"dl3755","icaoNumber":"dal3755"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 10:05:00"},"arrival":{"iataCode":"aus","icaoCode":"kaus","terminal":"","gate":"10","scheduledTime":"2026-08-31 15:20:00"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-8eh"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"986","iataNumber":"dl986","icaoNumber":"dal986"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"32","scheduledTime":"2026-08-31 10:40:00"},"arrival":{"iataCode":"hnd","icaoCode":"rjtt","terminal":"3","gate":"144","scheduledTime":"2026-08-31 14:00:00"},"aircraft":{"modelCode":"a359","modelText":"airbus a350-941"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7","iataNumber":"dl7","icaoNumber":"dal7"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 10:50:00"},"arrival":{"iataCode":"sjd","icaoCode":"mmsd","terminal":"2","gate":"","scheduledTime":"2026-08-31 13:20:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1875","iataNumber":"dl1875","icaoNumber":"dal1875"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"27","scheduledTime":"2026-08-31 10:28:00"},"arrival":{"iataCode":"mco","icaoCode":"kmco","terminal":"b","gate":"","scheduledTime":"2026-08-31 18:42:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"867","iataNumber":"dl867","icaoNumber":"dal867"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 11:00:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 18:37:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"528","iataNumber":"dl528","icaoNumber":"dal528"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"31a","scheduledTime":"2026-08-31 11:41:00"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"a22","scheduledTime":"2026-08-31 14:30:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1194","iataNumber":"dl1194","icaoNumber":"dal1194"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23a","scheduledTime":"2026-08-31 13:00:00"},"arrival":{"iataCode":"geg","icaoCode":"kgeg","terminal":"","gate":"b4","scheduledTime":"2026-08-31 15:35:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3794","iataNumber":"dl3794","icaoNumber":"dal3794"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 11:26:00"},"arrival":{"iataCode":"pvr","icaoCode":"mmpr","terminal":"","gate":"05","scheduledTime":"2026-08-31 15:35:00"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1793","iataNumber":"dl1793","icaoNumber":"dal1793"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"38","scheduledTime":"2026-08-31 11:15:00"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"d3","scheduledTime":"2026-08-31 16:50:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"413","iataNumber":"dl413","icaoNumber":"dal413"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"","scheduledTime":"2026-08-31 11:35:00"},"arrival":{"iataCode":"lim","icaoCode":"spjc","terminal":"","gate":"","scheduledTime":"2026-08-31 22:10:00"},"aircraft":{"modelCode":"b763","modelText":"boeing 767-316(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"6025","iataNumber":"dl6025","icaoNumber":"dal6025"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"133","scheduledTime":"2026-08-31 12:00:00"},"arrival":{"iataCode":"mex","icaoCode":"mmmx","terminal":"2","gate":"","scheduledTime":"2026-08-31 16:50:00"},"aircraft":{"modelCode":"b789","modelText":"boeing 787-9 dreamliner"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7951","iataNumber":"dl7951","icaoNumber":"dal7951"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"20","scheduledTime":"2026-08-31 11:50:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"a20","scheduledTime":"2026-08-31 19:14:00"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"802","iataNumber":"dl802","icaoNumber":"dal802"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 10:20:00"},"arrival":{"iataCode":"msy","icaoCode":"kmsy","terminal":"","gate":"c6","scheduledTime":"2026-08-31 16:10:00"},"aircraft":{"modelCode":"b739","modelText":"boeing 737-932(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2096","iataNumber":"dl2096","icaoNumber":"dal2096"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"35","scheduledTime":"2026-08-31 12:00:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 19:39:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"446","iataNumber":"dl446","icaoNumber":"dal446"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21a","scheduledTime":"2026-08-31 12:05:00"},"arrival":{"iataCode":"smf","icaoCode":"ksmf","terminal":"a","gate":"3","scheduledTime":"2026-08-31 13:32:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3812","iataNumber":"dl3812","icaoNumber":"dal3812"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"150","scheduledTime":"2026-08-31 13:00:00"},"arrival":{"iataCode":"icn","icaoCode":"rksi","terminal":"2","gate":"233","scheduledTime":"2026-08-31 17:50:00"},"aircraft":{"modelCode":"b748","modelText":"boeing 747-8b5"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7836","iataNumber":"dl7836","icaoNumber":"dal7836"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"36","scheduledTime":"2026-08-31 13:10:00"},"arrival":{"iataCode":"slc","icaoCode":"kslc","terminal":"","gate":"","scheduledTime":"2026-08-31 16:03:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"1647","iataNumber":"dl1647","icaoNumber":"dal1647"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"34","scheduledTime":"2026-08-31 12:35:00"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"f13","scheduledTime":"2026-08-31 18:13:00"},"aircraft":{"modelCode":"b753","modelText":"boeing 757-351"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"914","iataNumber":"dl914","icaoNumber":"dal914"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"35","scheduledTime":"2026-08-31 13:55:00"},"arrival":{"iataCode":"hnl","icaoCode":"phnl","terminal":"2","gate":"f2","scheduledTime":"2026-08-31 16:43:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"465","iataNumber":"dl465","icaoNumber":"dal465"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"202","scheduledTime":"2026-08-31 14:00:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"2026-08-31 09:50:00"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"8693","iataNumber":"dl8693","icaoNumber":"dal8693"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 14:19:00"},"arrival":{"iataCode":"pdx","icaoCode":"kpdx","terminal":"","gate":"d7","scheduledTime":"2026-08-31 16:34:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2551","iataNumber":"dl2551","icaoNumber":"dal2551"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"204","scheduledTime":"2026-08-31 13:50:00"},"arrival":{"iataCode":"ams","icaoCode":"eham","terminal":"","gate":"","scheduledTime":"2026-08-31 09:05:00"},"aircraft":{"modelCode":"b78x","modelText":"boeing 787-10 dreamliner"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"9468","iataNumber":"dl9468","icaoNumber":"dal9468"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23a","scheduledTime":"2026-08-31 13:46:00"},"arrival":{"iataCode":"phx","icaoCode":"kphx","terminal":"3","gate":"f7","scheduledTime":"2026-08-31 15:21:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3894","iataNumber":"dl3894","icaoNumber":"dal3894"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"26","scheduledTime":"2026-08-31 13:55:00"},"arrival":{"iataCode":"gru","icaoCode":"sbgr","terminal":"3","gate":"","scheduledTime":"2026-08-31 05:30:00"},"aircraft":{"modelCode":"b789","modelText":"boeing 787-9 dreamliner"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"6079","iataNumber":"dl6079","icaoNumber":"dal6079"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"203","scheduledTime":"2026-08-31 13:30:00"},"arrival":{"iataCode":"tlv","icaoCode":"llbg","terminal":"3","gate":"","scheduledTime":"2026-08-31 13:20:00"},"aircraft":{"modelCode":"b789","modelText":"boeing 787-9 dreamliner"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7429","iataNumber":"dl7429","icaoNumber":"dal7429"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 14:00:00"},"arrival":{"iataCode":"sea","icaoCode":"ksea","terminal":"","gate":"","scheduledTime":"2026-08-31 16:40:00"},"aircraft":{"modelCode":"b738","modelText":"boeing 737-832"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2606","iataNumber":"dl2606","icaoNumber":"dal2606"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"","scheduledTime":"2026-08-31 14:45:00"},"arrival":{"iataCode":"lih","icaoCode":"phli","terminal":"","gate":"05","scheduledTime":"2026-08-31 17:41:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"428","iataNumber":"dl428","icaoNumber":"dal428"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21b","scheduledTime":"2026-08-31 14:11:00"},"arrival":{"iataCode":"san","icaoCode":"ksan","terminal":"2","gate":"36","scheduledTime":"2026-08-31 15:08:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175ll"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4001","iataNumber":"dl4001","icaoNumber":"dal4001"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"33","scheduledTime":"2026-08-31 14:15:00"},"arrival":{"iataCode":"atl","icaoCode":"katl","terminal":"s","gate":"","scheduledTime":"2026-08-31 21:59:00"},"aircraft":{"modelCode":"a321","modelText":"airbus a321-211"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"715","iataNumber":"dl715","icaoNumber":"dal715"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"21a","scheduledTime":"2026-08-31 17:12:00"},"arrival":{"iataCode":"ase","icaoCode":"kase","terminal":"","gate":"05","scheduledTime":"2026-08-31 20:25:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175ll"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"3704","iataNumber":"dl3704","icaoNumber":"dal3704"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"23a","scheduledTime":"2026-08-31 15:00:00"},"arrival":{"iataCode":"abq","icaoCode":"kabq","terminal":"","gate":"b8","scheduledTime":"2026-08-31 18:07:00"},"aircraft":{"modelCode":"e75l","modelText":"embraer e175lr"},"airline":{"name":"delta connection","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"4091","iataNumber":"dl4091","icaoNumber":"dal4091"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"137","scheduledTime":"2026-08-31 14:30:00"},"arrival":{"iataCode":"mex","icaoCode":"mmmx","terminal":"2","gate":"","scheduledTime":"2026-08-31 19:30:00"},"aircraft":{"modelCode":"b38m","modelText":"boeing 737 max 8"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"7950","iataNumber":"dl7950","icaoNumber":"dal7950"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"","scheduledTime":"2026-08-31 15:22:00"},"arrival":{"iataCode":"msp","icaoCode":"kmsp","terminal":"1","gate":"","scheduledTime":"2026-08-31 20:59:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"2198","iataNumber":"dl2198","icaoNumber":"dal2198"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"b","gate":"206","scheduledTime":"2026-08-31 15:15:00"},"arrival":{"iataCode":"cdg","icaoCode":"lfpg","terminal":"2e","gate":"","scheduledTime":"2026-08-31 11:10:00"},"aircraft":{"modelCode":"b77w","modelText":"boeing 777-328(er)"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"8725","iataNumber":"dl8725","icaoNumber":"dal8725"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"133","scheduledTime":"2026-08-31 15:50:00"},"arrival":{"iataCode":"lhr","icaoCode":"egll","terminal":"3","gate":"","scheduledTime":"2026-08-31 10:15:00"},"aircraft":{"modelCode":"a35k","modelText":"airbus a350-1041"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"5978","iataNumber":"dl5978","icaoNumber":"dal5978"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"3","gate":"31a","scheduledTime":"2026-08-31 15:50:00"},"arrival":{"iataCode":"dtw","icaoCode":"kdtw","terminal":"m","gate":"","scheduledTime":"2026-08-31 23:19:00"},"aircraft":{"modelCode":"a21n","modelText":"airbus a321-271nx"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"708","iataNumber":"dl708","icaoNumber":"dal708"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"25","scheduledTime":"2026-08-31 15:55:00"},"arrival":{"iataCode":"scl","icaoCode":"scel","terminal":"2","gate":"","scheduledTime":"2026-08-31 05:35:00"},"aircraft":{"modelCode":"b788","modelText":"boeing 787-8 dreamliner"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"6012","iataNumber":"dl6012","icaoNumber":"dal6012"}},{"weekday":"1","departure":{"iataCode":"lax","icaoCode":"klax","terminal":"2","gate":"24","scheduledTime":"2026-08-31 15:55:00"},"arrival":{"iataCode":"aus","icaoCode":"kaus","terminal":"","gate":"1","scheduledTime":"2026-08-31 20:58:00"},"aircraft":{"modelCode":"a319","modelText":"airbus a319-114"},"airline":{"name":"delta air lines","iataCode":"dl","icaoCode":"dal"},"flight":{"number":"622","iataNumber":"dl622","icaoNumber":"dal622"}}]}
+{
+    "pagination": {
+        "limit": 100,
+        "offset": 0,
+        "count": 100,
+        "total": 145
+    },
+    "data": [
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 17:05:00"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 19:58:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2311",
+                "iataNumber": "dl2311",
+                "icaoNumber": "dal2311"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "32",
+                "scheduledTime": "2026-08-31 18:05:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "2026-08-31 13:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "290",
+                "iataNumber": "dl290",
+                "icaoNumber": "dal290"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:40:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 00:10:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "471",
+                "iataNumber": "dl471",
+                "icaoNumber": "dal471"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "",
+                "scheduledTime": "2026-08-31 18:35:00"
+            },
+            "arrival": {
+                "iataCode": "hnl",
+                "icaoCode": "phnl",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 21:14:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "443",
+                "iataNumber": "dl443",
+                "icaoNumber": "dal443"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "137",
+                "scheduledTime": "2026-08-31 18:24:00"
+            },
+            "arrival": {
+                "iataCode": "mex",
+                "icaoCode": "mmmx",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 23:20:00"
+            },
+            "aircraft": {
+                "modelCode": "b38m",
+                "modelText": "boeing 737 max 8"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7949",
+                "iataNumber": "dl7949",
+                "icaoNumber": "dal7949"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23a",
+                "scheduledTime": "2026-08-31 18:15:00"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "47",
+                "scheduledTime": "2026-08-31 19:16:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "4087",
+                "iataNumber": "dl4087",
+                "icaoNumber": "dal4087"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "202",
+                "scheduledTime": "2026-08-31 18:25:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:15:00"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "8727",
+                "iataNumber": "dl8727",
+                "icaoNumber": "dal8727"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26b",
+                "scheduledTime": "2026-08-31 19:21:00"
+            },
+            "arrival": {
+                "iataCode": "tus",
+                "icaoCode": "ktus",
+                "terminal": "",
+                "gate": "b1",
+                "scheduledTime": "2026-08-31 21:00:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175ll"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3846",
+                "iataNumber": "dl3846",
+                "icaoNumber": "dal3846"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "148",
+                "scheduledTime": "2026-08-31 19:10:00"
+            },
+            "arrival": {
+                "iataCode": "cph",
+                "icaoCode": "ekch",
+                "terminal": "3",
+                "gate": "e135",
+                "scheduledTime": "2026-08-31 15:10:00"
+            },
+            "aircraft": {
+                "modelCode": "a333",
+                "modelText": "airbus a330-343"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7697",
+                "iataNumber": "dl7697",
+                "icaoNumber": "dal7697"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 20:00:00"
+            },
+            "arrival": {
+                "iataCode": "pdx",
+                "icaoCode": "kpdx",
+                "terminal": "",
+                "gate": "d15",
+                "scheduledTime": "2026-08-31 22:22:00"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2457",
+                "iataNumber": "dl2457",
+                "icaoNumber": "dal2457"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26b",
+                "scheduledTime": "2026-08-31 21:59:00"
+            },
+            "arrival": {
+                "iataCode": "rno",
+                "icaoCode": "krno",
+                "terminal": "",
+                "gate": "b9",
+                "scheduledTime": "2026-08-31 23:28:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3929",
+                "iataNumber": "dl3929",
+                "icaoNumber": "dal3929"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "22",
+                "scheduledTime": "2026-08-31 21:00:00"
+            },
+            "arrival": {
+                "iataCode": "bos",
+                "icaoCode": "kbos",
+                "terminal": "a",
+                "gate": "a14",
+                "scheduledTime": "2026-08-31 05:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b752",
+                "modelText": "boeing 757-231"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "507",
+                "iataNumber": "dl507",
+                "icaoNumber": "dal507"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "156",
+                "scheduledTime": "2026-08-31 21:30:00"
+            },
+            "arrival": {
+                "iataCode": "lim",
+                "icaoCode": "spjc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:05:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-316(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6071",
+                "iataNumber": "dl6071",
+                "icaoNumber": "dal6071"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 22:35:00"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 00:10:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3827",
+                "iataNumber": "dl3827",
+                "icaoNumber": "dal3827"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 22:27:00"
+            },
+            "arrival": {
+                "iataCode": "mco",
+                "icaoCode": "kmco",
+                "terminal": "b",
+                "gate": "73",
+                "scheduledTime": "2026-08-31 06:25:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "547",
+                "iataNumber": "dl547",
+                "icaoNumber": "dal547"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26",
+                "scheduledTime": "2026-08-31 21:24:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "a20",
+                "scheduledTime": "2026-08-31 05:00:00"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "783",
+                "iataNumber": "dl783",
+                "icaoNumber": "dal783"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21a",
+                "scheduledTime": "2026-08-31 22:45:00"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "47",
+                "scheduledTime": "2026-08-31 23:42:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3746",
+                "iataNumber": "dl3746",
+                "icaoNumber": "dal3746"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 22:45:00"
+            },
+            "arrival": {
+                "iataCode": "cvg",
+                "icaoCode": "kcvg",
+                "terminal": "3",
+                "gate": "b5",
+                "scheduledTime": "2026-08-31 05:59:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "458",
+                "iataNumber": "dl458",
+                "icaoNumber": "dal458"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "37a",
+                "scheduledTime": "2026-08-31 22:55:00"
+            },
+            "arrival": {
+                "iataCode": "syd",
+                "icaoCode": "yssy",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-31 06:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "41",
+                "iataNumber": "dl41",
+                "icaoNumber": "dal41"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "30",
+                "scheduledTime": "2026-08-31 22:59:00"
+            },
+            "arrival": {
+                "iataCode": "fll",
+                "icaoCode": "kfll",
+                "terminal": "2",
+                "gate": "d6",
+                "scheduledTime": "2026-08-31 07:05:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "477",
+                "iataNumber": "dl477",
+                "icaoNumber": "dal477"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "148",
+                "scheduledTime": "2026-08-31 23:50:00"
+            },
+            "arrival": {
+                "iataCode": "icn",
+                "icaoCode": "rksi",
+                "terminal": "2",
+                "gate": "232",
+                "scheduledTime": "2026-08-31 04:40:00"
+            },
+            "aircraft": {
+                "modelCode": "a388",
+                "modelText": "airbus a380-861"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7834",
+                "iataNumber": "dl7834",
+                "icaoNumber": "dal7834"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 23:55:00"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:25:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "915",
+                "iataNumber": "dl915",
+                "icaoNumber": "dal915"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:15:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "a17",
+                "scheduledTime": "2026-08-31 14:40:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "733",
+                "iataNumber": "dl733",
+                "icaoNumber": "dal733"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "30",
+                "scheduledTime": "2026-08-31 06:00:00"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:33:00"
+            },
+            "aircraft": {
+                "modelCode": "b764",
+                "modelText": "boeing 767-432(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "934",
+                "iataNumber": "dl934",
+                "icaoNumber": "dal934"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "38",
+                "scheduledTime": "2026-08-31 05:35:00"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "a22",
+                "scheduledTime": "2026-08-31 08:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2906",
+                "iataNumber": "dl2906",
+                "icaoNumber": "dal2906"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:35:00"
+            },
+            "arrival": {
+                "iataCode": "aus",
+                "icaoCode": "kaus",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 12:25:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "946",
+                "iataNumber": "dl946",
+                "icaoNumber": "dal946"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 06:00:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 13:35:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "390",
+                "iataNumber": "dl390",
+                "icaoNumber": "dal390"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:00:00"
+            },
+            "arrival": {
+                "iataCode": "sfo",
+                "icaoCode": "ksfo",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:23:00"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1421",
+                "iataNumber": "dl1421",
+                "icaoNumber": "dal1421"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "37a",
+                "scheduledTime": "2026-08-31 06:40:00"
+            },
+            "arrival": {
+                "iataCode": "bos",
+                "icaoCode": "kbos",
+                "terminal": "a",
+                "gate": "a19",
+                "scheduledTime": "2026-08-31 15:15:00"
+            },
+            "aircraft": {
+                "modelCode": "b752",
+                "modelText": "boeing 757-231"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "639",
+                "iataNumber": "dl639",
+                "icaoNumber": "dal639"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 06:00:00"
+            },
+            "arrival": {
+                "iataCode": "bna",
+                "icaoCode": "kbna",
+                "terminal": "",
+                "gate": "b9",
+                "scheduledTime": "2026-08-31 12:06:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "768",
+                "iataNumber": "dl768",
+                "icaoNumber": "dal768"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:05:00"
+            },
+            "arrival": {
+                "iataCode": "pdx",
+                "icaoCode": "kpdx",
+                "terminal": "",
+                "gate": "d5",
+                "scheduledTime": "2026-08-31 09:23:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2975",
+                "iataNumber": "dl2975",
+                "icaoNumber": "dal2975"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "137",
+                "scheduledTime": "2026-08-31 09:09:00"
+            },
+            "arrival": {
+                "iataCode": "mex",
+                "icaoCode": "mmmx",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:05:00"
+            },
+            "aircraft": {
+                "modelCode": "b38m",
+                "modelText": "boeing 737 max 8"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7952",
+                "iataNumber": "dl7952",
+                "icaoNumber": "dal7952"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:35:00"
+            },
+            "arrival": {
+                "iataCode": "mco",
+                "icaoCode": "kmco",
+                "terminal": "b",
+                "gate": "",
+                "scheduledTime": "2026-08-31 15:22:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "482",
+                "iataNumber": "dl482",
+                "icaoNumber": "dal482"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "32",
+                "scheduledTime": "2026-08-31 07:00:00"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "2026-08-31 15:39:00"
+            },
+            "aircraft": {
+                "modelCode": "b764",
+                "modelText": "boeing 767-432(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "979",
+                "iataNumber": "dl979",
+                "icaoNumber": "dal979"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:15:00"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "a22",
+                "scheduledTime": "2026-08-31 10:29:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1318",
+                "iataNumber": "dl1318",
+                "icaoNumber": "dal1318"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:15:00"
+            },
+            "arrival": {
+                "iataCode": "sea",
+                "icaoCode": "ksea",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 10:00:00"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2980",
+                "iataNumber": "dl2980",
+                "icaoNumber": "dal2980"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:15:00"
+            },
+            "arrival": {
+                "iataCode": "las",
+                "icaoCode": "klas",
+                "terminal": "1",
+                "gate": "d34",
+                "scheduledTime": "2026-08-31 08:27:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2253",
+                "iataNumber": "dl2253",
+                "icaoNumber": "dal2253"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 08:21:00"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "f7",
+                "scheduledTime": "2026-08-31 09:56:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "4119",
+                "iataNumber": "dl4119",
+                "icaoNumber": "dal4119"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:00:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:35:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "515",
+                "iataNumber": "dl515",
+                "icaoNumber": "dal515"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "24",
+                "scheduledTime": "2026-08-31 05:30:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "",
+                "scheduledTime": "2026-08-31 12:56:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2399",
+                "iataNumber": "dl2399",
+                "icaoNumber": "dal2399"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "20",
+                "scheduledTime": "2026-08-31 07:35:00"
+            },
+            "arrival": {
+                "iataCode": "dca",
+                "icaoCode": "kdca",
+                "terminal": "2",
+                "gate": "b21",
+                "scheduledTime": "2026-08-31 15:35:00"
+            },
+            "aircraft": {
+                "modelCode": "b752",
+                "modelText": "boeing 757-231"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "392",
+                "iataNumber": "dl392",
+                "icaoNumber": "dal392"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:30:00"
+            },
+            "arrival": {
+                "iataCode": "ogg",
+                "icaoCode": "phog",
+                "terminal": "",
+                "gate": "39",
+                "scheduledTime": "2026-08-31 11:04:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "425",
+                "iataNumber": "dl425",
+                "icaoNumber": "dal425"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:05:00"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "d3",
+                "scheduledTime": "2026-08-31 13:42:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "799",
+                "iataNumber": "dl799",
+                "icaoNumber": "dal799"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:30:00"
+            },
+            "arrival": {
+                "iataCode": "hnl",
+                "icaoCode": "phnl",
+                "terminal": "2",
+                "gate": "e8",
+                "scheduledTime": "2026-08-31 11:20:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "480",
+                "iataNumber": "dl480",
+                "icaoNumber": "dal480"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 07:35:00"
+            },
+            "arrival": {
+                "iataCode": "dfw",
+                "icaoCode": "kdfw",
+                "terminal": "e",
+                "gate": "e17",
+                "scheduledTime": "2026-08-31 12:48:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "521",
+                "iataNumber": "dl521",
+                "icaoNumber": "dal521"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "22",
+                "scheduledTime": "2026-08-31 08:05:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 15:41:00"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "782",
+                "iataNumber": "dl782",
+                "icaoNumber": "dal782"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21a",
+                "scheduledTime": "2026-08-31 09:40:00"
+            },
+            "arrival": {
+                "iataCode": "iah",
+                "icaoCode": "kiah",
+                "terminal": "a",
+                "gate": "10",
+                "scheduledTime": "2026-08-31 15:05:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1143",
+                "iataNumber": "dl1143",
+                "icaoNumber": "dal1143"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23b",
+                "scheduledTime": "2026-08-31 10:00:00"
+            },
+            "arrival": {
+                "iataCode": "pdx",
+                "icaoCode": "kpdx",
+                "terminal": "",
+                "gate": "d9",
+                "scheduledTime": "2026-08-31 12:20:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2766",
+                "iataNumber": "dl2766",
+                "icaoNumber": "dal2766"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "38",
+                "scheduledTime": "2026-08-31 09:40:00"
+            },
+            "arrival": {
+                "iataCode": "mia",
+                "icaoCode": "kmia",
+                "terminal": "s",
+                "gate": "h5",
+                "scheduledTime": "2026-08-31 18:07:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "811",
+                "iataNumber": "dl811",
+                "icaoNumber": "dal811"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "30",
+                "scheduledTime": "2026-08-31 08:10:00"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "2026-08-31 17:00:00"
+            },
+            "aircraft": {
+                "modelCode": "a333",
+                "modelText": "airbus a330-323"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "958",
+                "iataNumber": "dl958",
+                "icaoNumber": "dal958"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:45:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "",
+                "scheduledTime": "2026-08-31 17:08:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "494",
+                "iataNumber": "dl494",
+                "icaoNumber": "dal494"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "131",
+                "scheduledTime": "2026-08-31 09:50:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "delta air lines (la28 olympics livery)",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "327",
+                "iataNumber": "dl327",
+                "icaoNumber": "dal327"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:55:00"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "a35",
+                "scheduledTime": "2026-08-31 12:45:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1434",
+                "iataNumber": "dl1434",
+                "icaoNumber": "dal1434"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "20",
+                "scheduledTime": "2026-08-31 09:45:00"
+            },
+            "arrival": {
+                "iataCode": "sea",
+                "icaoCode": "ksea",
+                "terminal": "",
+                "gate": "b8",
+                "scheduledTime": "2026-08-31 12:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1714",
+                "iataNumber": "dl1714",
+                "icaoNumber": "dal1714"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 08:20:00"
+            },
+            "arrival": {
+                "iataCode": "rno",
+                "icaoCode": "krno",
+                "terminal": "",
+                "gate": "b8",
+                "scheduledTime": "2026-08-31 09:53:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "4099",
+                "iataNumber": "dl4099",
+                "icaoNumber": "dal4099"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:55:00"
+            },
+            "arrival": {
+                "iataCode": "gdl",
+                "icaoCode": "mmgl",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:14:00"
+            },
+            "aircraft": {
+                "modelCode": "b38m",
+                "modelText": "boeing 737 max 8"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "9018",
+                "iataNumber": "dl9018",
+                "icaoNumber": "dal9018"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 10:01:00"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "f7",
+                "scheduledTime": "2026-08-31 11:34:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3951",
+                "iataNumber": "dl3951",
+                "icaoNumber": "dal3951"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "25",
+                "scheduledTime": "2026-08-31 10:11:00"
+            },
+            "arrival": {
+                "iataCode": "tpa",
+                "icaoCode": "ktpa",
+                "terminal": "",
+                "gate": "e68",
+                "scheduledTime": "2026-08-31 18:05:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "749",
+                "iataNumber": "dl749",
+                "icaoNumber": "dal749"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "32",
+                "scheduledTime": "2026-08-31 15:15:00"
+            },
+            "arrival": {
+                "iataCode": "jfk",
+                "icaoCode": "kjfk",
+                "terminal": "4",
+                "gate": "",
+                "scheduledTime": "2026-08-31 23:47:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-332(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "938",
+                "iataNumber": "dl938",
+                "icaoNumber": "dal938"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:35:00"
+            },
+            "arrival": {
+                "iataCode": "rdu",
+                "icaoCode": "krdu",
+                "terminal": "2",
+                "gate": "d5",
+                "scheduledTime": "2026-08-31 17:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "508",
+                "iataNumber": "dl508",
+                "icaoNumber": "dal508"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 10:05:00"
+            },
+            "arrival": {
+                "iataCode": "cun",
+                "icaoCode": "mmun",
+                "terminal": "3",
+                "gate": "43",
+                "scheduledTime": "2026-08-31 16:55:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-9gp(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "615",
+                "iataNumber": "dl615",
+                "icaoNumber": "dal615"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:05:00"
+            },
+            "arrival": {
+                "iataCode": "smf",
+                "icaoCode": "ksmf",
+                "terminal": "a",
+                "gate": "10",
+                "scheduledTime": "2026-08-31 10:37:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3755",
+                "iataNumber": "dl3755",
+                "icaoNumber": "dal3755"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 10:05:00"
+            },
+            "arrival": {
+                "iataCode": "aus",
+                "icaoCode": "kaus",
+                "terminal": "",
+                "gate": "10",
+                "scheduledTime": "2026-08-31 15:20:00"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-8eh"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "986",
+                "iataNumber": "dl986",
+                "icaoNumber": "dal986"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "32",
+                "scheduledTime": "2026-08-31 10:40:00"
+            },
+            "arrival": {
+                "iataCode": "hnd",
+                "icaoCode": "rjtt",
+                "terminal": "3",
+                "gate": "144",
+                "scheduledTime": "2026-08-31 14:00:00"
+            },
+            "aircraft": {
+                "modelCode": "a359",
+                "modelText": "airbus a350-941"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7",
+                "iataNumber": "dl7",
+                "icaoNumber": "dal7"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 10:50:00"
+            },
+            "arrival": {
+                "iataCode": "sjd",
+                "icaoCode": "mmsd",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 13:20:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1875",
+                "iataNumber": "dl1875",
+                "icaoNumber": "dal1875"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "27",
+                "scheduledTime": "2026-08-31 10:28:00"
+            },
+            "arrival": {
+                "iataCode": "mco",
+                "icaoCode": "kmco",
+                "terminal": "b",
+                "gate": "",
+                "scheduledTime": "2026-08-31 18:42:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "867",
+                "iataNumber": "dl867",
+                "icaoNumber": "dal867"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 11:00:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 18:37:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "528",
+                "iataNumber": "dl528",
+                "icaoNumber": "dal528"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "31a",
+                "scheduledTime": "2026-08-31 11:41:00"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "a22",
+                "scheduledTime": "2026-08-31 14:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1194",
+                "iataNumber": "dl1194",
+                "icaoNumber": "dal1194"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23a",
+                "scheduledTime": "2026-08-31 13:00:00"
+            },
+            "arrival": {
+                "iataCode": "geg",
+                "icaoCode": "kgeg",
+                "terminal": "",
+                "gate": "b4",
+                "scheduledTime": "2026-08-31 15:35:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3794",
+                "iataNumber": "dl3794",
+                "icaoNumber": "dal3794"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 11:26:00"
+            },
+            "arrival": {
+                "iataCode": "pvr",
+                "icaoCode": "mmpr",
+                "terminal": "",
+                "gate": "05",
+                "scheduledTime": "2026-08-31 15:35:00"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1793",
+                "iataNumber": "dl1793",
+                "icaoNumber": "dal1793"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "38",
+                "scheduledTime": "2026-08-31 11:15:00"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "d3",
+                "scheduledTime": "2026-08-31 16:50:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "413",
+                "iataNumber": "dl413",
+                "icaoNumber": "dal413"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "",
+                "scheduledTime": "2026-08-31 11:35:00"
+            },
+            "arrival": {
+                "iataCode": "lim",
+                "icaoCode": "spjc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 22:10:00"
+            },
+            "aircraft": {
+                "modelCode": "b763",
+                "modelText": "boeing 767-316(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6025",
+                "iataNumber": "dl6025",
+                "icaoNumber": "dal6025"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "133",
+                "scheduledTime": "2026-08-31 12:00:00"
+            },
+            "arrival": {
+                "iataCode": "mex",
+                "icaoCode": "mmmx",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:50:00"
+            },
+            "aircraft": {
+                "modelCode": "b789",
+                "modelText": "boeing 787-9 dreamliner"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7951",
+                "iataNumber": "dl7951",
+                "icaoNumber": "dal7951"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "20",
+                "scheduledTime": "2026-08-31 11:50:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "a20",
+                "scheduledTime": "2026-08-31 19:14:00"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "802",
+                "iataNumber": "dl802",
+                "icaoNumber": "dal802"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 10:20:00"
+            },
+            "arrival": {
+                "iataCode": "msy",
+                "icaoCode": "kmsy",
+                "terminal": "",
+                "gate": "c6",
+                "scheduledTime": "2026-08-31 16:10:00"
+            },
+            "aircraft": {
+                "modelCode": "b739",
+                "modelText": "boeing 737-932(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2096",
+                "iataNumber": "dl2096",
+                "icaoNumber": "dal2096"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "35",
+                "scheduledTime": "2026-08-31 12:00:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 19:39:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "446",
+                "iataNumber": "dl446",
+                "icaoNumber": "dal446"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21a",
+                "scheduledTime": "2026-08-31 12:05:00"
+            },
+            "arrival": {
+                "iataCode": "smf",
+                "icaoCode": "ksmf",
+                "terminal": "a",
+                "gate": "3",
+                "scheduledTime": "2026-08-31 13:32:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3812",
+                "iataNumber": "dl3812",
+                "icaoNumber": "dal3812"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "150",
+                "scheduledTime": "2026-08-31 13:00:00"
+            },
+            "arrival": {
+                "iataCode": "icn",
+                "icaoCode": "rksi",
+                "terminal": "2",
+                "gate": "233",
+                "scheduledTime": "2026-08-31 17:50:00"
+            },
+            "aircraft": {
+                "modelCode": "b748",
+                "modelText": "boeing 747-8b5"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7836",
+                "iataNumber": "dl7836",
+                "icaoNumber": "dal7836"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "36",
+                "scheduledTime": "2026-08-31 13:10:00"
+            },
+            "arrival": {
+                "iataCode": "slc",
+                "icaoCode": "kslc",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:03:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "1647",
+                "iataNumber": "dl1647",
+                "icaoNumber": "dal1647"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "34",
+                "scheduledTime": "2026-08-31 12:35:00"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "f13",
+                "scheduledTime": "2026-08-31 18:13:00"
+            },
+            "aircraft": {
+                "modelCode": "b753",
+                "modelText": "boeing 757-351"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "914",
+                "iataNumber": "dl914",
+                "icaoNumber": "dal914"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "35",
+                "scheduledTime": "2026-08-31 13:55:00"
+            },
+            "arrival": {
+                "iataCode": "hnl",
+                "icaoCode": "phnl",
+                "terminal": "2",
+                "gate": "f2",
+                "scheduledTime": "2026-08-31 16:43:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "465",
+                "iataNumber": "dl465",
+                "icaoNumber": "dal465"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "202",
+                "scheduledTime": "2026-08-31 14:00:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:50:00"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "8693",
+                "iataNumber": "dl8693",
+                "icaoNumber": "dal8693"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:19:00"
+            },
+            "arrival": {
+                "iataCode": "pdx",
+                "icaoCode": "kpdx",
+                "terminal": "",
+                "gate": "d7",
+                "scheduledTime": "2026-08-31 16:34:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2551",
+                "iataNumber": "dl2551",
+                "icaoNumber": "dal2551"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "204",
+                "scheduledTime": "2026-08-31 13:50:00"
+            },
+            "arrival": {
+                "iataCode": "ams",
+                "icaoCode": "eham",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 09:05:00"
+            },
+            "aircraft": {
+                "modelCode": "b78x",
+                "modelText": "boeing 787-10 dreamliner"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "9468",
+                "iataNumber": "dl9468",
+                "icaoNumber": "dal9468"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23a",
+                "scheduledTime": "2026-08-31 13:46:00"
+            },
+            "arrival": {
+                "iataCode": "phx",
+                "icaoCode": "kphx",
+                "terminal": "3",
+                "gate": "f7",
+                "scheduledTime": "2026-08-31 15:21:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3894",
+                "iataNumber": "dl3894",
+                "icaoNumber": "dal3894"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "26",
+                "scheduledTime": "2026-08-31 13:55:00"
+            },
+            "arrival": {
+                "iataCode": "gru",
+                "icaoCode": "sbgr",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 05:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b789",
+                "modelText": "boeing 787-9 dreamliner"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6079",
+                "iataNumber": "dl6079",
+                "icaoNumber": "dal6079"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "203",
+                "scheduledTime": "2026-08-31 13:30:00"
+            },
+            "arrival": {
+                "iataCode": "tlv",
+                "icaoCode": "llbg",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 13:20:00"
+            },
+            "aircraft": {
+                "modelCode": "b789",
+                "modelText": "boeing 787-9 dreamliner"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7429",
+                "iataNumber": "dl7429",
+                "icaoNumber": "dal7429"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:00:00"
+            },
+            "arrival": {
+                "iataCode": "sea",
+                "icaoCode": "ksea",
+                "terminal": "",
+                "gate": "",
+                "scheduledTime": "2026-08-31 16:40:00"
+            },
+            "aircraft": {
+                "modelCode": "b738",
+                "modelText": "boeing 737-832"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2606",
+                "iataNumber": "dl2606",
+                "icaoNumber": "dal2606"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 14:45:00"
+            },
+            "arrival": {
+                "iataCode": "lih",
+                "icaoCode": "phli",
+                "terminal": "",
+                "gate": "05",
+                "scheduledTime": "2026-08-31 17:41:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "428",
+                "iataNumber": "dl428",
+                "icaoNumber": "dal428"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21b",
+                "scheduledTime": "2026-08-31 14:11:00"
+            },
+            "arrival": {
+                "iataCode": "san",
+                "icaoCode": "ksan",
+                "terminal": "2",
+                "gate": "36",
+                "scheduledTime": "2026-08-31 15:08:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175ll"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "4001",
+                "iataNumber": "dl4001",
+                "icaoNumber": "dal4001"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "33",
+                "scheduledTime": "2026-08-31 14:15:00"
+            },
+            "arrival": {
+                "iataCode": "atl",
+                "icaoCode": "katl",
+                "terminal": "s",
+                "gate": "",
+                "scheduledTime": "2026-08-31 21:59:00"
+            },
+            "aircraft": {
+                "modelCode": "a321",
+                "modelText": "airbus a321-211"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "715",
+                "iataNumber": "dl715",
+                "icaoNumber": "dal715"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "21a",
+                "scheduledTime": "2026-08-31 17:12:00"
+            },
+            "arrival": {
+                "iataCode": "ase",
+                "icaoCode": "kase",
+                "terminal": "",
+                "gate": "05",
+                "scheduledTime": "2026-08-31 20:25:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175ll"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "3704",
+                "iataNumber": "dl3704",
+                "icaoNumber": "dal3704"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "23a",
+                "scheduledTime": "2026-08-31 15:00:00"
+            },
+            "arrival": {
+                "iataCode": "abq",
+                "icaoCode": "kabq",
+                "terminal": "",
+                "gate": "b8",
+                "scheduledTime": "2026-08-31 18:07:00"
+            },
+            "aircraft": {
+                "modelCode": "e75l",
+                "modelText": "embraer e175lr"
+            },
+            "airline": {
+                "name": "delta connection",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "4091",
+                "iataNumber": "dl4091",
+                "icaoNumber": "dal4091"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "137",
+                "scheduledTime": "2026-08-31 14:30:00"
+            },
+            "arrival": {
+                "iataCode": "mex",
+                "icaoCode": "mmmx",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 19:30:00"
+            },
+            "aircraft": {
+                "modelCode": "b38m",
+                "modelText": "boeing 737 max 8"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "7950",
+                "iataNumber": "dl7950",
+                "icaoNumber": "dal7950"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 15:22:00"
+            },
+            "arrival": {
+                "iataCode": "msp",
+                "icaoCode": "kmsp",
+                "terminal": "1",
+                "gate": "",
+                "scheduledTime": "2026-08-31 20:59:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "2198",
+                "iataNumber": "dl2198",
+                "icaoNumber": "dal2198"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "b",
+                "gate": "206",
+                "scheduledTime": "2026-08-31 15:15:00"
+            },
+            "arrival": {
+                "iataCode": "cdg",
+                "icaoCode": "lfpg",
+                "terminal": "2e",
+                "gate": "",
+                "scheduledTime": "2026-08-31 11:10:00"
+            },
+            "aircraft": {
+                "modelCode": "b77w",
+                "modelText": "boeing 777-328(er)"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "8725",
+                "iataNumber": "dl8725",
+                "icaoNumber": "dal8725"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "133",
+                "scheduledTime": "2026-08-31 15:50:00"
+            },
+            "arrival": {
+                "iataCode": "lhr",
+                "icaoCode": "egll",
+                "terminal": "3",
+                "gate": "",
+                "scheduledTime": "2026-08-31 10:15:00"
+            },
+            "aircraft": {
+                "modelCode": "a35k",
+                "modelText": "airbus a350-1041"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "5978",
+                "iataNumber": "dl5978",
+                "icaoNumber": "dal5978"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "3",
+                "gate": "31a",
+                "scheduledTime": "2026-08-31 15:50:00"
+            },
+            "arrival": {
+                "iataCode": "dtw",
+                "icaoCode": "kdtw",
+                "terminal": "m",
+                "gate": "",
+                "scheduledTime": "2026-08-31 23:19:00"
+            },
+            "aircraft": {
+                "modelCode": "a21n",
+                "modelText": "airbus a321-271nx"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "708",
+                "iataNumber": "dl708",
+                "icaoNumber": "dal708"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "25",
+                "scheduledTime": "2026-08-31 15:55:00"
+            },
+            "arrival": {
+                "iataCode": "scl",
+                "icaoCode": "scel",
+                "terminal": "2",
+                "gate": "",
+                "scheduledTime": "2026-08-31 05:35:00"
+            },
+            "aircraft": {
+                "modelCode": "b788",
+                "modelText": "boeing 787-8 dreamliner"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "6012",
+                "iataNumber": "dl6012",
+                "icaoNumber": "dal6012"
+            }
+        },
+        {
+            "weekday": "1",
+            "departure": {
+                "iataCode": "lax",
+                "icaoCode": "klax",
+                "terminal": "2",
+                "gate": "24",
+                "scheduledTime": "2026-08-31 15:55:00"
+            },
+            "arrival": {
+                "iataCode": "aus",
+                "icaoCode": "kaus",
+                "terminal": "",
+                "gate": "1",
+                "scheduledTime": "2026-08-31 20:58:00"
+            },
+            "aircraft": {
+                "modelCode": "a319",
+                "modelText": "airbus a319-114"
+            },
+            "airline": {
+                "name": "delta air lines",
+                "iataCode": "dl",
+                "icaoCode": "dal"
+            },
+            "flight": {
+                "number": "622",
+                "iataNumber": "dl622",
+                "icaoNumber": "dal622"
+            }
+        }
+    ]
+}
