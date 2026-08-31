@@ -41,8 +41,6 @@
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-2.0.18.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-2.0.18.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-3.16.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-core-3.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-databind-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-4.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
