@@ -21,7 +21,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.taskman.*;
-import org.deltava.util.IntervalTaskTimer;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -74,7 +74,7 @@ public class EliteScoringTask extends Task {
 			// Get lifetime Elite status levels
 			TreeSet<EliteLifetime> ltLvls = eldao.getLifetimeLevels();
 		
-			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>(); int pendingCount = 0;
+			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
 			for (Iterator<ApprovalStatus> i = flights.iterator(); i.hasNext(); ) {
 				ApprovalStatus ap = i.next();
 				IntervalTaskTimer tt = new IntervalTaskTimer();
@@ -113,7 +113,7 @@ public class EliteScoringTask extends Task {
 					log.info("New Pilot ({} {}), clearing Flights", p.getName(), p.getPilotCode());
 					lastID = p.getID();
 					pireps.clear();
-					pendingCount = frdao.getPendingCount(p.getID());
+					
 				
 					// Load flights for the year
 					pireps.addAll(frdao.getEliteFlights(p.getID(), EliteScorer.getStatsYear(fr.getDate())));
@@ -122,8 +122,9 @@ public class EliteScoringTask extends Task {
 				}
 				
 				// Check for pending flights
+				int pendingCount = frdao.getPendingCount(p.getID(), fr.getSubmittedOn());
 				if (pendingCount != 0) {
-					log.log(isNewPilot ? Level.WARN : Level.INFO, "{} has {} pending Flights, skipping Flight Report {}", p.getName(), Integer.valueOf(pendingCount), Integer.valueOf(fr.getID()));
+					log.log(isNewPilot ? Level.WARN : Level.INFO, "{} has {} pending Flights before {}, skipping Flight Report {}", p.getName(), Integer.valueOf(pendingCount), StringUtils.format(fr.getSubmittedOn(), "MM/dd/yyyy"), Integer.valueOf(fr.getID()));
 					continue;
 				}
 				

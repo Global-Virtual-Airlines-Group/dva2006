@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -381,16 +382,18 @@ public class GetFlightReports extends DAO {
 	}
 	
 	/**
-	 * Returns the number of submitted or held Flights for a Pilot.
+	 * Returns the number of submitted or held Flights for a Pilot, submitted prior to a certain date.
 	 * @param pilotID the Pilot database ID
+	 * @param dt the date/time to check before
 	 * @return the number of Held or Submitted Flight Reports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getPendingCount(int pilotID) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?))")) {
+	public int getPendingCount(int pilotID, Instant dt) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?)) AND (SUBMITTED<?)")) {
 			ps.setInt(1, pilotID);
 			ps.setInt(2, FlightStatus.SUBMITTED.ordinal());
 			ps.setInt(3, FlightStatus.HOLD.ordinal());
+			ps.setTimestamp(4, createTimestamp(dt));
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) : 0;
 			}
