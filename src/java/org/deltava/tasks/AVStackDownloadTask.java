@@ -60,7 +60,7 @@ public class AVStackDownloadTask extends Task {
 		// Get the AviationStack DAO
 		GetAviationStack avdao = new GetAviationStack();
 		avdao.setAccessKey(SystemData.get("security.key.avstack"));
-		avdao.setConnectTimeout(3500);
+		avdao.setConnectTimeout(4500);
 		avdao.setReadTimeout(29500);
 		avdao.setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
 		avdao.setAircraft(acTypes);
@@ -90,8 +90,10 @@ public class AVStackDownloadTask extends Task {
 			if (statusCode == 429) { // Triggered rate limit
 				ctx.log(Level.WARN, "Triggered AviationStack rate limit, pausing for 60s");
 				ThreadUtils.sleep(60_500);
-			} else
-				ctx.log(Level.WARN, "Error loading %s %s Departures - %s", h.getAirline().getCode(), ap.getIATA(), de.getMessage());
+			} else {
+				ctx.log(Level.ERROR, "%s loading %s %s Departures - %s", de.getClass().getSimpleName(), h.getAirline().getCode(), ap.getIATA(), de.getMessage());
+				ThreadUtils.sleep(SLEEP_TIME);
+			}
 		}
 		
 		// Check for empty result for large hub - this is usually an error
@@ -126,8 +128,10 @@ public class AVStackDownloadTask extends Task {
 			if (statusCode == 429) { // Triggered rate limit
 				ctx.log(Level.WARN, "Triggered AviationStack rate limit, pausing for 60s");
 				ThreadUtils.sleep(60_500);
-			} else
-				ctx.log(Level.WARN, "Error loading %s %s Arrivals - %s", h.getAirline().getCode(), ap.getIATA(), de.getMessage());
+			} else {
+				ctx.log(Level.ERROR, "%s loading %s %s Arrival - %s", de.getClass().getSimpleName(), h.getAirline().getCode(), ap.getIATA(), de.getMessage());
+				ThreadUtils.sleep(SLEEP_TIME);
+			}
 		}
 
 		return apEntries;
