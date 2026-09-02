@@ -241,6 +241,26 @@ public class SetSchedule extends DAO {
 			_srcCache.remove(src.cacheKey());
 		}
 	}
+
+	/**
+	 * Extends the validity of a certain set of raw schedule entries by a single day. This is for situations where there is a daily fetch that fails for a single day. 
+	 * @param src the ScheduleSource
+	 * @param ed the end date
+	 * @return the number of entries extended
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int extendRaw(ScheduleSource src, LocalDate ed) throws DAOException {
+		DayOfWeek dow = ed.plusDays(1).getDayOfWeek();
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE RAW_SCHEDULE SET ENDDATE=DATE_ADD(ENDDATE, INTERVAL 1 DAY), DAYS=(DAYS | ?) WHERE (SRC=?) AND (ENDDATE=?)")) {
+			ps.setInt(1, 1 << dow.ordinal());
+			ps.setInt(2, src.ordinal());
+			ps.setDate(3, Date.valueOf(ed));
+			return executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
 	
 	/**
 	 * Purges Raw Schedule source / airline mappings.
@@ -255,7 +275,7 @@ public class SetSchedule extends DAO {
 			sqlBuf.append(" WHERE (SRC=?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			if (src != null) ps.setInt(1,  src.ordinal());
+			if (src != null) ps.setInt(1, src.ordinal());
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
