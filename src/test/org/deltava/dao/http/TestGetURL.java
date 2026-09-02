@@ -46,4 +46,17 @@ public class TestGetURL extends TestCase {
 		assertTrue(data.length > 0);
 		assertEquals(Compression.BROTLI, dao.getCompression());
 	}
+	
+	@SuppressWarnings("static-method")
+	public void testError() {
+		try {
+			GetURL dao = new GetURL("https://dev.deltava.org/foo", null);
+			dao.load();
+			fail("404 expected");
+		} catch (DAOException de) {
+			assertTrue(de instanceof HTTPDAOException);
+			HTTPDAOException hde = (HTTPDAOException) de;
+			assertEquals(404, hde.getStatusCode());
+		}
+	}
 }
