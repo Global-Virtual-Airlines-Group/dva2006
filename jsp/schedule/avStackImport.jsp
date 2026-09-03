@@ -21,11 +21,26 @@ golgotha.local.refresh = function() {
 	const p = fetch('avstatus.ws', {signal:AbortSignal.timeout(2500)});
 	p.then(function(rsp) {
 		if (!rsp.ok) return false;
-		window.setTimeout(golgotha.local.refresh, 2500);
+		const tmrID = window.setTimeout(golgotha.local.refresh, 2500);
 		rsp.json().then(function(js) {
-			let msgs = '';
-			js.entries.forEach(function(msg) { msgs += msg; msgs += '\n'; });
-			f.msgs.value = msgs;
+			const pr = document.getElementById('msgTitle');
+			for (var x = 0; x < js.entries.length; x++) {
+				const er = document.getElementById('msg-' + x);
+				if (er) continue;
+
+				const d = js.entries[x];
+				const r = document.createElement('tr');
+				r.setAttribute('id', 'msg-' + x);
+				r.setAttribute('class', 'msgs');
+				r.appendChild(golgotha.util.createElement('td', d.time, 'label top'));
+				r.appendChild(golgotha.util.createElement('td', d.level, 'lvl top ' + d.level.toLowerCase()));
+				r.appendChild(golgotha.util.createElement('td', d.msg, 'data small'));
+				pr.parentNode.insertBefore(r, null);
+			}
+
+			golgotha.util.display('msgTitle', true);
+			if (js.isComplete)
+				window.clearTimeout(tmrID);
 		});
 	});
 };
@@ -41,6 +56,9 @@ golgotha.onDOMReady(function() {
 	return true;
 });
 </script>
+<style nonce="${contentSecurity.nonce}">
+
+</style>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -53,15 +71,14 @@ golgotha.onDOMReady(function() {
 <el:form action="avdl.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">AVIATIONSTACK SCHEDULE IMPORT</td>
+ <td colspan="3">AVIATIONSTACK SCHEDULE IMPORT</td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doImport" value="true" label="Import AviationStack Data" /></td>
+ <td class="data" colspan="2"><el:box name="doImport" value="true" label="Import AviationStack Data" /></td>
 </tr>
-<tr id="updateRow" style="display:none;">
- <td class="label top">Messages</td>
- <td class="data"><el:textbox name="msgs" width="85%" height="5" readOnly="true" resize="true"></el:textbox></td>
+<tr id="msgTitle" class="title caps" style="display:none;">
+ <td colspan="3">IMPORT STATUS MESSAGES</td>
 </tr>
 </el:table>
 

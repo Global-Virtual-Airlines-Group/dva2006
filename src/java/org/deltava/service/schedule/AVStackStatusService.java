@@ -3,13 +3,14 @@ package org.deltava.service.schedule;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
+import java.time.ZonedDateTime;
+
 import org.json.*;
 
-import org.deltava.beans.LogEntry;
-
+import org.deltava.beans.*;
 import org.deltava.service.*;
 
-import org.deltava.util.JSONUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
@@ -38,13 +39,19 @@ public class AVStackStatusService extends WebService {
 		if (entries == null)
 			return SC_NOT_FOUND;
 		
+		// Get user formatting info
+		Pilot p = ctx.getUser();
+		String fmt = String.format("%s %s", p.getDateFormat(), p.getTimeFormat());
+		
 		// Convert to JSON
 		JSONObject jo = new JSONObject();
 		for (LogEntry le : entries) {
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(le.getCreatedOn(), ctx.getUser().getTZ().getZone());
 			JSONObject lo = new JSONObject();
 			lo.put("created", le.getCreatedOn().toEpochMilli());
+			lo.put("time", StringUtils.format(zdt, fmt));
 			lo.put("level", le.getLeve().name());
-			lo.put("msg", le.toString());
+			lo.put("msg", le.getMessage());
 			jo.accumulate("entries", lo);
 		}
 		
