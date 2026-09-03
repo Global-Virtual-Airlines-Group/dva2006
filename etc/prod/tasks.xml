@@ -169,7 +169,7 @@
 	</task>
 
 	<!-- Aviation Stack download -->
-	<task id="avstack" enabled="false">
+	<task id="avstack" enabled="true">
 		<class>org.deltava.tasks.AVStackDownloadTask</class>
 		<time>
 			<min>20</min>
@@ -180,7 +180,7 @@
 		</time>	
 	</task>
 	
-	<task id="avextend" enabled="true">
+	<task id="avextend" enabled="false">
 		<class>org.deltava.tasks.AVStackExtendTask</class>
 			<time>
 			<min>50</min>
