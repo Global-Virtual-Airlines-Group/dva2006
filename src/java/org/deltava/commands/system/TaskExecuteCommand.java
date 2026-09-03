@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to manually execute Scheduled Tasks. Unlike the Task Scheduler, which spawns a new Thread to
  * execute a Scheduled Task, this Command will execute the Task using the same Thread.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -47,10 +47,10 @@ public class TaskExecuteCommand extends AbstractCommand {
 
 		// Save the task info in the request
 		ctx.setAttribute("task", new TaskInfo(t), REQUEST);
-
-		// Forward to the JSP
+		
+		// Forward to the JSP. Check for session - this may have expired for long-running tasks
 		CommandResult result = ctx.getResult();
-		result.setType(ResultType.REQREDIRECT);
+		result.setType((ctx.getSession() == null) ? ResultType.FORWARD : ResultType.REQREDIRECT);
 		result.setURL("/jsp/admin/taskExecute.jsp");
 		result.setSuccess(true);
 	}
