@@ -822,25 +822,19 @@
 		<class>org.deltava.commands.schedule.AVStackDownloadCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
-	
-	<command id="avmerge">
-		<name>AVStack Schedule Merge</name>
-		<class>org.deltava.commands.schedule.AVStackMergeCommand</class>
-		<roles>Schedule,Operations</roles>
-	</command>
 
 	<command id="airlines">
 		<name>Airline List</name>
 		<class>org.deltava.commands.schedule.AirlineListCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
-	
+
 	<command id="airline">
 		<name>Airline Profile</name>
 		<class>org.deltava.commands.schedule.AirlineCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
-	
+
 	<command id="airports">
 		<name>Airport List</name>
 		<class>org.deltava.commands.schedule.AirportListCommand</class>
