@@ -40,7 +40,7 @@ public class GetFAACharts extends DAO {
 		
 		Document doc = null;
 		try {
-			setCompression(Compression.GZIP);
+			setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
 			init(url);
 			try (InputStream in = getIn()) {
 				SAXBuilder builder = new SAXBuilder();
