@@ -79,7 +79,7 @@
 	<cache id="Metadata" max="24" expires="1800" />
 	<cache id="ScheduleSource" remote="true" expires="3600" />
 	<cache id="AVStackEntries" remote="true" expires="6h" />
-	<cache id="AVStackStatus" max="2" expires="48h" />
+	<cache id="AVStackStatus" remote="true" expires="48h" />
 	<cache id="ExamProfiles" expires="14400" max="3" />
 	<cache id="TestingHistory" expires="1800" max="32" />
 	<cache id="ReverseDNS" expires="8h" remote="true" />
