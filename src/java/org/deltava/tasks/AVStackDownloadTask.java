@@ -143,7 +143,7 @@ public class AVStackDownloadTask extends Task {
 		// Get the effective date
 		IntervalTaskTimer tt = new IntervalTaskTimer();
 		LocalDate ld = LocalDate.now().plusDays(SystemData.getInt("schedule.avstack.days", 14));
-		ctx.log(Level.WARN, "Loading Schedules for %s", StringUtils.format(ld, "MM/dd/yyyy"));
+		ctx.log(Level.WARN, "Loading %s Schedules for %s", SystemData.get("airline.code"), StringUtils.format(ld, "MM/dd/yyyy"));
 
 		// Load Hub airports and Airlines
 		SequencedCollection<Hub> hubs = new LinkedHashSet<Hub>();
@@ -153,14 +153,13 @@ public class AVStackDownloadTask extends Task {
 			
 			// Check if we're complete
 			GetMetadata mddao = new GetMetadata(con);
-			Instant lastLoad = StringUtils.parseEpoch(mddao.get(String.format("%s.avstack.import", SystemData.get("airline.code")), "0"));
-			LocalDate lld = lastLoad.atZone(ZoneOffset.UTC).toLocalDate();
-			if (lld.equals(ld)) {
-				ctx.log(Level.INFO, "Already loaded AviationStack flights for %s", StringUtils.format(ld, "MM/dd/yyyy"));
+			Instant lastLoad = mddao.getDate(String.format("%s.avstack.import", SystemData.get("airline.code").toLowerCase()));
+			Duration d = (lastLoad == null) ? Duration.MAX : Duration.between(lastLoad, Instant.now());
+			if (d.toHours() < 20) {
+				ctx.log(Level.INFO, "Already loaded AviationStack flights for %s (%d hours)", StringUtils.format(ld, "MM/dd/yyyy"), Long.valueOf(d.toHours()));
 				return;
-			}
-			
-			ctx.log(Level.INFO, "Last AviationStack import on %s", StringUtils.format(lld, "MM/dd/yyyy"));
+			} else if (lastLoad != null)
+				ctx.log(Level.INFO, "Last AviationStack import on %s UTC", StringUtils.format(lastLoad, "MM/dd/yyyy HH:mm"));
 			
 			// Load Hubs
 			GetRawScheduleInfo rsdao = new GetRawScheduleInfo(con);
@@ -212,8 +211,7 @@ public class AVStackDownloadTask extends Task {
 		
 		// Merge code shares
 		CodeShareFilter csf = new CodeShareFilter(opCodes, csCodes);
-		ctx.log(Level.INFO, "Code Share Operators = {}, Marketers = {}", csf.getOperatorCodes(), csf.getMarketerCodes());
-		
+		ctx.log(Level.INFO, "Code Share Operators = %s, Marketers = %s", csf.getOperatorCodes(), csf.getMarketerCodes());
 		RawScheduleHelper.mergeCodeShares(results, csf);
 		
 		// Eliminate duplicates
@@ -236,7 +234,7 @@ public class AVStackDownloadTask extends Task {
 		}
 		
 		tt.mark("eqMassage");
-		ctx.log(Level.INFO, "Adjusted {} equipment codes", Integer.valueOf(eqCnt));
+		ctx.log(Level.INFO, "Adjusted %d equipment codes", Integer.valueOf(eqCnt));
 		
 		try {
 			Connection con = ctx.getConnection();
