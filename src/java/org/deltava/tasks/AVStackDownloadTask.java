@@ -274,7 +274,7 @@ public class AVStackDownloadTask extends Task {
 			
 			// Write metadata and commit
 			SetMetadata mdwdao = new SetMetadata(con);
-			mdwdao.write(String.format("%s.avstack.import", SystemData.get("airline.code").toLowerCase()), String.valueOf(Instant.now().toEpochMilli()));
+			mdwdao.write(String.format("%s.avstack.import", SystemData.get("airline.code").toLowerCase()), Instant.now());
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
