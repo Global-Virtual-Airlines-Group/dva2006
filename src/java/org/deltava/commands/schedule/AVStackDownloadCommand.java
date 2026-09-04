@@ -1,9 +1,13 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.time.*;
+
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.tasks.AVStackDownloadTask;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to manually pull AviationStack schedule data.
@@ -22,6 +26,21 @@ public class AVStackDownloadCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
+		// Get the last import date
+		Instant lastImport = null;
+		try {
+			GetMetadata mddao = new GetMetadata(ctx.getConnection());
+			lastImport = mddao.getDate(String.format("%s.avstack.import", SystemData.get("airline.code").toLowerCase()));
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Save last import date
+		ctx.setAttribute("lastImport", lastImport, REQUEST);
+		
+		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/avStackImport.jsp");
 		if (!Boolean.parseBoolean(ctx.getParameter("doImport"))) {
@@ -39,8 +58,12 @@ public class AVStackDownloadCommand extends AbstractCommand {
 		};
 		
 		// Execute the task
-		Thread t = Thread.ofVirtual().name("AVStack Download").unstarted(r);
-		t.start();
+		Duration d = (lastImport == null) ? Duration.MAX : Duration.between(lastImport, Instant.now());
+		if (d.toHours() > 18) {
+			Thread t = Thread.ofVirtual().name("AVStack Download").unstarted(r);
+			t.start();
+		} else
+			ctx.setMessage(String.format("Previous AviationStack import %d hours ago, skipping", Long.valueOf(d.toHours())));
 		
 		// Go to the JSP
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
