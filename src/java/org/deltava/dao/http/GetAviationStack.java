@@ -106,6 +106,10 @@ public class GetAviationStack extends DAO {
 		PaginatedList<RawScheduleEntry> results = new PaginatedList<RawScheduleEntry>(ofs);
 		try {
 			init(urlBuf.toString());
+			int rspCode = getResponseCode();
+			if (rspCode >= 400)
+				throw new HTTPDAOException("AviationStack Error", rspCode);
+			
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "utf-8"))) {
 				JSONObject jo = new JSONObject(new JSONTokener(br));
 				
