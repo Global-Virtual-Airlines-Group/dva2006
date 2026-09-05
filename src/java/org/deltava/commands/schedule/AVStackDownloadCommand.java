@@ -61,12 +61,8 @@ public class AVStackDownloadCommand extends AbstractCommand {
 		};
 		
 		// Execute the task
-		Duration d = (lastImport == null) ? Duration.MAX : Duration.between(lastImport, Instant.now());
-		if (doForce || (d.toHours() > 18)) {
-			Thread t = Thread.ofVirtual().name("AVStack Download").unstarted(r);
-			t.start();
-		} else
-			ctx.setMessage(String.format("Previous AviationStack import %d hours ago, skipping", Long.valueOf(d.toHours())));
+		Thread t = Thread.ofVirtual().name("AVStack Download").unstarted(r);
+		t.start();
 		
 		// Go to the JSP
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
