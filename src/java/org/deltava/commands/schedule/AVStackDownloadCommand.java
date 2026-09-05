@@ -49,16 +49,18 @@ public class AVStackDownloadCommand extends AbstractCommand {
 		}
 		
 		// Create the task in a runnable
+		boolean doForce = Boolean.parseBoolean(ctx.getParameter("doForce"));
 		final Runnable r = new Runnable() {
 			@Override
 			public void run() {
 				AVStackDownloadTask t = new AVStackDownloadTask();
+				t.setID("avstack");
+				t.setForced(doForce);
 				t.run(ctx.getUser());
 			}
 		};
 		
 		// Execute the task
-		boolean doForce = Boolean.parseBoolean(ctx.getParameter("doForce"));
 		Duration d = (lastImport == null) ? Duration.MAX : Duration.between(lastImport, Instant.now());
 		if (doForce || (d.toHours() > 18)) {
 			Thread t = Thread.ofVirtual().name("AVStack Download").unstarted(r);

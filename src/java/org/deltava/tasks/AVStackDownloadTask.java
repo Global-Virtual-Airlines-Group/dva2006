@@ -31,6 +31,8 @@ public class AVStackDownloadTask extends Task {
 	private static final Cache<CacheableCollection<LogEntry>> _statusCache = CacheManager.getCollection(LogEntry.class, "AVStackStatus");
 	private static final Cache<CacheableCollection<RawScheduleEntry>> _eCache = CacheManager.getCollection(RawScheduleEntry.class, "AVStackEntries");
 	
+	private boolean _force;
+	
 	/**
 	 * Transfer class to track whether download is complete.
 	 */
@@ -48,6 +50,14 @@ public class AVStackDownloadTask extends Task {
 	 */
 	public AVStackDownloadTask() {
 		super("AviationStack Download", AVStackDownloadTask.class);
+	}
+	
+	/**
+	 * Updates whether to skip any last execution time checks, if manually run.
+	 * @param isForced TRUE to skip last execution checks, otherwise FALSE
+	 */
+	public void setForced(boolean isForced) {
+		_force = isForced;
 	}
 	
 	/*
@@ -155,7 +165,7 @@ public class AVStackDownloadTask extends Task {
 			GetMetadata mddao = new GetMetadata(con);
 			Instant lastLoad = mddao.getDate(String.format("%s.avstack.import", SystemData.get("airline.code").toLowerCase()));
 			Duration d = (lastLoad == null) ? Duration.MAX : Duration.between(lastLoad, Instant.now());
-			if (d.toHours() < 20) {
+			if (!_force && (d.toHours() < 20)) {
 				ctx.log(Level.INFO, "Already loaded AviationStack flights for %s (%d hours)", StringUtils.format(ld, "MM/dd/yyyy"), Long.valueOf(d.toHours()));
 				return;
 			} else if (lastLoad != null)
