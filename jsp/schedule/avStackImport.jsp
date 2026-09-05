@@ -92,8 +92,8 @@ td.lvl.error {
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data" colspan="2"><el:box name="doImport" value="true" label="Import AviationStack Data" /><content:hasmsg><br />
-<el:box name="doForce" value="true" label="Force AviationStack re-Import" /></content:hasmsg></td>
+ <td class="data" colspan="2"><el:box name="doImport" value="true" label="Import AviationStack Data" /><br>
+<el:box name="doForce" value="true" label="Force AviationStack re-Import" /></td>
 </tr>
 <content:hasmsg>
 <tr>

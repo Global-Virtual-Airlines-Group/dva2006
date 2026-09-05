@@ -165,7 +165,7 @@ public class AVStackDownloadTask extends Task {
 			GetMetadata mddao = new GetMetadata(con);
 			Instant lastLoad = mddao.getDate(String.format("%s.avstack.import", SystemData.get("airline.code").toLowerCase()));
 			Duration d = (lastLoad == null) ? Duration.MAX : Duration.between(lastLoad, Instant.now());
-			if (!_force && (d.toHours() < 20)) {
+			if (!_force && (d.toHours() < 8)) {
 				ctx.log(Level.INFO, "Already loaded AviationStack flights for %s (%d hours)", StringUtils.format(ld, "MM/dd/yyyy"), Long.valueOf(d.toHours()));
 				return;
 			} else if (lastLoad != null)
