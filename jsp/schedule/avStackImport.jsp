@@ -34,7 +34,7 @@ golgotha.local.refresh = function() {
 				r.setAttribute('id', 'msg-' + x);
 				r.setAttribute('class', 'msgs');
 				r.appendChild(golgotha.util.createElement('td', d.time, 'label top'));
-				r.appendChild(golgotha.util.createElement('td', d.level, 'lvl top ' + d.level.toLowerCase()));
+				r.appendChild(golgotha.util.createElement('td', d.level, 'lvl bld top ' + d.level.toLowerCase()));
 				r.appendChild(golgotha.util.createElement('td', d.msg, 'data small'));
 				pr.parentNode.insertBefore(r, null);
 			}
@@ -93,7 +93,7 @@ td.lvl.error {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data" colspan="2"><el:box name="doImport" value="true" label="Import AviationStack Data" /><content:hasmsg><br />
-<el:box name="doForce" value="true" label="Force AviationStack re-Import" /></content:hasmsg>></td>
+<el:box name="doForce" value="true" label="Force AviationStack re-Import" /></content:hasmsg></td>
 </tr>
 <content:hasmsg>
 <tr>
