@@ -222,19 +222,14 @@ public class AVStackDownloadTask extends Task {
 		results.clear();
 		
 		// Adjust equipment codes
-		int eqCnt = 0;
 		for (RawScheduleEntry rse : rawEntries) {
-			if ("B767-300".equals(rse.getEquipmentType())) {
-				rse.setEquipmentType("B767-300ER");
-				eqCnt++;
-			} else if ("B737-900".equals(rse.getEquipmentType()) && "DL".equals(rse.getAirline().getCode())) {
-				rse.setEquipmentType("B737-900ER");
-				eqCnt++;
-			}
+			RawScheduleHelper.adjustEquipment(rse, "B767-300", "B767-300ER", "*");
+			RawScheduleHelper.adjustEquipment(rse, "B737-900", "B737-900ER", "DL");
+			RawScheduleHelper.adjustEquipment(rse, "B777-200", "B777-200ER", "KL", "AF");
 		}
 		
 		tt.mark("eqMassage");
-		ctx.log(Level.INFO, "Adjusted %d equipment codes", Integer.valueOf(eqCnt));
+		ctx.log(Level.INFO, "Adjusted equipment codes");
 		
 		try {
 			Connection con = ctx.getConnection();

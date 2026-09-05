@@ -85,9 +85,10 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 								se.addDayOfWeek((dayNumber == 1) ? DayOfWeek.SUNDAY : DayOfWeek.of(dayNumber - 1));
 							}
 						
-							// Check for B737-900ER
-							if (se.getAirline().getCode().equals("DL") && "B737-900".equals(se.getEquipmentType()))
-								se.setEquipmentType("B737-900ER");
+							// Adjust equipment types
+							RawScheduleHelper.adjustEquipment(se, "B767-300", "B767-300ER", "*");
+							RawScheduleHelper.adjustEquipment(se, "B737-900", "B737-900ER", "DL");
+							RawScheduleHelper.adjustEquipment(se, "B777-200", "B777-200ER", "KL", "AF");
 						
 							// Parse dates/times - if start date is more than 100 days in the past, add a year
 							LocalDate sd = LocalDate.parse(fd.startDate, _df);

@@ -242,6 +242,25 @@ public class RawScheduleHelper {
 		log.info("Removed {} potential codeshare flags", Integer.valueOf(cnt));
 	}
 	
+	/**
+	 * Updates equipment types based on Airline.
+	 * @param rse the RawScheduleEntry
+	 * @param eqType the equipment type to match against
+	 * @param newEQ the updated equipment type
+	 * @param airlineCodes the airline codes to match against, or &quot;*;quot; for all
+	 */
+	public static void adjustEquipment(RawScheduleEntry rse, String eqType, String newEQ, String... airlineCodes) {
+		if (!rse.getEquipmentType().equals(eqType)) return;
+		String aCode = rse.getAirline().getCode();
+		for (int x = 0; x < airlineCodes.length; x++) {
+			String code = airlineCodes[x];
+			if ("*".equals(code) || aCode.equals(code)) {
+				rse.setEquipmentType(newEQ);
+				return;
+			}
+		}
+	}
+	
 	/*
 	 * Helper method to determine if two schedule entries are likely code shares.
 	 */

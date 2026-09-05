@@ -110,10 +110,9 @@ public class LoadAVStackSchedule extends ScheduleTestCase {
 		
 		// Adjust equipment codes
 		for (RawScheduleEntry rse : results) {
-			if ("B767-300".equals(rse.getEquipmentType()))
-				rse.setEquipmentType("B767-300ER");
-			else if ("B737-900".equals(rse.getEquipmentType()) && "DL".equals(rse.getAirline().getCode()))
-				rse.setEquipmentType("B737-900ER");
+			RawScheduleHelper.adjustEquipment(rse, "B767-300", "B767-300ER", "*");
+			RawScheduleHelper.adjustEquipment(rse, "B737-900", "B737-900ER", "DL");
+			RawScheduleHelper.adjustEquipment(rse, "B777-200", "B777-200ER", "KL", "AF");
 		}
 		
 		// Export to JSON file
