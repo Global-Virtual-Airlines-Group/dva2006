@@ -61,6 +61,18 @@ public class AVStackDownloadTask extends Task {
 	}
 	
 	/*
+	 * Helper method to log and save messages to the cache.
+	 */
+	private static void log(TaskContext ctx, Level l, String fmt, Object... args) {
+		ctx.log(l, fmt, args);
+		
+		// Save log to cache
+		CacheableList<LogEntry> entries = new CacheableList<LogEntry>(SystemData.get("airline.code"));
+		entries.addAll(ctx.getLogEntries());
+		_statusCache.add(entries);
+	}
+	
+	/*
 	 * Helper method to load departure and arrival flights from a given Hub airport, handling pagination.
 	 */
 	private APIResults loadFlights(TaskContext ctx, LocalDate dt, Hub h, Collection<Aircraft> acTypes) {
@@ -79,55 +91,55 @@ public class AVStackDownloadTask extends Task {
 		Airport ap = h.getAirport(); final int SLEEP_TIME = SystemData.getInt("schedule.avstack.sleep", 60500);
 		try {
 			int ofs = 0;
-			ctx.log(Level.INFO, "Loading %s Departures for %s (%s) (ofs=0)", h.getAirline().getCode(), ap.getName(), ap.getIATA());
+			log(ctx, Level.INFO, "Loading %s Departures for %s (%s) (ofs=0)", h.getAirline().getCode(), ap.getName(), ap.getIATA());
 			PaginatedList<RawScheduleEntry> entries = avdao.get(ap, h.getAirline(), dt, true, 0);
-			ctx.log(Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
+			log(ctx, Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 			apEntries.addAll(entries);
-			ctx.log(Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
+			log(ctx, Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
 			ThreadUtils.sleep(SLEEP_TIME);
 			while ((ofs + entries.getCount()) < entries.getTotal()) {
 				ofs = entries.getOffset() + entries.getCount();
-				ctx.log(Level.INFO, "Loading %s Departures for %s (%s) (ofs=%d)", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
+				log(ctx, Level.INFO, "Loading %s Departures for %s (%s) (ofs=%d)", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
 				entries = avdao.get(ap, h.getAirline(), dt, true, ofs);
-				ctx.log(Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
+				log(ctx, Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 				apEntries.addAll(entries);
-				ctx.log(Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
+				log(ctx, Level.DEBUG, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
 				ThreadUtils.sleep(SLEEP_TIME);
 			}
 		} catch (DAOException de) {
 			apEntries.IsError = true;
 			int statusCode = (de instanceof HTTPDAOException hde) ? hde.getStatusCode() : 0;
 			if (statusCode == 429) { // Triggered rate limit
-				ctx.log(Level.WARN, "Triggered AviationStack rate limit, pausing for 60s");
+				log(ctx, Level.WARN, "Triggered AviationStack rate limit, pausing for 60s");
 				ThreadUtils.sleep(60_500);
 			} else {
-				ctx.log(Level.ERROR, "%s loading %s %s Departures - %s", de.getClass().getSimpleName(), h.getAirline().getCode(), ap.getIATA(), de.getMessage());
+				log(ctx, Level.ERROR, "%s loading %s %s Departures - %s", de.getClass().getSimpleName(), h.getAirline().getCode(), ap.getIATA(), de.getMessage());
 				ThreadUtils.sleep(SLEEP_TIME);
 			}
 		}
 		
 		// Check for empty result for large hub - this is usually an error
 		if (isLargeHub && apEntries.isEmpty()) {
-			ctx.log(Level.WARN, "Zero entries for %s %s (%s), assuming error", h.getAirline().getCode(), ap.getName(), ap.getIATA());
+			log(ctx, Level.WARN, "Zero entries for %s %s (%s), assuming error", h.getAirline().getCode(), ap.getName(), ap.getIATA());
 			apEntries.IsError = true;
 		}
 
 		// Load Arrivals
 		try {
 			int ofs = 0;
-			ctx.log(Level.INFO, "Loading %s Arrivals for %s (%s) (ofs=0)", h.getAirline().getCode(), ap.getName(), ap.getIATA());
+			log(ctx, Level.INFO, "Loading %s Arrivals for %s (%s) (ofs=0)", h.getAirline().getCode(), ap.getName(), ap.getIATA());
 			PaginatedList<RawScheduleEntry> entries = avdao.get(ap, h.getAirline(), dt, false, 0);
-			ctx.log(Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
+			log(ctx, Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 			apEntries.addAll(entries);
-			ctx.log(Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
+			log(ctx, Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
 			ThreadUtils.sleep(SLEEP_TIME);
 			while ((ofs + entries.getCount()) < entries.getTotal()) {
 				ofs = entries.getOffset() + entries.getCount();
-				ctx.log(Level.INFO, "Loading %s Arrivals for %s (%s) (ofs=%d)", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
+				log(ctx, Level.INFO, "Loading %s Arrivals for %s (%s) (ofs=%d)", h.getAirline().getCode(), ap.getName(), ap.getIATA(), Integer.valueOf(ofs));
 				entries = avdao.get(ap, h.getAirline(), dt, false, ofs);
-				ctx.log(Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
+				log(ctx, Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 				apEntries.addAll(entries);
-				ctx.log(Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
+				log(ctx, Level.DEBUG, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
 				ThreadUtils.sleep(SLEEP_TIME);
 			}
 			
@@ -136,10 +148,10 @@ public class AVStackDownloadTask extends Task {
 			apEntries.IsError = true;
 			int statusCode = (de instanceof HTTPDAOException hde) ? hde.getStatusCode() : 0;
 			if (statusCode == 429) { // Triggered rate limit
-				ctx.log(Level.WARN, "Triggered AviationStack rate limit, pausing for 60s");
+				log(ctx, Level.WARN, "Triggered AviationStack rate limit, pausing for 60s");
 				ThreadUtils.sleep(60_500);
 			} else {
-				ctx.log(Level.ERROR, "%s loading %s %s Arrival - %s", de.getClass().getSimpleName(), h.getAirline().getCode(), ap.getIATA(), de.getMessage());
+				log(ctx, Level.ERROR, "%s loading %s %s Arrival - %s", de.getClass().getSimpleName(), h.getAirline().getCode(), ap.getIATA(), de.getMessage());
 				ThreadUtils.sleep(SLEEP_TIME);
 			}
 		}
@@ -153,7 +165,7 @@ public class AVStackDownloadTask extends Task {
 		// Get the effective date
 		IntervalTaskTimer tt = new IntervalTaskTimer();
 		LocalDate ld = LocalDate.now().plusDays(SystemData.getInt("schedule.avstack.days", 14));
-		ctx.log(Level.WARN, "Loading %s Schedules for %s", SystemData.get("airline.code"), StringUtils.format(ld, "MM/dd/yyyy"));
+		log(ctx, Level.WARN, "Loading %s Schedules for %s", SystemData.get("airline.code"), StringUtils.format(ld, "MM/dd/yyyy"));
 
 		// Load Hub airports and Airlines
 		SequencedCollection<Hub> hubs = new LinkedHashSet<Hub>();
@@ -166,10 +178,10 @@ public class AVStackDownloadTask extends Task {
 			Instant lastLoad = mddao.getDate(String.format("%s.avstack.import", SystemData.get("airline.code").toLowerCase()));
 			Duration d = (lastLoad == null) ? Duration.MAX : Duration.between(lastLoad, Instant.now());
 			if (!_force && (d.toHours() < 8)) {
-				ctx.log(Level.INFO, "Already loaded AviationStack flights for %s (%d hours)", StringUtils.format(ld, "MM/dd/yyyy"), Long.valueOf(d.toHours()));
+				log(ctx, Level.INFO, "Already loaded AviationStack flights for %s (%d hours)", StringUtils.format(ld, "MM/dd/yyyy"), Long.valueOf(d.toHours()));
 				return;
 			} else if (lastLoad != null)
-				ctx.log(Level.INFO, "Last AviationStack import on %s UTC", StringUtils.format(lastLoad, "MM/dd/yyyy HH:mm"));
+				log(ctx, Level.INFO, "Last AviationStack import on %s UTC", StringUtils.format(lastLoad, "MM/dd/yyyy HH:mm"));
 			
 			// Load Hubs
 			GetRawScheduleInfo rsdao = new GetRawScheduleInfo(con);
@@ -180,7 +192,7 @@ public class AVStackDownloadTask extends Task {
 			acTypes.addAll(acdao.getAircraftTypes());
 			tt.mark("dbData");
 		} catch (DAOException de) {
-			ctx.log(Level.ERROR, de.getMessage());
+			log(ctx, Level.ERROR, de.getMessage());
 			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
@@ -189,7 +201,7 @@ public class AVStackDownloadTask extends Task {
 		// Walk through the Hubs. Load departures and arrivals
 		boolean isComplete = true;
 		List<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
-		ctx.log(Level.INFO, "Hub Airports = %s", hubs);
+		log(ctx, Level.INFO, "Hub Airports = %s", hubs);
 		for (Hub h : hubs) {
 			CacheableCollection<RawScheduleEntry> entries = _eCache.get(h.toString());
 			if (entries == null) {
@@ -201,16 +213,16 @@ public class AVStackDownloadTask extends Task {
 					entries.addAll(flights);
 					_eCache.add(entries);
 				} else
-					ctx.log(Level.WARN, "Returned no %s Flights for large Hub %s (%s)", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
+					log(ctx, Level.WARN, "Returned no %s Flights for large Hub %s (%s)", h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
 			} else
-				ctx.log(Level.INFO, "Retrieved %d %s flights for %s from cache", Integer.valueOf(entries.size()), h.getAirline().getName(), h.getAirport().getIATA());
+				log(ctx, Level.INFO, "Retrieved %d %s flights for %s from cache", Integer.valueOf(entries.size()), h.getAirline().getName(), h.getAirport().getIATA());
 					
 			results.addAll(entries);
 		}
 
 		// Check if we're complete
 		if (!isComplete) {
-			ctx.log(Level.ERROR, "Aborting due to incomplete download");
+			log(ctx, Level.ERROR, "Aborting due to incomplete download");
 			return;
 		}
 		
@@ -221,14 +233,14 @@ public class AVStackDownloadTask extends Task {
 		
 		// Merge code shares
 		CodeShareFilter csf = new CodeShareFilter(opCodes, csCodes);
-		ctx.log(Level.INFO, "Code Share Operators = %s, Marketers = %s", csf.getOperatorCodes(), csf.getMarketerCodes());
+		log(ctx, Level.INFO, "Code Share Operators = %s, Marketers = %s", csf.getOperatorCodes(), csf.getMarketerCodes());
 		RawScheduleHelper.mergeCodeShares(results, csf);
 		
 		// Eliminate duplicates
 		Collection<RawScheduleEntry> rawEntries = new TreeSet<RawScheduleEntry>(RawScheduleHelper.getDupeChecker(false));
 		rawEntries.addAll(results);
 		tt.mark("dupes");
-		ctx.log(Level.INFO, "Eliminated %d/%d duplicate flights", Integer.valueOf(results.size() - rawEntries.size()), Integer.valueOf(results.size()));
+		log(ctx, Level.INFO, "Eliminated %d/%d duplicate flights", Integer.valueOf(results.size() - rawEntries.size()), Integer.valueOf(results.size()));
 		results.clear();
 		
 		// Adjust equipment codes
@@ -239,7 +251,7 @@ public class AVStackDownloadTask extends Task {
 		}
 		
 		tt.mark("eqMassage");
-		ctx.log(Level.INFO, "Adjusted equipment codes");
+		log(ctx, Level.INFO, "Adjusted equipment codes");
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -254,7 +266,7 @@ public class AVStackDownloadTask extends Task {
 			for (Hub h : hubs) {
 				int size = todaysFlights.size();
 				if (todaysFlights.removeIf(rse -> rse.getStartDate().equals(ld) && h.hasRoute(rse))) {
-					ctx.log(Level.INFO, "Removing %d %s Flights for %s (%s)", Integer.valueOf(size - todaysFlights.size()), h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
+					log(ctx, Level.INFO, "Removing %d %s Flights for %s (%s)", Integer.valueOf(size - todaysFlights.size()), h.getAirline().getCode(), h.getAirport().getName(), h.getAirport().getIATA());
 				}
 			}
 			
@@ -281,19 +293,14 @@ public class AVStackDownloadTask extends Task {
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			ctx.log(Level.ERROR, de.getMessage());
+			log(ctx, Level.ERROR, de.getMessage());
 			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			tt.stop();
 			ctx.release();
 		}
 
-		ctx.log(Level.INFO, tt.toString());
-		ctx.log(Level.INFO, "Complete");
-		
-		// Save log to cache
-		CacheableList<LogEntry> entries = new CacheableList<LogEntry>(SystemData.get("airline.code"));
-		entries.addAll(ctx.getLogEntries());
-		_statusCache.add(entries);
+		log(ctx, Level.INFO, tt.toString());
+		log(ctx, Level.INFO, "Complete");
 	}
 }
