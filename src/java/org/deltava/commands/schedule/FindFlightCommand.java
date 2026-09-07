@@ -114,6 +114,7 @@ public class FindFlightCommand extends AbstractCommand {
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
 		ctx.setAttribute("airline", SystemData.getAirline(SystemData.get("airline.code")), REQUEST);
+		ctx.setAttribute("hasCriteria", Boolean.valueOf(hasCriteria), REQUEST);
 
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
@@ -173,7 +174,6 @@ public class FindFlightCommand extends AbstractCommand {
 		// Save the search criteria in the session
 		ssc.setSortBy(sortType);
 		ctx.setAttribute("fafCriteria", ssc, SESSION);
-		ctx.setAttribute("hasCriteria", Boolean.valueOf(hasCriteria), REQUEST);
 
 		// Check if we're doing a new search or returning back existing criteria
 		String opName = (String) ctx.getCmdParameter(OPERATION, "search");
