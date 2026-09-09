@@ -6,12 +6,7 @@ import org.apache.logging.log4j.*;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.event.message.MessageReplyEvent;
 
-import com.newrelic.api.agent.NewRelic;
-import com.newrelic.api.agent.Trace;
-
 import org.deltava.beans.discord.ChannelName;
-import org.deltava.util.log.SyntheticRequest;
-import org.deltava.util.log.SyntheticResponse;
 
 /**
  * A class to handle Discord message responses.
@@ -26,11 +21,7 @@ public class MessageReplyListener implements org.javacord.api.listener.message.M
     private static final Logger log = LogManager.getLogger(MessageReplyListener.class);
     
     @Override
-    @Trace(dispatcher=true)
     public void onMessageReply(MessageReplyEvent e) {
-    	
-    	NewRelic.setTransactionName("Discord", "msgReply");
-        NewRelic.setRequestAndResponse(new SyntheticRequest("msgReply", "Discord"), new SyntheticResponse());
     	
         // Only handle the message reply if it is a response to a bot message and in an appropriate channel
         if (isGoodChannel(e) && e.getReferencedMessage().getAuthor().isBotUser()) {

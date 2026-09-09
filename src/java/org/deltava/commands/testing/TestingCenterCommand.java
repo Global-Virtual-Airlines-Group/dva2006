@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2011, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2016, 2017, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -6,9 +6,9 @@ import java.sql.Connection;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.apache.logging.log4j.*;
+import io.opentelemetry.api.trace.Span;
 
-import com.newrelic.api.agent.NewRelic;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 1.0
  */
 
@@ -47,7 +47,10 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot usr = pdao.get(ctx.getUser().getID());
 			ctx.setAttribute("pilot", usr, REQUEST);
-			NewRelic.addCustomParameter("pilot.name", usr.getName());
+			
+			// Send pilot name to OpenTelemetry
+			Span span = Span.current();
+			span.setAttribute("pilot.name", usr.getName());
 
 			// Initialize the Testing History
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);

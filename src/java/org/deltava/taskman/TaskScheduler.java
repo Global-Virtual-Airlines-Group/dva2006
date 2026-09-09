@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -8,8 +8,6 @@ import org.apache.logging.log4j.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
-
-import com.newrelic.api.agent.NewRelic;
 
 /**
  * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in that it checks whether a task should be executed once every 60 seconds.
@@ -113,6 +111,5 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		log.atError().withThrowable(e).log("Uncaught Exception in {}", t.getName());
-		NewRelic.noticeError(e, false);
 	}
 }

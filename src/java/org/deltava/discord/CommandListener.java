@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.sql.Connection;
@@ -13,22 +13,16 @@ import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.entity.message.component.*;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
 
-import com.newrelic.api.agent.NewRelic;
-import com.newrelic.api.agent.Trace;
-
 import org.deltava.beans.discord.*;
 
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
-import org.deltava.util.log.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A class to listen for Discord commands.
  * @author Danielw
  * @author Luke
- * @version 11.3
+ * @version 12.5
  * @since 11.0
  */
 
@@ -37,30 +31,21 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
 	private static final Logger log = LogManager.getLogger(CommandListener.class); 
 
     @Override
-    @Trace(dispatcher=true)
     public void onSlashCommandCreate(SlashCommandCreateEvent e) {
         SlashCommandInteraction sci = e.getSlashCommandInteraction();
         String cmdName = sci.getCommandName().toLowerCase();
-        NewRelic.setProductName(SystemData.get("airline.code"));
-        NewRelic.setTransactionName("Discord", cmdName);
-        NewRelic.setRequestAndResponse(new SyntheticRequest(cmdName, "Discord"), new SyntheticResponse());
 
-        TaskTimer tt = new TaskTimer();
-        try {
-        	switch (cmdName) {
-        		case "allkeys" -> showKeys();
-        		case "reloadkeys" -> reloadKeys(e);
-        		case "addkey" -> addWord(e, false);
-        		case "dropkey" -> dropWord(e, false);
-        		case "flywithme" -> newFlyWithMeRequest(e);
-        		case "addsafe" -> addWord(e, true);
-        		case "dropsafe" -> dropWord(e, true);
-        		case "warn" -> sendWarning(e);
-        		default -> log.info("Ignored command - {}", cmdName);
-        	}
-        } finally {
-        	NewRelic.recordResponseTimeMetric(cmdName, tt.stop());
-        }
+       	switch (cmdName) {
+       		case "allkeys" -> showKeys();
+       		case "reloadkeys" -> reloadKeys(e);
+       		case "addkey" -> addWord(e, false);
+       		case "dropkey" -> dropWord(e, false);
+       		case "flywithme" -> newFlyWithMeRequest(e);
+       		case "addsafe" -> addWord(e, true);
+       		case "dropsafe" -> dropWord(e, true);
+       		case "warn" -> sendWarning(e);
+       		default -> log.info("Ignored command - {}", cmdName);
+       	}
     }
 
 	private static void addWord(SlashCommandCreateEvent e, boolean isSafe) {
@@ -93,7 +78,6 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
             Bot.send(ChannelName.ALERTS, EmbedGenerator.wordAdded(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
         } catch (Exception ex) {
         	log.atError().withThrowable(ex).log("Error adding {} word - {}", keyType, ex.getMessage());
-        	NewRelic.noticeError(ex, false);
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Add %s word", keyType), ex));
         } finally {
         	Bot.release(con);
@@ -128,7 +112,6 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
            	Bot.send(ChannelName.ALERTS, EmbedGenerator.wordDeleted(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error removing {} word - {}", keyType, ex.getMessage());
-    		NewRelic.noticeError(ex, false);
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Remove %s word", keyType), ex));
     	} finally {
     		Bot.release(con);
@@ -142,7 +125,6 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		Bot.send(ChannelName.ALERTS, EmbedGenerator.showKeys(true, cf.getSafewords()));
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error displaying keywords - {}", ex.getMessage());
-    		NewRelic.noticeError(ex, false);
     	}
     }
     
@@ -158,7 +140,6 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		createResponse(sci, "Keyword list reloaded", true).respond();
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error reloading keywords - {}", ex.getMessage());
-    		NewRelic.noticeError(ex, false);
     		Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), "Reload keyword list", ex));
     	} finally {
     		Bot.release(con);

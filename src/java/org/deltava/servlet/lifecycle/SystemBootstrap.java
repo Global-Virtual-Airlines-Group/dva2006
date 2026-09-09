@@ -31,12 +31,10 @@ import org.gvagroup.common.*;
 import org.gvagroup.pool.*;
 import org.gvagroup.tomcat.SharedWorker;
 
-import com.newrelic.api.agent.NewRelic;
-
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -311,7 +309,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Restart the daemon
 		log.atError().withThrowable(e).log("Restarting {}", sd);
-		NewRelic.noticeError(e, false);
 		synchronized (_daemons) {
 			_daemons.remove(t);
 			spawnDaemon(sd);

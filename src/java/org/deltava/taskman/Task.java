@@ -13,10 +13,7 @@ import org.deltava.beans.Pilot;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
-import org.deltava.util.log.*;
 import org.deltava.util.system.SystemData;
-
-import com.newrelic.api.agent.*;
 
 /**
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
@@ -252,7 +249,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      * {@link Task#execute(TaskContext)} method.
      * @param usr overrides the user executing the Task if not null
      */
-    @Trace(dispatcher=true)
     public void run(Pilot usr) {
     	setStartTime(Instant.now());
     	_runCount++;
@@ -274,7 +270,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     		dao.logTaskExecution(getID(), 0);
     	} catch (Exception e) {
     		log.atError().withThrowable(e).log("Cannot log Task start - {}", e.getMessage());
-    		NewRelic.noticeError(e, false);
     	} finally {
     		ctxt.release();
     	}
@@ -283,10 +278,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
         execute(ctxt);
         _lastRunTime = (System.currentTimeMillis() - _lastStartTime.toEpochMilli());
         log.info("{} completed - {}ms", getName(), Long.valueOf(_lastRunTime));
-        NewRelic.setProductName(SystemData.get("airline.code"));
-        NewRelic.setRequestAndResponse(new SyntheticRequest(_name, (usr == null) ? "SYSTEM" : usr.getPilotCode()), new SyntheticResponse());
-        NewRelic.setTransactionName("Task", _name);
-        NewRelic.recordResponseTimeMetric(_name, _lastRunTime);
         
         // Log execution time
     	try {
@@ -294,7 +285,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     		dao.logTaskExecution(getID(), _lastRunTime);
     	} catch (Exception e) {
     		log.atError().withThrowable(e).log("Cannot log Task completion - {}", e.getMessage());
-    		NewRelic.noticeError(e, false);
     	} finally {
     		ctxt.release();
     	}
@@ -307,7 +297,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      */
     protected void logError(String msg, Throwable t) {
     	log.atError().withThrowable(t).log("{} - {}", msg, t.getMessage());
-    	NewRelic.noticeError(t, false);
     }
     
     @Override
@@ -323,7 +312,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     @Override
     public void uncaughtException(Thread t, Throwable e) {
     	log.atError().withThrowable(e).log("Error in child thread {}", t.getName());
-    	NewRelic.noticeError(e, false);
     }
     
     /**

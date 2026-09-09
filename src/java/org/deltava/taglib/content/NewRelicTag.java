@@ -3,8 +3,6 @@ package org.deltava.taglib.content;
 
 import jakarta.servlet.jsp.JspException;
 
-import com.newrelic.api.agent.NewRelic;
-
 import org.deltava.beans.system.ContentSecurity;
 
 import org.deltava.taglib.*;
@@ -20,6 +18,7 @@ import org.deltava.util.StringUtils;
  * @since 12.4
  */
 
+@Deprecated
 public class NewRelicTag extends CSPNonceTag {
 	
 	private String _src;
@@ -27,7 +26,6 @@ public class NewRelicTag extends CSPNonceTag {
 	
 	@Override
 	public int doStartTag() throws JspException {
-		_src = NewRelic.getBrowserTimingHeader(getNonce());
 		_hasJS = !StringUtils.isEmpty(_src);
 		
 		// Update CSP policy

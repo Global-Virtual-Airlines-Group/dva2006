@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018, 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018, 2020, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 
 import org.apache.logging.log4j.*;
 
-import com.newrelic.api.agent.NewRelic;
+import io.opentelemetry.api.trace.Span;
 
 import org.deltava.service.*;
 
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -89,7 +89,8 @@ public class WebServiceServlet extends BasicAuthServlet {
 		}
 		
 		// Set transaction name
-		NewRelic.setTransactionName("Web Service", svc.getClass().getSimpleName());
+		Span span = Span.current();
+		span.updateName(svc.getClass().getSimpleName());
 
 		// Check if we need to be authenticated
 		Pilot usr = (Pilot) req.getUserPrincipal();
@@ -102,7 +103,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		}
 		
 		if (usr != null)
-			NewRelic.setUserName(usr.getName());
+			span.setAttribute("user.name", usr.getName());
 		
 		// Generate the service context
 		ServiceContext ctx = new ServiceContext(req, rsp);
@@ -131,7 +132,6 @@ public class WebServiceServlet extends BasicAuthServlet {
 				log.atError().withThrowable(e).log("Error executing {} - {}", parser.getName(), e.getMessage());
 			}
 
-			NewRelic.noticeError(e, false);
 			try {
 				rsp.sendError(resultCode, e.getMessage());
 			} catch (Exception e2) {
@@ -142,7 +142,6 @@ public class WebServiceServlet extends BasicAuthServlet {
 		}
 		
 		// Log excessive execution
-		NewRelic.recordResponseTimeMetric(svc.getClass().getSimpleName(), tt.getMillis());
 		if (tt.getMillis() > 5000)
 			log.warn("Excessive execution time for {} - {}ms", parser.getName().toLowerCase(), Long.valueOf(tt.getMillis()));
 	}

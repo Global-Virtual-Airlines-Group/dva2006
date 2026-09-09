@@ -1,16 +1,14 @@
-// Copyright 2004, 2007, 2008, 2009, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2008, 2009, 2015, 2016, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.Collection;
 
 import jakarta.servlet.jsp.PageContext;
 
-import com.newrelic.api.agent.Trace;
-
 /**
  * A Web Site Command.
  * @author Luke
- * @version 10.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -56,7 +54,6 @@ public interface Command {
      * @param ctx run-time information needed to execute
      * @throws CommandException if an error occurs
      */
-    @Trace
     public void execute(CommandContext ctx) throws CommandException;
 
     /**
@@ -82,5 +79,5 @@ public interface Command {
      * @param roleNames a List of role names
      * @throws IllegalStateException if the role names have already been set
      */
-    void setRoles(Collection<String> roleNames) throws IllegalStateException;
+    void setRoles(Collection<String> roleNames);
 }

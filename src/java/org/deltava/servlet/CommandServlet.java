@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -14,6 +14,8 @@ import jakarta.servlet.annotation.MultipartConfig;
 
 import org.apache.logging.log4j.*;
 
+import io.opentelemetry.api.trace.Span;
+
 import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -25,12 +27,10 @@ import org.deltava.util.system.SystemData;
 
 import org.gvagroup.pool.*;
 
-import com.newrelic.api.agent.NewRelic;
-
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -210,10 +210,12 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		}
 
 		// Create the command context
+		Span span = Span.current();
+		span.updateName(cmd.getName());
 		CommandContext ctxt = new CommandContext(req, rsp);
-		NewRelic.setTransactionName("Command", cmd.getName());
 		if (req.getUserPrincipal() != null)
-			NewRelic.setUserName(req.getUserPrincipal().getName());
+			span.setAttribute("user.name", req.getUserPrincipal().getName());
+
 		try {
 			// Validate command access
 			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles()))
@@ -282,7 +284,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			else
 				usrName = req.getUserPrincipal().getName();
 			
-			NewRelic.noticeError(e, false);
 			if (logStackDump)
 				log.atLevel(logLevel).withThrowable(e).log("{} executing {} ({}) - {}", usrName, cmd.getName(), getURL(req), e.getMessage());
 			else
@@ -297,7 +298,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				rd.forward(req, rsp);
 			} catch (Exception fe) {
 				log.atError().withThrowable(fe).log("Error forwarding - {}", fe.getMessage());
-				NewRelic.noticeError(fe, false);
 				try {
 					rsp.sendError(SC_INTERNAL_SERVER_ERROR);
 				} catch (Exception ee) {
@@ -306,7 +306,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			}
 		} finally {
 			long execTime = tt.stop();
-			NewRelic.recordResponseTimeMetric(cmd.getName(), tt.getMillis());
 			if (execTime < MAX_EXEC_TIME)
 				log.debug("{} completed in {} ms", cmd.getID(), Long.valueOf(execTime));
 			else
@@ -328,7 +327,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			return;
 		}
 		
-		NewRelic.noticeError(e, false);
 		_logThread = Thread.ofVirtual().name(SystemData.get("airline.code") + " Command Logger").unstarted(_logger);
 		_logThread.setUncaughtExceptionHandler(this);
 		_logThread.setDaemon(true);

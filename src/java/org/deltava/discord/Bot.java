@@ -1,4 +1,4 @@
-// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.util.*;
@@ -17,8 +17,6 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.*;
 
-import com.newrelic.api.agent.NewRelic;
-
 import okhttp3.OkHttpClient;
 
 import org.deltava.beans.*;
@@ -36,7 +34,7 @@ import org.gvagroup.pool.*;
  * The Discord Bot. This has a number of static methods that serve as the entry point to Discord operations from other code.
  * @author danielw
  * @author luke
- * @version 12.3
+ * @version 12.5
  * @since 11.0
  */
 
@@ -256,7 +254,6 @@ public class Bot {
     		}
     	} catch (ExecutionException ee) {
     		log.atError().withThrowable(ee).log(ee.getMessage());
-    		NewRelic.noticeError(ee, false);
     	} catch (InterruptedException ie) {
     		log.warn("Interrupted removing Discord roles from {} ({})", p.getName(), p.getPilotCode());
     	}

@@ -1,12 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
-
-import com.newrelic.api.agent.Trace;
 
 /**
  * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor and then passed a request and a response.
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -19,7 +17,6 @@ public abstract class WebService {
     * @return the HTTP status code
     * @throws ServiceException if an error occurs
     */
-	@Trace(dispatcher=true)
    public abstract int execute(ServiceContext ctx) throws ServiceException;
    
    /**

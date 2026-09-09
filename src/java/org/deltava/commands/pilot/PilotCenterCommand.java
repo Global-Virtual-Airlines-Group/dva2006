@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.time.*;
 import java.sql.Connection;
 import java.time.temporal.ChronoUnit;
 
-import com.newrelic.api.agent.NewRelic;
+import io.opentelemetry.api.trace.Span;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -78,7 +78,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			p = profiles.get(Integer.valueOf(ctx.getUser().getID()));
 			p.setTotalLegs(totalLegs);
 			p.setTotalHours(totalHours);
-			NewRelic.addCustomParameter("pilot.name", p.getName());
+
+			// Send pilot name to OpenTelemetry
+			Span span = Span.current();
+			span.setAttribute("pilot.name", p.getName());
 			
 			// Show year in review
 			LocalDate today = LocalDate.now();

@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import com.newrelic.api.agent.NewRelic;
+import io.opentelemetry.api.trace.Span;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -125,8 +125,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			if (p == null)
 				throw notFoundException("Unknown Pilot", fr.getDatabaseID(DatabaseID.PILOT));
 			
-			// Send Pilot to NewRelic
-			NewRelic.addCustomParameter("pilot.name", p.getName());
+			// Send Pilot to OpenTelemetry
+			Span span = Span.current();
+			span.setAttribute("pilot.name", p.getName());
 
 			// Load the pilot's equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
