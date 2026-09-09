@@ -42,5 +42,6 @@
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-3.16.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-4.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/brotli-dec-0.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/opentelemetry-api-1.65.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
