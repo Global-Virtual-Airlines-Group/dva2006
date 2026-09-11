@@ -90,6 +90,14 @@ The <content:airline /> Flight Schedule has been updated by synchronizing <span 
 <br>
 To synchronize another airline's schedule entries, please <el:cmd className="sec bld" url="schedsync">Click Here</el:cmd>.<br>
 </c:when>
+<c:when test="${isHub}">
+<div class="updateHdr">Flight Schedule Hub Airport Updated</div>
+<br>
+The Hub Airport <span class="pri bld">${hub.airport.name}</span> <span class="bld">(<fmt:airport airport="${hub.airport}" />)</span> has been updated. Schedule source pulls for this Airport may commence on the next
+download of an incremental schedule.<br>
+<br>
+To return to the list of Schedule Hubs, <el:cmd url="hubs" className="sec bld">Click Here</el:cmd>.<br>
+</c:when>
 </c:choose>
 <c:if test="${isAirport}">
 <br>
