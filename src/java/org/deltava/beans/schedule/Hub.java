@@ -1,6 +1,8 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
+import org.deltava.beans.*;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -11,11 +13,12 @@ import org.deltava.util.cache.Cacheable;
  * @since 12.5
  */
 
-public class Hub implements Cacheable, Comparable<Hub> {
+public class Hub implements Auditable, Cacheable, ViewEntry, Comparable<Hub> {
 
 	private final Airline _a;
 	private final Airport _ap;
 	private int _destCount;
+	private boolean _active = true;
 	
 	/**
 	 * Creates the bean. 
@@ -51,6 +54,14 @@ public class Hub implements Cacheable, Comparable<Hub> {
 	public int getDestinationCount() {
 		return _destCount;
 	}
+	
+	/**
+	 * Returns whether this Schedule Hub is active.
+	 * @return TRUE if active, otherwise FALSE
+	 */
+	public boolean getActive() {
+		return _active;
+	}
 
 	/**
 	 * Updates the number of destinations served by this Airline from this Airport.
@@ -58,6 +69,14 @@ public class Hub implements Cacheable, Comparable<Hub> {
 	 */
 	public void setDestinationCount(int cnt) {
 		_destCount = cnt;
+	}
+	
+	/**
+	 * Updates whether this Schedule Hub is active.
+	 * @param isActive TRUE if active, otherwise FALSE
+	 */
+	public void setActive(boolean isActive) {
+		_active = isActive;
 	}
 	
 	/**
@@ -77,6 +96,21 @@ public class Hub implements Cacheable, Comparable<Hub> {
 	 */
 	public boolean hasRoute(RoutePair rp) {
 		return rp.isPopulated() && (rp.getAirportD().equals(_ap) || rp.getAirportA().equals(_ap));
+	}
+	
+	@Override
+	public boolean isCrossApp() {
+		return false;
+	}
+
+	@Override
+	public String getAuditID() {
+		return toString();
+	}
+
+	@Override
+	public String getRowClassName() {
+		return _active ? null : "warn";
 	}
 	
 	@Override
@@ -104,4 +138,5 @@ public class Hub implements Cacheable, Comparable<Hub> {
 		int tmpResult = _a.compareTo(h2._a);
 		return (tmpResult == 0) ? _ap.compareTo(h2._ap) : tmpResult; 
 	}
+
 }

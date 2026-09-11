@@ -36,6 +36,7 @@ public class GetRawScheduleInfo extends DAO {
 				while (rs.next()) {
 					Hub h = new Hub(SystemData.getAirline(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
 					h.setDestinationCount(rs.getInt(3));
+					h.setActive(rs.getBoolean(4));
 					results.add(h);
 				}
 			}

@@ -127,10 +127,11 @@ public class SetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Hub h) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SCHEDULE_HUBS VALUES (?,?,?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SCHEDULE_HUBS VALUES (?,?,?,?)")) {
 			ps.setString(1, h.getAirline().getCode());
 			ps.setString(2, h.getAirport().getIATA());
 			ps.setInt(3, h.getDestinationCount());
+			ps.setBoolean(4, h.getActive());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
