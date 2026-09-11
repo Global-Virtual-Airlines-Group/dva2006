@@ -39,6 +39,7 @@ golgotha.local.updateAirline = function(cb) {
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
+	cfg.noTours = true;
 	cfg.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers([f.airport]);
 	golgotha.airportLoad.setText([f.airline,f.airport]);
