@@ -185,7 +185,7 @@ public class AVStackDownloadTask extends Task {
 			
 			// Load Hubs
 			GetRawScheduleInfo rsdao = new GetRawScheduleInfo(con);
-			hubs.addAll(rsdao.getHubs());
+			hubs.addAll(rsdao.getHubs().stream().filter(Hub::getActive).toList());
 			
 			// Load aircraft types for IATA/ICAO lookup
 			GetAircraft acdao = new GetAircraft(con);
