@@ -1,8 +1,7 @@
-// Copyright 2005, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2016, 2017, 2018, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.assign.AssignmentInfo;
 
@@ -14,7 +13,7 @@ import org.deltava.security.command.AssignmentAccessControl;
 /**
  * A Web Site Command to display a Pilot's Flight Assignments.
  * @author Luke
- * @version 8.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -41,7 +40,7 @@ public class MyAssignmentsCommand extends AbstractViewCommand {
          vc.setResults(dao.getByPilot(ctx.getUser().getID(), null));
          
          // Get the access controllers for the assignments
-         List<AssignmentAccessControl> accessList = vc.getResults().stream().map(ai -> { AssignmentAccessControl access = new AssignmentAccessControl(ctx, ai); access.validate(); return access; }).collect(Collectors.toList());
+         List<AssignmentAccessControl> accessList = vc.getResults().stream().map(ai -> { AssignmentAccessControl access = new AssignmentAccessControl(ctx, ai); access.validate(); return access; }).toList();
          ctx.setAttribute("accessList", accessList, REQUEST);
          
          // Save dummy map of pilot IDs - the only one we need to add is our own

@@ -1,8 +1,7 @@
-// Copyright 2005, 2009, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2017, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
@@ -18,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airports.
  * @author Luke
- * @version 10.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -45,7 +44,7 @@ public class AirportListCommand extends AbstractViewCommand {
 		String aCode = ctx.getParameter("airline");
 		Airline a = SystemData.getAirline(aCode);
 		if (NO_GATE.equals(aCode)) {
-			List<Airport> airports = new HashSet<Airport>(SystemData.getAirports().values()).stream().filter(ap -> !ap.getGateData() && !ap.getAirlineCodes().isEmpty()).collect(Collectors.toList());
+			List<Airport> airports = new HashSet<Airport>(SystemData.getAirports().values()).stream().filter(ap -> !ap.getGateData() && !ap.getAirlineCodes().isEmpty()).toList();
 			AirportComparator cmp = new AirportComparator(sortOfs);
 			airports.sort(cmp);
 			vc.setResults(airports.subList(vc.getStart(), vc.getStart() + vc.getCount()));

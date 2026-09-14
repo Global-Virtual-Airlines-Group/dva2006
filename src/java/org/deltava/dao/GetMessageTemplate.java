@@ -1,9 +1,8 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2019, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve e-Mail message templates.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 1.0
  */
 
@@ -112,7 +111,7 @@ public class GetMessageTemplate extends DAO {
 				mt.setNotificationTTL(rs.getInt(8));
 				Collection<String> acts = StringUtils.split(rs.getString(9), ",");
 				if (acts != null)
-					mt.setActionTypes(acts.stream().map(o -> NotifyActionType.values()[StringUtils.parse(o, 0)]).collect(Collectors.toList()));
+					mt.setActionTypes(acts.stream().map(o -> NotifyActionType.values()[StringUtils.parse(o, 0)]).toList());
 					
 				results.add(mt);
 			}

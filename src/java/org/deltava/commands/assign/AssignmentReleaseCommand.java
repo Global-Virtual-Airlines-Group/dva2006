@@ -2,7 +2,6 @@
 package org.deltava.commands.assign;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.assign.*;
@@ -16,7 +15,7 @@ import org.deltava.security.command.AssignmentAccessControl;
 /**
  * A Web Site Command to release a Flight Assignment.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -49,7 +48,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			Collection<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), ctx.getDB());
 
 			// Delete PIREPs in draft status, and remove the Assignment ID for the others
-			Collection<FlightReport> remainingFlights = pireps.stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT)).collect(Collectors.toList());
+			Collection<FlightReport> remainingFlights = pireps.stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT)).toList();
 
 			// Save the totals
 			ctx.setAttribute("flightsDeleted", Integer.valueOf(pireps.size() - remainingFlights.size()), REQUEST);

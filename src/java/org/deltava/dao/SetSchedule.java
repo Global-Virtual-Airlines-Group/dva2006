@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.time.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 
@@ -219,7 +218,7 @@ public class SetSchedule extends DAO {
 				ps.setInt(6, src.getSkipped());
 				ps.setInt(7, src.getAdjusted());
 				ps.setBoolean(8, src.getPurged());
-				ps.setString(9, StringUtils.listConcat(src.getAirlines().stream().map(al -> al.getCode()).collect(Collectors.toList()), ","));
+				ps.setString(9, StringUtils.listConcat(src.getAirlines().stream().map(al -> al.getCode()).toList(), ","));
 				ps.setInt(10, src.getAuthorID());
 				executeUpdate(ps, 1);
 			}

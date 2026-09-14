@@ -1,8 +1,7 @@
-// Copyright 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2015, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import jakarta.servlet.jsp.*;
 import jakarta.servlet.jsp.tagext.TagSupport;
@@ -12,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to insert an Enumeration's values into a page attribute.
  * @author Luke
- * @version 6.3
+ * @version 12.5
  * @since 3.2
  */
 
@@ -89,7 +88,7 @@ public class EnumTag extends TagSupport {
 					}
 				}
 			} else if (_filterNames.size() > 0) {
-				Collection<Object> objs = Arrays.asList(values).stream().filter(e -> !_filterNames.contains(e.toString())).collect(Collectors.toList());
+				Collection<Object> objs = Arrays.asList(values).stream().filter(e -> !_filterNames.contains(e.toString())).toList();
 				pageContext.setAttribute(_varName, objs, PageContext.PAGE_SCOPE);
 			} else
 				pageContext.setAttribute(_varName, Arrays.asList(values), PageContext.PAGE_SCOPE);

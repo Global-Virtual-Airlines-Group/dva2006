@@ -4,7 +4,6 @@ package org.deltava.dao;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -17,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Tour data from the database.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.0
  */
 
@@ -208,7 +207,7 @@ public class GetTour extends DAO {
 			ps.setBoolean(1, true);
 			ps.setString(2, rp.getAirportD().getIATA());
 			ps.setString(3, rp.getAirportA().getIATA());
-			List<Tour> results = execute(ps).stream().filter(t -> t.isActiveOn(dt)).collect(Collectors.toList());
+			List<Tour> results = execute(ps).stream().filter(t -> t.isActiveOn(dt)).toList();
 			for (Tour t : results) {
 				t.setOwner(SystemData.getApp(dbName));
 				loadLegs(t);

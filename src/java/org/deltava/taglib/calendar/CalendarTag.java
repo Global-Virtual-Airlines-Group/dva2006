@@ -2,7 +2,6 @@
 package org.deltava.taglib.calendar;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
@@ -18,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -277,7 +276,7 @@ abstract class CalendarTag extends TagSupport {
 
 	/**
 	 * Returns all Calendar entries for the currently rendered Date, from midnight to 11:59PM.
-	 * @return a Collection of CalendarEntry beans
+	 * @return an immutable Collection of CalendarEntry beans
 	 * @see CalendarTag#setEntries(Collection)
 	 */
 	Collection<CalendarEntry> getCurrentEntries() {
@@ -285,7 +284,7 @@ abstract class CalendarTag extends TagSupport {
 		Instant sd = _currentDate.toInstant().minus(1, ChronoUnit.MILLIS);
 		Instant ed = sd.plus(1, ChronoUnit.DAYS).plus(2, ChronoUnit.MILLIS);
 		final DateRange rng = new DateRange(sd, ed);
-		return _entries.stream().filter(ce -> _multipleDays ? multiFilter(ce, rng) : singleFilter(ce, rng)).collect(Collectors.toList());
+		return _entries.stream().filter(ce -> _multipleDays ? multiFilter(ce, rng) : singleFilter(ce, rng)).toList();
 	}
 	
 	/*

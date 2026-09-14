@@ -1,8 +1,7 @@
-// Copyright 2010, 2011, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.Instant;
 
 import org.deltava.beans.*;
@@ -10,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store information about a job posting.
  * @author Luke
- * @version 10.2
+ * @version 12.5
  * @since 3.4
  */
 
@@ -145,7 +144,7 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 * @return a Collection of Application beans
 	 */
 	public Collection<Application> getSelectedApplications() {
-		return _apps.stream().filter(Application::getApproved).collect(Collectors.toList());
+		return _apps.stream().filter(Application::getApproved).toList();
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2016, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Fleet Gallery.
  * @author Luke
- * @version 12.1
+ * @version 12.5
  * @since 1.0
  */
 
@@ -72,7 +72,7 @@ public class FleetGalleryCommand extends AbstractViewCommand {
         }
         
         // Build the description array
-        List<String> descs = results.stream().map(Image::getDescription).map(StringUtils::stripInlineHTML).collect(Collectors.toList());
+        List<String> descs = results.stream().map(Image::getDescription).map(StringUtils::stripInlineHTML).toList();
         
         // Save the results and description array
         ctx.setAttribute("fleetGallery", results, REQUEST);

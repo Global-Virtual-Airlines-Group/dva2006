@@ -1,8 +1,7 @@
-// Copyright 2006, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -13,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a route map of Schedule entries.
  * @author Luke
- * @version 10.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -28,7 +27,7 @@ public class RouteMapCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the airlines for this web application
-		Collection<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).collect(Collectors.toList());
+		Collection<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).toList();
 		
 		// Init the airports map and split by airline
 		Collection<Airport> allAirports = SystemData.getAirports().values();

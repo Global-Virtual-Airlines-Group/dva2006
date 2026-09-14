@@ -5,7 +5,6 @@ import java.util.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.sql.Connection;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.assign.CharterRequest;
 import org.deltava.beans.schedule.*;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and edit Charter flight Requests.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.0
  */
 
@@ -129,8 +128,7 @@ public class CharterRequestCommand extends AbstractFormCommand {
 			ctx.setAttribute("author", ctx.getUser(), REQUEST);
 		
 		// Save request attributes
-		List<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).collect(Collectors.toList());
-		//airlines.addAll(SystemData.getAirlines().values());
+		List<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).toList();
 		ctx.setAttribute("chreq", req, REQUEST);
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		

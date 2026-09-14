@@ -2,7 +2,6 @@
 package org.deltava.commands.pilot;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Duration;
 import java.time.Instant;
@@ -22,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to disply all the routes the pilot has flown.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -58,7 +57,7 @@ public class PilotRouteMapCommand extends AbstractCommand {
 			long days = Duration.between(firstFlight, Instant.now()).toDays();
 			
 			// Filter the dateOps
-			Collection<ComboAlias> dateOpts = DATE_OPTS.stream().filter(ca -> (StringUtils.parse(ca.getComboAlias(), Integer.MAX_VALUE) < days)).collect(Collectors.toList());
+			Collection<ComboAlias> dateOpts = DATE_OPTS.stream().filter(ca -> (StringUtils.parse(ca.getComboAlias(), Integer.MAX_VALUE) < days)).toList();
 			
 			// Save the user's home airport
 			Airport airportH = SystemData.getAirport(usr.getHomeAirport());

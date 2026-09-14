@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 6.3
  */
 
@@ -119,12 +119,12 @@ public class AirportInformationCommand extends AbstractCommand {
 			String aCode = SystemData.get("airline.code");
 			GetAircraft acdao = new GetAircraft(con);
 			Collection<Aircraft> allAC = acdao.getAircraftTypes(aCode);
-			Collection<Aircraft> validAC = allAC.stream().filter(ac -> ac.isUsed(aCode) && aircraftRunwayFilter(ac.getOptions(aCode), maxLength)).collect(Collectors.toList());
+			Collection<Aircraft> validAC = allAC.stream().filter(ac -> ac.isUsed(aCode) && aircraftRunwayFilter(ac.getOptions(aCode), maxLength)).toList();
 			
 			// Calculate whether we show valid equipment, or invalid (to reduce size of list)
 			double validRatio = validAC.size() * 1.0d / allAC.size();
 			if (validRatio >= 0.5) {
-				Collection<Aircraft> invalidAC = allAC.stream().filter(ac -> !validAC.contains(ac)).collect(Collectors.toList());
+				Collection<Aircraft> invalidAC = allAC.stream().filter(ac -> !validAC.contains(ac)).toList();
 				ctx.setAttribute("invalidAC", invalidAC, REQUEST);
 			} else
 				ctx.setAttribute("validAC", validAC, REQUEST);
@@ -165,7 +165,7 @@ public class AirportInformationCommand extends AbstractCommand {
 		
 		// Load active airports
 		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME)); 
-		airports.addAll(SystemData.getAirports().values().stream().filter(ap -> !ap.getAirlineCodes().isEmpty()).collect(Collectors.toList()));
+		airports.addAll(SystemData.getAirports().values().stream().filter(ap -> !ap.getAirlineCodes().isEmpty()).toList());
 		ctx.setAttribute("airports", airports, REQUEST);
 		
 		// Calculate sunrise / sunset
