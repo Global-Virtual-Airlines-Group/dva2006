@@ -1,8 +1,7 @@
-// Copyright 2017, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to update Pilot ratings based on currency Check Rides.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 8.0
  */
 
@@ -119,7 +118,7 @@ public class CurrencyRatingTask extends Task {
 				// Check if any ratings are expiring
 				Collection<CheckRide> expRides = helper.getCheckRides(expDays);
 				if (!expRides.isEmpty()) {
-					Collection<String> rideNames = expRides.stream().map(CheckRide::getName).collect(Collectors.toList());
+					Collection<String> rideNames = expRides.stream().map(CheckRide::getName).toList();
 					MessageContext mctxt = new MessageContext();
 					mctxt.addData("exams", StringUtils.listConcat(rideNames, ", "));
 					mctxt.setTemplate(mt);

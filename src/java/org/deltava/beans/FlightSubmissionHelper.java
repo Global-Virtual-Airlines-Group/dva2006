@@ -1,10 +1,9 @@
 // Copyright 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.sql.Connection;
 import java.time.*;
+import java.util.*;
+import java.sql.Connection;
 
 import org.apache.logging.log4j.*;
 
@@ -28,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.0
  */
 
@@ -346,7 +345,7 @@ public class FlightSubmissionHelper {
 	 */
 	public void checkRefuel() {
 		if ((!(_fr instanceof ACARSFlightReport afr)) || !hasPositionData()) return;
-		List<FuelChecker> fuelData = _rte.stream().filter(FuelChecker.class::isInstance).map(FuelChecker.class::cast).collect(Collectors.toList());
+		List<FuelChecker> fuelData = _rte.stream().filter(FuelChecker.class::isInstance).map(FuelChecker.class::cast).toList();
 		FuelUse use = FuelUse.validate(fuelData);
 		afr.setTotalFuel(use.getTotalFuel());
 		afr.setAttribute(Attribute.REFUELWARN, use.getRefuel());

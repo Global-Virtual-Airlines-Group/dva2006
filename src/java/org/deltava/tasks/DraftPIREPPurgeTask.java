@@ -1,8 +1,7 @@
-// Copyright 2006, 2007, 2009, 2010, 2016, 2018, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2016, 2018, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.*;
 import java.sql.Connection;
 
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge Draft Flight Reports from the database.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 1.0
  */
 
@@ -42,7 +41,7 @@ public class DraftPIREPPurgeTask extends Task {
 			
 			// Get the DAO and the Flight Reports - remove based on date
 			GetFlightReports dao = new GetFlightReports(con);
-			Collection<FlightReport> pireps = dao.getByStatus(Collections.singleton(FlightStatus.DRAFT), null).stream().filter(fr -> fr.getDate().isBefore(pd)).collect(Collectors.toList());
+			Collection<FlightReport> pireps = dao.getByStatus(Collections.singleton(FlightStatus.DRAFT), null).stream().filter(fr -> fr.getDate().isBefore(pd)).toList();
 
 			// Get the write DAO and purge
 			SetFlightReport wdao = new SetFlightReport(con);

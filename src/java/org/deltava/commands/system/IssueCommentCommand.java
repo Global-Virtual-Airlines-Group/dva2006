@@ -2,7 +2,6 @@
 package org.deltava.commands.system;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -15,7 +14,7 @@ import org.deltava.security.command.IssueAccessControl;
 /**
  * A web site command to save new Issue Comments.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -103,7 +102,7 @@ public class IssueCommentCommand extends AbstractCommand {
 				// Get the pilot profiles
 				GetPilot pdao = new GetPilot(con);
 				Collection<Pilot> pilots = pdao.get(udm).values();
-				pilots = pilots.stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
+				pilots = pilots.stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).toList();
 
 				// Create the e-mail message
 				Mailer mailer = new Mailer(ctx.getUser());

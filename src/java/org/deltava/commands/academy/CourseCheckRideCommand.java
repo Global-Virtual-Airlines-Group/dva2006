@@ -2,7 +2,6 @@
 package org.deltava.commands.academy;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides linked to Flight Academy courses.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -113,7 +112,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			
 			// Get all available aircraft types
 			if (!cert.getRideEQ().isEmpty() && isOurs) {
-				Collection<String> availableEQ = p.getRatings().stream().filter(eq -> (cert.getRideEQ().contains(eq))).collect(Collectors.toList());
+				Collection<String> availableEQ = p.getRatings().stream().filter(eq -> (cert.getRideEQ().contains(eq))).toList();
 				if (availableEQ.isEmpty())
 					throw new CommandException("No available aircraft for Check Ride in " + StringUtils.listConcat(cert.getRideEQ(), ", "), false);
 			
@@ -122,8 +121,8 @@ public class CourseCheckRideCommand extends AbstractCommand {
 				ctx.setAttribute("actypes", p.getRatings(), REQUEST);
 			else {
 				GetAircraft acdao = new GetAircraft(con);
-				List<String> allEQ = acdao.getAircraftTypes().stream().map(Aircraft::getName).collect(Collectors.toList());
-				allEQ = allEQ.stream().filter(eq -> (cert.getRideEQ().isEmpty() || cert.getRideEQ().contains(eq))).collect(Collectors.toList());
+				List<String> allEQ = acdao.getAircraftTypes().stream().map(Aircraft::getName).toList();
+				allEQ = allEQ.stream().filter(eq -> (cert.getRideEQ().isEmpty() || cert.getRideEQ().contains(eq))).toList();
 				ctx.setAttribute("actypes", allEQ, REQUEST);
 			}
 			

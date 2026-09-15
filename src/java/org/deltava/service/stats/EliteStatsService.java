@@ -1,10 +1,9 @@
-// Copyright 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -19,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Elite program statistics.
  * @author Luke
- * @version 11.5
+ * @version 12.5
  * @since 9.2
  */
 
@@ -104,8 +103,8 @@ public class EliteStatsService extends WebService {
 		for (EliteLevel lvl : levelLegend) {
 			JSONObject so = new JSONObject(); Collection<EliteLevel> yrLevels = new TreeSet<EliteLevel>(new EliteLevelComparator());
 			allLevels.stream().filter(lvl::matches).forEach(yrLevels::add);
-			so.put("legs", yrLevels.stream().map(EliteLevel::getLegs).collect(Collectors.toList()));
-			so.put("distance", yrLevels.stream().map(EliteLevel::getDistance).collect(Collectors.toList()));
+			so.put("legs", yrLevels.stream().map(EliteLevel::getLegs).toList());
+			so.put("distance", yrLevels.stream().map(EliteLevel::getDistance).toList());
 			jro.put(lvl.getName(), so);
 		}
 		

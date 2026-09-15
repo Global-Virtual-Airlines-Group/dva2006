@@ -1,11 +1,10 @@
-// Copyright 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.io.IOException;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.json.*;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Airport arrival/departure time distributions.
  * @author Luke
- * @version 12.1
+ * @version 12.5
  * @since 8.6
  */
 
@@ -40,7 +39,7 @@ public class FlightTimeStatsService extends WebService {
 		if (a == null)
 			return SC_NOT_FOUND;
 		
-		List<ScheduleStatsEntry> stats = IntStream.range(0, 24).mapToObj(hr -> new ScheduleStatsEntry(hr)).collect(Collectors.toList());
+		List<ScheduleStatsEntry> stats = IntStream.range(0, 24).mapToObj(hr -> new ScheduleStatsEntry(hr)).toList();
 		try {
 			GetScheduleAirport sadao = new GetScheduleAirport(ctx.getConnection());
 			sadao.getDepartureStatistics(a).stream().forEach(se -> { stats.get(se.getHour()).setDepartureLegs(se.getDomesticDepartureLegs(), se.getInternationalDepartureLegs()); });

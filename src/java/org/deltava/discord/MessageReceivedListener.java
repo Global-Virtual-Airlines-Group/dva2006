@@ -1,6 +1,9 @@
 // Copyright 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.logging.log4j.*;
 
 import org.javacord.api.entity.channel.*;
@@ -13,10 +16,6 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.Trace;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.concurrent.CompletableFuture;
-
 import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
 
@@ -28,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * A Discord message receiver.
  * @author Luke
  * @author danielw
- * @version 12.4
+ * @version 12.5
  * @since 11.0
  */
 
@@ -148,7 +147,7 @@ public class MessageReceivedListener implements MessageCreateListener {
         // Set roles
         Collection<Role> roles = RoleHelper.calculateRoles(p);
         IntervalTaskTimer tt = new IntervalTaskTimer();
-        CompletableFuture<?>[] fs = roles.stream().map(msgAuth::addRole).collect(Collectors.toList()).toArray(new CompletableFuture[roles.size()]);
+        CompletableFuture<?>[] fs = roles.stream().map(msgAuth::addRole).toList().toArray(new CompletableFuture[roles.size()]);
         CompletableFuture.allOf(fs).join();
         tt.mark("roles");
         

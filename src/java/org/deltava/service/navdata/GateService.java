@@ -1,8 +1,7 @@
-// Copyright 2015, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2019, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 6.3
  */
 
@@ -53,7 +52,7 @@ public class GateService extends WebService {
 			
 			// Load airlines
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			airlines.addAll(rsdao.getAirlines(null, a).stream().filter(al -> !al.getHistoric()).collect(Collectors.toList()));
+			airlines.addAll(rsdao.getAirlines(null, a).stream().filter(al -> !al.getHistoric()).toList());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {

@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -23,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide JSON-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 7.3
  */
 
@@ -95,7 +94,7 @@ public class MapProgressJSONService extends WebService {
 		}
 		
 		// Plot GC route for MapBox
-		final List<GeoLocation> routePathPoints = GeoUtils.greatCircle(routeWaypoints.stream().map(GeoLocation.class::cast).collect(Collectors.toList()));
+		final List<GeoLocation> routePathPoints = GeoUtils.greatCircle(routeWaypoints.stream().map(GeoLocation.class::cast).toList());
 		
 		// Handle cross-IDL lines for MapBox
 		GeoUtils.translate(pathPoints);

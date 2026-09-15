@@ -2,7 +2,6 @@
 package org.deltava.commands.help;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -213,7 +212,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 				readAuditLog(ctx, i);
 				
 				// Load Pilot data
-				List<Pilot> pilots = pdao.getByID(getPilotIDs(i), "PILOTS").values().stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
+				List<Pilot> pilots = pdao.getByID(getPilotIDs(i), "PILOTS").values().stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).toList();
 				ctx.setAttribute("pilots", CollectionUtils.createMap(CollectionUtils.sort(pilots, cmp), Pilot::getID), REQUEST);
 			} else {
 				// Check access
@@ -235,7 +234,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			assignees.addAll(pdao.getByRole("Examination", ctx.getDB()));
 			assignees.addAll(pdao.getByRole("Signature", ctx.getDB()));
 			assignees.addAll(pdao.getByRole("HelpDesk", ctx.getDB()));
-			List<Pilot> activeAssignees = assignees.stream().sorted(cmp).filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
+			List<Pilot> activeAssignees = assignees.stream().sorted(cmp).filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).toList();
 			ctx.setAttribute("assignees", activeAssignees, REQUEST);
 			
 			// Get options for issue conversion

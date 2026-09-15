@@ -1,16 +1,15 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.Helper;
 
 /**
  * A utility class to predict API usage.
  * @author Luke
- * @version 9.0
+ * @version 12.5
  * @since 9.0
  */
  
@@ -38,7 +37,7 @@ public class APIUsageHelper {
 		
 		// Filter out other APIs and calculate our daily average
 		APIUsage result = new APIUsage(ts, name);
-		List<APIUsage> filteredUsage = history.stream().filter(u -> u.getName().equalsIgnoreCase(name)).collect(Collectors.toList());
+		List<APIUsage> filteredUsage = history.stream().filter(u -> u.getName().equalsIgnoreCase(name)).toList();
 		OptionalDouble avgTotal = filteredUsage.stream().mapToInt(APIUsage::getTotal).average();
 		OptionalDouble avgAnon = filteredUsage.stream().mapToInt(APIUsage::getAnonymous).average();
 		if (avgTotal.isEmpty())

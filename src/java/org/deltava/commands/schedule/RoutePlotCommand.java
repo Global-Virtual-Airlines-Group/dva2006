@@ -1,8 +1,7 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Simulator;
@@ -22,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 11.6
+ * @version 12.5
  * @since 1.0
  */
 
@@ -101,7 +100,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				// Save runways and best runway
 				Runway rwyD = dRwys.isEmpty() ? null : dRwys.getFirst();
 				ctx.setAttribute("dRwys", dRwys, REQUEST);
-				ctx.setAttribute("aRwyNames", aRwys.stream().map(Runway::getName).collect(Collectors.toList()), REQUEST);
+				ctx.setAttribute("aRwyNames", aRwys.stream().map(Runway::getName).toList(), REQUEST);
 				ctx.setAttribute("rwy", rwyD, REQUEST);
 				
 				// Save SID/STARs

@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display and update Gate metadata. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.2
  */
 
@@ -50,7 +50,7 @@ public class GateInformationCommand extends AbstractCommand {
 		
 		// Load active airports
 		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME)); 
-		airports.addAll(SystemData.getAirports().values().stream().filter(ap -> !ap.getAirlineCodes().isEmpty()).collect(Collectors.toList()));
+		airports.addAll(SystemData.getAirports().values().stream().filter(ap -> !ap.getAirlineCodes().isEmpty()).toList());
 		ctx.setAttribute("airports", airports, REQUEST);
 
 		// Save metadata

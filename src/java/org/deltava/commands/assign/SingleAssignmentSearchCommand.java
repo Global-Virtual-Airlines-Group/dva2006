@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 2.2
  */
 
@@ -76,7 +76,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			
 			// Get the equipment families
 			GetAircraft acdao = new GetAircraft(con);
-			Collection<Aircraft> allEQ = acdao.getAircraftTypes().stream().filter(ac -> !ac.getAcademyOnly()).collect(Collectors.toList());
+			Collection<Aircraft> allEQ = acdao.getAircraftTypes().stream().filter(ac -> !ac.getAcademyOnly()).toList();
 			ctx.setAttribute("allFamily", allEQ.stream().map(Aircraft::getFamily).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new)), REQUEST);
 
 			// Get additional parameters if we are redoing a search

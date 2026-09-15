@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021, 2022, 2023, 2025, 2206 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -151,7 +151,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Find variable entries
-			Collection<RawScheduleEntry> variedEQ = entries.stream().filter(ScheduleEntry::isVariable).collect(Collectors.toList());
+			Collection<RawScheduleEntry> variedEQ = entries.stream().filter(ScheduleEntry::isVariable).toList();
 			Collection<Airline> airlines = variedEQ.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
 			Map<String, Aircraft> allAC = CollectionUtils.createMap(acdao.getAircraftTypes(), Aircraft::getName);
 			
@@ -181,13 +181,13 @@ public class ScheduleImportCommand extends AbstractCommand {
 					continue;
 				}
 				
-				List<Aircraft> eqTypes = sedao.getEquipmentTypes(rse, rse.getAirline()).stream().map(acType -> allAC.get(acType)).filter(ac -> (ac != null) && (ac.getHistoric() == rse.getHistoric())).collect(Collectors.toList());
+				List<Aircraft> eqTypes = sedao.getEquipmentTypes(rse, rse.getAirline()).stream().map(acType -> allAC.get(acType)).filter(ac -> (ac != null) && (ac.getHistoric() == rse.getHistoric())).toList();
 				if (eqTypes.isEmpty())
 					sedao.getEquipmentTypes(rse, null).stream().map(acType -> allAC.get(acType)).filter(ac -> (ac != null) && (ac.getHistoric() == rse.getHistoric())).forEach(eqTypes::add);
 				
 				// Determine variable equipment
 				if (eqTypes.isEmpty()) {
-					List<Aircraft> possibleEQ = airlineEQ.get(rse.getAirline()).stream().filter(ac -> (ac.getOptions(appCode).getRange() > rse.getDistance())).collect(Collectors.toList());
+					List<Aircraft> possibleEQ = airlineEQ.get(rse.getAirline()).stream().filter(ac -> (ac.getOptions(appCode).getRange() > rse.getDistance())).toList();
 					boolean hasHistoric = possibleEQ.stream().anyMatch(ac -> ac.getHistoric() == rse.getHistoric());
 					if (hasHistoric)
 						possibleEQ.removeIf(ac -> ac.getHistoric() != rse.getHistoric());

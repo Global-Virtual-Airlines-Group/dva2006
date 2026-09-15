@@ -1,8 +1,7 @@
-// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.Instant;
 
 import org.deltava.beans.ComboAlias;
@@ -15,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Australian routes.
  * @author Luke
- * @version 7.0
+ * @version 12.5
  * @since 2.7
  */
 
@@ -43,7 +42,7 @@ public class AUSOTPlotCommand extends AbstractCommand {
 		}
 		
 		// Save the dates in the request
-		Collection<String> fmtDates = dates.stream().map(dt -> StringUtils.format(dt, ctx.getUser().getDateFormat())).collect(Collectors.toList());
+		Collection<String> fmtDates = dates.stream().map(dt -> StringUtils.format(dt, ctx.getUser().getDateFormat())).toList();
 		ctx.setAttribute("dates", fmtDates, REQUEST);
 		ctx.setAttribute("trackTypes", TYPES, REQUEST);
 

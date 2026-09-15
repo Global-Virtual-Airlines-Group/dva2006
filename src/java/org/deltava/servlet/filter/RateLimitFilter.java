@@ -1,10 +1,9 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import static org.deltava.commands.HTTPContext.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -26,7 +25,7 @@ import org.gvagroup.pool.ConnectionPool;
 /**
  * A servlet filter to do HTTP rate limiting.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 11.6
  */
 
@@ -61,7 +60,7 @@ public class RateLimitFilter extends HttpFilter implements Thread.UncaughtExcept
 				_rl.purge();
 				
 				// Clone the counters
-				List<RequestCounter> ctrs = _rl.getCounters().stream().map(RequestCounter::new).collect(Collectors.toList());
+				List<RequestCounter> ctrs = _rl.getCounters().stream().map(RequestCounter::new).toList();
 
 				// Lookup net blocks as needed
 				ConnectionPool<Connection> cp = SystemData.getJDBCPool();

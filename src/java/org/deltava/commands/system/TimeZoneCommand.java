@@ -3,7 +3,6 @@ package org.deltava.commands.system;
 
 import java.util.*;
 import java.time.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.TZInfo;
 
@@ -15,7 +14,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to edit time zone profiles.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -50,7 +49,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 			throw notFoundException("Unknown Time Zone", id);
 		
 		// Get time zone IDs and convert to combo util
-		List<ZoneId> zoneIDs = ZoneId.getAvailableZoneIds().stream().map(ZoneId::of).collect(Collectors.toList());
+		List<ZoneId> zoneIDs = ZoneId.getAvailableZoneIds().stream().map(ZoneId::of).toList();
 		zoneIDs.sort(new TZComparator());
 
 		// Save the time zone and JVM options

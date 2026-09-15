@@ -1,8 +1,7 @@
-// Copyright 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -13,7 +12,7 @@ import org.deltava.comparators.GateComparator;
 /**
  * A helper class to handle gate assignments. 
  * @author Luke
- * @version 12.1
+ * @version 12.5
  * @since 10.3
  */
 
@@ -154,8 +153,8 @@ public class GateHelper {
 	 * Helper method to filter Gates by Zone and Airline.
 	 */
 	private static List<Gate> filter(Collection<Gate> gates, Airline a, GateZone gz) {
-		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).collect(Collectors.toList());
-		List<Gate> iGates = fdGates.stream().filter(g -> g.getZone().matches(gz)).collect(Collectors.toList());
+		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).toList();
+		List<Gate> iGates = fdGates.stream().filter(g -> g.getZone().matches(gz)).toList();
 		return iGates.isEmpty() ? fdGates : iGates;
 	}
 }

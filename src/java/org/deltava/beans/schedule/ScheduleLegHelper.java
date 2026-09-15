@@ -2,7 +2,7 @@
 package org.deltava.beans.schedule;
 
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Stream;
 
 import org.deltava.beans.Helper;
 
@@ -37,7 +37,7 @@ public class ScheduleLegHelper {
 		entries.stream().forEach(se -> addEntry(fMap, se.getShortCode(), se));
 		
 		// Sort each bucket based on arrival time
-		return fMap.entrySet().stream().map(Map.Entry::getValue).flatMap(ScheduleLegHelper::setLegs).collect(Collectors.toList());
+		return fMap.entrySet().stream().map(Map.Entry::getValue).flatMap(ScheduleLegHelper::setLegs).toList();
 	}
 
 	/*

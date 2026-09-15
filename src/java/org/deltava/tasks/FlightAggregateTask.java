@@ -1,13 +1,11 @@
 // Copyright 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static java.util.concurrent.TimeUnit.*;
 
 import java.io.*;
 import java.util.*;
 import java.sql.Connection;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 
@@ -29,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to aggregate Flight statistics. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 11.1
  */
 
@@ -101,8 +99,8 @@ public class FlightAggregateTask extends Task {
 					// Load accomplishments - only save the ones we haven't obtained yet
 					GetAccomplishment accdao = new GetAccomplishment(con);
 					Collection<Accomplishment> allAccs = accdao.getAll();
-					Collection<Accomplishment> pAccs = accdao.getByPilot(p, ctx.getDB()).stream().map(Accomplishment::new).collect(Collectors.toList());
-					Collection<Accomplishment> accs = allAccs.stream().filter(a -> !pAccs.contains(a)).collect(Collectors.toList());
+					Collection<Accomplishment> pAccs = accdao.getByPilot(p, ctx.getDB()).stream().map(Accomplishment::new).toList();
+					Collection<Accomplishment> accs = allAccs.stream().filter(a -> !pAccs.contains(a)).toList();
 					
 					// Add the approved PIREP
 					acchelper.add(fr);
@@ -133,7 +131,7 @@ public class FlightAggregateTask extends Task {
 						GetTour trdao = new GetTour(con);
 						Tour t = trdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
 						TourFlightHelper tfh = new TourFlightHelper(fr, false);
-						tfh.addFlights(pireps.stream().filter(pirep -> pirep.getID() != ap.getID()).collect(Collectors.toList()));
+						tfh.addFlights(pireps.stream().filter(pirep -> pirep.getID() != ap.getID()).toList());
 						tt.mark("tours");
 						
 						int idx = tfh.isLeg(t);

@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Year in Review page. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 12.4
  */
 
@@ -76,8 +76,8 @@ public class YearlyReviewCommand extends AbstractCommand {
 			}
 			
 			// Remove future flights - clone data before you do so since the cache may be local
-			List<Integer> years = data.stream().mapToInt(fr -> LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear()).distinct().boxed().collect(Collectors.toList());
-			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isBefore(ed)).collect(Collectors.toList());
+			List<Integer> years = data.stream().mapToInt(fr -> LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear()).distinct().boxed().toList();
+			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isBefore(ed)).toList();
 			Collections.sort(years, Comparator.reverseOrder());
 			
 			// Save pilot and years
@@ -93,13 +93,13 @@ public class YearlyReviewCommand extends AbstractCommand {
 			}
 			
 			// Load current year and all previous years flights
-			Collection<FlightReport> cyFlights = flights.stream().filter(fr -> fr.getDate().isAfter(sd)).collect(Collectors.toList());
-			Collection<FlightReport> pyFlights = flights.stream().filter(fr -> !cyFlights.contains(fr)).collect(Collectors.toList());
+			Collection<FlightReport> cyFlights = flights.stream().filter(fr -> fr.getDate().isAfter(sd)).toList();
+			Collection<FlightReport> pyFlights = flights.stream().filter(fr -> !cyFlights.contains(fr)).toList();
 			Collection<Airport> cyAP = cyFlights.stream().map(RoutePair::getAirports).flatMap(Collection::stream).collect(Collectors.toCollection(LinkedHashSet::new));
 			Collection<String> cyEQ = cyFlights.stream().map(FlightReport::getEquipmentType).collect(Collectors.toCollection(TreeSet::new));
 			
 			// Get last year's flights
-			Collection<FlightReport> lyFlights = pyFlights.stream().filter(fr -> fr.getDate().isAfter(lsd)).collect(Collectors.toList());
+			Collection<FlightReport> lyFlights = pyFlights.stream().filter(fr -> fr.getDate().isAfter(lsd)).toList();
 			
 			// Load previous airports and equipment
 			Collection<Airport> pyAP = pyFlights.stream().map(RoutePair::getAirports).flatMap(Collection::stream).collect(Collectors.toSet());

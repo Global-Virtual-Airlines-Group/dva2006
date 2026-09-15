@@ -1,8 +1,7 @@
-// Copyright 2005, 2009, 2016, 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2018, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -13,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Pilot Roster.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 1.0
  */
 
@@ -50,7 +49,7 @@ public class RosterCommand extends AbstractViewCommand {
             if (eq == null) {
             	List<Integer> IDs = dao.getActivePilots(vc.getSortType());
             	Map<Integer, Pilot> pilots = dao.getByID(IDs, "PILOTS");
-            	vc.setResults(IDs.stream().map(pilots::get).filter(Objects::nonNull).collect(Collectors.toList()));
+            	vc.setResults(IDs.stream().map(pilots::get).filter(Objects::nonNull).toList());
             } else
             	vc.setResults(dao.getPilotsByEQ(eq, vc.getSortType(), true, null));
         } catch (DAOException de) {

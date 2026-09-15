@@ -4,7 +4,6 @@ package org.deltava.util.system;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
@@ -111,7 +110,7 @@ public final class SystemData implements Serializable {
 	 */
 	public static <T> Collection<T> getCollection(Class<T> c, String propertyName) {
 		Collection<?> data = (Collection<?>) getObject(propertyName);
-		return (data == null) ? null : data.stream().filter(c::isInstance).map(c::cast).collect(Collectors.toList());
+		return (data == null) ? null : data.stream().filter(c::isInstance).map(c::cast).toList();
 	}
 
 	/**

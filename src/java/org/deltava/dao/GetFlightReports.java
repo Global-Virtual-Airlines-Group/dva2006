@@ -832,7 +832,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
-		sqlBuf.append(StringUtils.listConcat(pireps.stream().map(DatabaseBean::getID).collect(Collectors.toList()), ","));
+		sqlBuf.append(StringUtils.listConcat(pireps.stream().map(DatabaseBean::getID).toList(), ","));
 		sqlBuf.append("))");
 
 		// Convert PIREPs to a Map for lookup

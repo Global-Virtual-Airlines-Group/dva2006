@@ -3,7 +3,6 @@ package org.deltava.beans.schedule;
 
 import java.util.*;
 import java.time.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 
@@ -172,7 +171,7 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable, CalendarEntry 
 	 * @return a Collection of ComboAlias objects
 	 */
 	public Collection<ComboAlias> getOptions() {
-		return _airlineLegs.entrySet().stream().map(me -> ComboUtils.fromString(me.getKey().getName() + " (" + me.getValue() + ")", me.getKey().getComboAlias())).collect(Collectors.toList());
+		return _airlineLegs.entrySet().stream().map(me -> ComboUtils.fromString(me.getKey().getName() + " (" + me.getValue() + ")", me.getKey().getComboAlias())).toList();
 	}
 	
 	/**

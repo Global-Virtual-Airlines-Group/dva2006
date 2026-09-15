@@ -1,9 +1,8 @@
-// Copyright 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.FileUpload;
@@ -20,7 +19,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to import Airspace boundary data. 
  * @author Luke
- * @version 10.2
+ * @version 12.5
  * @since 7.3
  */
 
@@ -69,7 +68,7 @@ public class AirspaceImportCommand extends NavDataImportCommand {
 			
 			// Load the data
 			GetAirspaceDefinition dao = new GetAirspaceDefinition(is);
-			Collection<Airspace> airspaces = dao.load().stream().filter(a -> types.isEmpty() || types.contains(a.getType())).collect(Collectors.toList());
+			Collection<Airspace> airspaces = dao.load().stream().filter(a -> types.isEmpty() || types.contains(a.getType())).toList();
 			airspaces.forEach(a -> a.setCountry(c));
 			
 			// Get the write DAO, clear and update
