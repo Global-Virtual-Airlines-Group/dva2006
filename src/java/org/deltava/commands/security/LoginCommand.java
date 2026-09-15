@@ -1,10 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.net.*;
 import java.time.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import jakarta.servlet.http.*;
@@ -30,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -122,7 +121,7 @@ public class LoginCommand extends AbstractCommand {
 				if (p != null)
 					users.add(p);
 			} else
-				users.addAll(dao.getByName(fullName.toString(), ctx.getDB()).stream().filter(usr -> !usr.getIsForgotten()).collect(Collectors.toList()));
+				users.addAll(dao.getByName(fullName.toString(), ctx.getDB()).stream().filter(usr -> !usr.getIsForgotten()).toList());
 			
 			if (users.size() == 0) {
 				String msg = String.format("Unknown User Name - \"%s\"", fullName);
@@ -138,7 +137,7 @@ public class LoginCommand extends AbstractCommand {
 				}
 				
 				// If we got more than one pilot, filter inactive pilots
-				List<Pilot> activeUsers = users.stream().filter(usr -> ((usr.getStatus() == PilotStatus.ACTIVE) || (usr.getStatus() == PilotStatus.ONLEAVE))).collect(Collectors.toList());
+				List<Pilot> activeUsers = users.stream().filter(usr -> ((usr.getStatus() == PilotStatus.ACTIVE) || (usr.getStatus() == PilotStatus.ONLEAVE))).toList();
 				
 				// If there's more than one, we're good
 				if ((p == null) && (activeUsers.size() == 1))

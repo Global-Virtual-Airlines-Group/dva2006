@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.time.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 
@@ -127,10 +126,11 @@ public class SetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Hub h) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SCHEDULE_HUBS VALUES (?,?,?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SCHEDULE_HUBS VALUES (?,?,?,?)")) {
 			ps.setString(1, h.getAirline().getCode());
 			ps.setString(2, h.getAirport().getIATA());
 			ps.setInt(3, h.getDestinationCount());
+			ps.setBoolean(4, h.getActive());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -218,7 +218,7 @@ public class SetSchedule extends DAO {
 				ps.setInt(6, src.getSkipped());
 				ps.setInt(7, src.getAdjusted());
 				ps.setBoolean(8, src.getPurged());
-				ps.setString(9, StringUtils.listConcat(src.getAirlines().stream().map(al -> al.getCode()).collect(Collectors.toList()), ","));
+				ps.setString(9, StringUtils.listConcat(src.getAirlines().stream().map(al -> al.getCode()).toList(), ","));
 				ps.setInt(10, src.getAuthorID());
 				executeUpdate(ps, 1);
 			}

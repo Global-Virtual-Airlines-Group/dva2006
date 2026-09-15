@@ -1,9 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.math.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.Hemisphere;
@@ -14,7 +13,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -341,8 +340,8 @@ public class GeoUtils {
 	 * @param distance the distance in miles
 	 * @return a Collection of GeoLocations
 	 */
-	public static List<GeoLocation> neighbors(GeoLocation gl, Collection<? extends GeoLocation> points, int distance) {
-		return points.stream().filter(pt -> (gl.distanceTo(pt) < distance)).collect(Collectors.toList());
+	public static List<GeoLocation> neighbors(GeoLocation gl, Collection<GeoLocation> points, int distance) {
+		return points.stream().filter(pt -> (gl.distanceTo(pt) < distance)).toList();
 	}
 
 	/**
@@ -506,7 +505,7 @@ public class GeoUtils {
 	public static LinearRing toRing(Collection<GeoLocation> pts) {
 		List<GeoLocation> brd = new ArrayList<GeoLocation>(pts);
 		brd.add(brd.get(0));
-		List<Coordinate> cts = brd.stream().map(GeoUtils::toCoordinate).collect(Collectors.toList());
+		List<Coordinate> cts = brd.stream().map(GeoUtils::toCoordinate).toList();
 		
 		GeometryFactory gf = new GeometryFactory();
 		return gf.createLinearRing(cts.toArray(new Coordinate[0]));
@@ -547,7 +546,7 @@ public class GeoUtils {
 	 */
 	public static Collection<GeoLocation> fromGeometry(Geometry geo) {
 		List<Coordinate> coords = Arrays.asList(geo.getCoordinates());
-		return coords.stream().map(pt -> fromCoordinate(pt)).collect(Collectors.toList());
+		return coords.stream().map(pt -> fromCoordinate(pt)).toList();
 	}
 	
 	/**

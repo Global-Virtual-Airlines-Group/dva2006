@@ -1,7 +1,6 @@
-// Copyright 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.Airline;
@@ -15,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to synchronize flight schedules between Airlines.
  * @author Luke
- * @version 10.3
+ * @version 12.5
  * @since 6.0
  */
 
@@ -30,8 +29,8 @@ public class ScheduleSyncCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Copy request attributes
-		ctx.setAttribute("apps", SystemData.getApps().stream().filter(a -> !a.getCode().equals(SystemData.get("airline.code"))).collect(Collectors.toList()), REQUEST);
-		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(a -> (a.getActive() && a.getScheduleSync())).collect(Collectors.toList()), REQUEST);
+		ctx.setAttribute("apps", SystemData.getApps().stream().filter(a -> !a.getCode().equals(SystemData.get("airline.code"))).toList(), REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(a -> (a.getActive() && a.getScheduleSync())).toList(), REQUEST);
 
 		// Check for execution
 		CommandResult result = ctx.getResult();

@@ -2,7 +2,6 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.json.*;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airports needed to complete Accomplishments. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 7.2
  */
 
@@ -119,7 +118,7 @@ public class AccomplishmentAirportMapCommand extends AbstractCommand {
 			flights.forEach(helper::add);
 			
 			// Map the missing airports to the accomplishments
-			accs.stream().filter(Accomplishment::getActive).forEach(a -> missingAirports.put(a.getComboAlias(), helper.missing(a).stream().map(ap -> new AirportMapEntry((Airport) ap)).collect(Collectors.toList())));
+			accs.stream().filter(Accomplishment::getActive).forEach(a -> missingAirports.put(a.getComboAlias(), helper.missing(a).stream().map(ap -> new AirportMapEntry((Airport) ap)).toList()));
 			
 			// Remove completed Accomplishments
 			accs.removeIf(a -> (helper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET));

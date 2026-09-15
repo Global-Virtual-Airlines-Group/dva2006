@@ -42,7 +42,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -517,9 +517,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				// List possible tail codes, custom airframes and ETOPS options
 				if ((sbPkg == null) && (acInfo != null) && (acOpts != null)) {
 					int maxETOPS = Math.min(acOpts.getETOPS().ordinal(), ETOPS.ETOPS330.ordinal());
-					List<ETOPS> etopsRange = List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= maxETOPS).collect(Collectors.toList());
+					List<ETOPS> etopsRange = List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= maxETOPS).toList();
 					Collections.reverse(etopsRange);
-					ctx.setAttribute("etopsOV", etopsRange.stream().map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
+					ctx.setAttribute("etopsOV", etopsRange.stream().map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).toList(), REQUEST);
 				}
 				
 				// Determine if deprture time has already passed
@@ -646,7 +646,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						
 							// Get online data if we can
 							if (Attribute.isOnline(fr.getAttributes())) {
-								Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).collect(Collectors.toList());
+								Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).toList();
 								onlineTime = OnlineTime.calculate(entries, otMaxGap);
 							}
 						}

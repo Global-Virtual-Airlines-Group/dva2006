@@ -2,14 +2,14 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.sql.Connection;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * @since 12.5
  */
 
-public class HubCommand extends AbstractFormCommand {
+public class HubCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving the Hub Airport.
@@ -31,13 +31,30 @@ public class HubCommand extends AbstractFormCommand {
 		
 		// Build the bean
 		Hub h = new Hub(SystemData.getAirline(ctx.getParameter("airline")), SystemData.getAirport(ctx.getParameter("airport")));
-		h.setDestinationCount(StringUtils.parse(ctx.getParameter("dstCount"), 0));
-
+		h.setDestinationCount(StringUtils.parse(ctx.getParameter("destCount"), 0));
+		h.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
+		
 		// Write to the database
 		try {
-			SetSchedule wdao = new SetSchedule(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			ctx.startTX();
+			
+			// Check if Hub exists and build audit log
+			GetRawScheduleInfo dao = new GetRawScheduleInfo(con);
+			Collection<Hub> hubs = dao.getHubs();
+			Optional<Hub> oh = hubs.stream().filter(h2 -> h2.equals(h)).findAny();
+			
+			// Build the audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oh.orElse(null), h);				
+			AuditLog ae = AuditLog.create(h, delta, ctx.getUser().getID());
+				
+			// Write the Hub
+			SetSchedule wdao = new SetSchedule(con);
 			wdao.write(h);
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -73,6 +90,9 @@ public class HubCommand extends AbstractFormCommand {
 				GetRawScheduleInfo dao = new GetRawScheduleInfo(ctx.getConnection());
 				Collection<Hub> hubs = dao.getHubs();
 				Optional<Hub> oh = hubs.stream().filter(h -> h.matches(a, ap)).findAny();
+				if (oh.isPresent())
+					readAuditLog(ctx, oh.get());
+				
 				ctx.setAttribute("hub", oh.orElse(null), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
@@ -82,7 +102,7 @@ public class HubCommand extends AbstractFormCommand {
 		}
 		
 		// Get current airlines
-		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(al -> !al.getHistoric()).collect(Collectors.toList()), REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(al -> !al.getHistoric()).toList(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

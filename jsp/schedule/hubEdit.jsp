@@ -39,11 +39,14 @@ golgotha.local.updateAirline = function(cb) {
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
+	cfg.noTours = true;
 	cfg.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers([f.airport]);
 	golgotha.airportLoad.setText([f.airline,f.airport]);
-	if (f.airline.selectedIndex > 0)
-		f.airline.onchange();
+	if (f.airline.selectedIndex < 1) return true;
+	f.airline.onchange();
+	window.setTimeout(function() { f.airport.setAirport('${hub.airport.IATA}', true); }, 450);
+	return true;
 });
 </script>
 </head>
@@ -67,12 +70,17 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Airport</td>
- <td class="data"><el:combo name="airport" idx="*" size="1" required="true" options="${emptyList}" value="${hub.airport}" /><el:airportCode combo="airport" idx="*" airport="${hub.airport}" /></td>
+ <td class="data"><el:combo name="airport" idx="*" size="1" required="true" options="${emptyList}" firstEntry="[ AIRPORT ]" /><el:airportCode combo="airport" idx="*" airport="${hub.airport}" /></td>
 </tr>
 <tr>
  <td class="label">Destinations Served</td>
- <td class="data"><el:text name="destCount" idx="*" size="3" max="4" required="true" value="${hub.destinationCount}" /></td>
+ <td class="data"><el:text name="destCount" idx="*" size="3" max="3" required="true" value="${hub.destinationCount}" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="active" label="Schedule Hub is Active" value="true" checked="${hub.active}" /></td>
+</tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

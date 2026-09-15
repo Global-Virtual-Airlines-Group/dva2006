@@ -2,7 +2,6 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.json.*;
@@ -19,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 2.1
  */
 
@@ -76,7 +75,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			List<LandingStatistics> landingStats = stdao.getLandings(userID);
 			landingStats.sort(new LandingStatsComparator().reversed());
 			ctx.setAttribute("eqLandingStats", landingStats, REQUEST);
-			ctx.setAttribute("eqLandingSortData", landingStats.stream().map(MyFlightStatsCommand::toJSON).collect(Collectors.toList()), REQUEST);
+			ctx.setAttribute("eqLandingSortData", landingStats.stream().map(MyFlightStatsCommand::toJSON).toList(), REQUEST);
 			
 			// Load airframe statistics
 			ctx.setAttribute("airframes", frdao.getAirframes(null, null, userID), REQUEST);
@@ -85,7 +84,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			stdao.setQueryMax(30);
 			Collection<RouteStats> popRoutes = stdao.getPopularRoutes(userID);
 			ctx.setAttribute("popularRoutes", popRoutes, REQUEST);
-			ctx.setAttribute("popRouteSortData", popRoutes.stream().map(MyFlightStatsCommand::toJSON).collect(Collectors.toList()), REQUEST);
+			ctx.setAttribute("popRouteSortData", popRoutes.stream().map(MyFlightStatsCommand::toJSON).toList(), REQUEST);
 			ctx.setAttribute("popularTotal", Integer.valueOf(popRoutes.stream().mapToInt(RouteStats::getFlights).sum()), REQUEST);
 			
 			// Get my best landings
@@ -113,7 +112,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			
 			// Add sort data
 			ctx.setAttribute("landingSortData", jla, REQUEST);
-			ctx.setAttribute("statSortData", vc.getResults().stream().map(JSONUtils::format).collect(Collectors.toList()), REQUEST);
+			ctx.setAttribute("statSortData", vc.getResults().stream().map(JSONUtils::format).toList(), REQUEST);
 
 			// Get pilot and totals
 			ctx.setAttribute("pilot", p, REQUEST);

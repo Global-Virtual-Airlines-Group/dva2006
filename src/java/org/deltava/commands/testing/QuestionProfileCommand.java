@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -185,7 +185,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			AirlineInformation ourAirline = SystemData.getApp(null);
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			Collection<ExamProfile> allExams = epdao.getAllExamProfiles();
-			Collection<ExamProfile> myExams = allExams.stream().filter(ex -> ex.getOwner().equals(ourAirline)).collect(Collectors.toList());
+			Collection<ExamProfile> myExams = allExams.stream().filter(ex -> ex.getOwner().equals(ourAirline)).toList();
 			if (doEdit) {
 				ctx.setAttribute("examNames", myExams, REQUEST);
 				if (qp != null)

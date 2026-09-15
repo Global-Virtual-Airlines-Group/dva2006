@@ -1,9 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.comparators.GeoComparator;
@@ -13,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 10.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -250,7 +249,7 @@ public class NetworkInfo implements Cacheable {
      */
     public Controller getControllerByFrequency(String freq, GeoLocation loc) {
     	if ("122.8".equals(freq)) return null;
-    	List<Controller> results = _controllers.values().stream().filter(c -> freq.equals(c.getFrequency())).collect(Collectors.toList());
+    	List<Controller> results = _controllers.values().stream().filter(c -> freq.equals(c.getFrequency())).toList();
 
     	// Sort by distance if a location specified
     	if ((loc != null) && (results.size() > 1)) {

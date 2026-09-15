@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 11.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -63,6 +63,7 @@ public class AirportListService extends WebService {
 			
 			String al = ctx.getParameter("airline");
 			boolean useSched = Boolean.parseBoolean(ctx.getParameter("useSched"));
+			boolean noTours = Boolean.parseBoolean(ctx.getParameter("noTours"));
 			if (al != null) {
 				Airline a = SystemData.getAirline(al);
 				// Either search the schedule or return the SystemData list
@@ -71,7 +72,9 @@ public class AirportListService extends WebService {
 					GetAirport adao = new GetAirport(con);
 					GetScheduleAirport dao = new GetScheduleAirport(con);
 					Collection<Airport> alAirports = isDest ? dao.getDestinationAirports(a) : dao.getOriginAirports(a);
-					alAirports.addAll(adao.getTourAirports(ctx.getDB()));
+					if (!noTours)
+						alAirports.addAll(adao.getTourAirports(ctx.getDB()));
+					
 					filter.add(new IATAFilter(alAirports));
 				} else {
 					if ("charts".equalsIgnoreCase(al)) {
@@ -97,10 +100,12 @@ public class AirportListService extends WebService {
 				GetAirport adao = new GetAirport(con);
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				Collection<Airport> schedAirports = new LinkedHashSet<Airport>();
-				schedAirports.addAll(adao.getTourAirports(ctx.getDB()));
 				schedAirports.addAll(dao.getOriginAirports(null));
 				schedAirports.addAll(dao.getDestinationAirports(null));
 				schedAirports.addAll(adao.getEventAirports());
+				if (!noTours)
+					schedAirports.addAll(adao.getTourAirports(ctx.getDB()));
+				
 				filter.add(new IATAFilter(schedAirports));
 			}
 			

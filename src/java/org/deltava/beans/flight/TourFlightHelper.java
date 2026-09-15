@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to calculate Flight Tour eligibility.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 10.0
  */
 
@@ -135,7 +135,7 @@ public class TourFlightHelper {
 		
 		// Have we not completed this leg, but have completed the previous?
 		Flight pl = (idx > 1) ? t.getFlights().get(idx - 2) : null;
-		List<FlightReport> tourFlights = _flights.stream().filter(f -> f.getDatabaseID(DatabaseID.TOUR) == t.getID()).collect(Collectors.toList()); // check if previous legs are in time frame for tour
+		List<FlightReport> tourFlights = _flights.stream().filter(f -> f.getDatabaseID(DatabaseID.TOUR) == t.getID()).toList(); // check if previous legs are in time frame for tour
 		boolean isLegComplete = tourFlights.stream().anyMatch(f -> t.legMatches(_fr, f));
 		boolean isPrevComplete = (pl == null) || tourFlights.stream().anyMatch(f -> t.legMatches(f, pl));
 		if (isLegComplete)

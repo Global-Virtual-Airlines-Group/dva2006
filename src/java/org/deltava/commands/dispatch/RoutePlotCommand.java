@@ -1,9 +1,8 @@
-// Copyright 2008, 2009, 2011, 2012, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
 import java.sql.Connection;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 
@@ -17,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 10.6
+ * @version 12.5
  * @since 2.2
  */
 
@@ -59,7 +58,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.release();
 			}
 		} else
-			ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(Airline::getActive).collect(Collectors.toList()), REQUEST);
+			ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(Airline::getActive).toList(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

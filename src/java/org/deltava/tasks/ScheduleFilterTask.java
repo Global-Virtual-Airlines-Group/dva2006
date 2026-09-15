@@ -72,7 +72,7 @@ public class ScheduleFilterTask extends Task {
 				log.info("Purged {} flight schedule entries from {}", Integer.valueOf(entriesPurged), srcInfo.getSource().getDescription());
 				
 				// Load schedule entries, assign legs
-				List<RawScheduleEntry> rawEntries = rawdao.load(srcInfo.getSource(), srcInfo.getEffectiveDate()).stream().filter(se -> srcInfo.contains(se.getAirline())).collect(Collectors.toList());
+				List<RawScheduleEntry> rawEntries = rawdao.load(srcInfo.getSource(), srcInfo.getEffectiveDate()).stream().filter(se -> srcInfo.contains(se.getAirline())).collect(Collectors.toList()); // mutable
 				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries); rawEntries.clear();
 				for (RawScheduleEntry rse : legEntries) {
 					String key = rse.createKey();

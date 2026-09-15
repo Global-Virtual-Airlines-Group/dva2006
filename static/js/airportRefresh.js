@@ -1,4 +1,4 @@
-golgotha.airportLoad = golgotha.airportLoad || {config:{doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false, noCache:false}};
+golgotha.airportLoad = golgotha.airportLoad || {config:{doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false, noCache:false, noTours:false}};
 golgotha.airportLoad.config.clone = function() {
 	let o = {};
 	for (p in this) {
@@ -136,7 +136,7 @@ p.then(function(rsp) {
 	const oldCodes = ((o) && (o.airport)) ? [o.airport.iata, o.airport.icao] : [null];
 	const isChanged = (oldCodes.indexOf(oldCode) < 0);
 	rsp.json().then(function(js) {
-		golgotha.airportLoad.setOptions(combo, js, opts);		
+		golgotha.airportLoad.setOptions(combo, js, opts);
 		combo.setAirport(oldCode, isChanged);
 		combo.disabled = false;
 		if (combo.txt) combo.txt.disabled = false;

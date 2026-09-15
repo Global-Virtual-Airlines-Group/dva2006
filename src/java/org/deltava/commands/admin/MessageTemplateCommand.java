@@ -3,7 +3,6 @@ package org.deltava.commands.admin;
 
 import java.util.*;
 import java.sql.Connection;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.AuditLog;
 import org.deltava.beans.system.*;
@@ -20,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to edit Message Templates.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -131,7 +130,7 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 			mt.setNoReply(Boolean.parseBoolean(ctx.getParameter("noReply")));
 			mt.setNotificationTTL(StringUtils.parse(ctx.getParameter("ttl"), 3600));
 			mt.setNotifyContext(StringUtils.isEmpty(ctx.getParameter("ctx")) ? null : ctx.getParameter("ctx"));
-			mt.setActionTypes(ctx.getParameters("actions", Collections.emptyList()).stream().map(at -> EnumUtils.parse(NotifyActionType.class, at, null)).filter(Objects::nonNull).collect(Collectors.toList()));
+			mt.setActionTypes(ctx.getParameters("actions", Collections.emptyList()).stream().map(at -> EnumUtils.parse(NotifyActionType.class, at, null)).filter(Objects::nonNull).toList());
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(omt, mt);

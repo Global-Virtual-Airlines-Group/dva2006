@@ -1,8 +1,7 @@
-// Copyright 2010, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2020, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.util.CollectionUtils;
@@ -10,7 +9,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A utility class to filter Accomplishments.
  * @author Luke
- * @version 11.0
+ * @version 12.5
  * @since 3.2
  */
 
@@ -87,7 +86,7 @@ class AccomplishmentFilter {
 		if (a.getChoices().isEmpty())
 			return new ArrayList<T>(values);
 		
-		return values.stream().filter(v -> matches(v, a)).collect(Collectors.toList());
+		return values.stream().filter(v -> matches(v, a)).toList();
 	}
 	
 	/**

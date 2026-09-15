@@ -2,7 +2,6 @@
 package org.deltava.commands.assign;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -17,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 4.1
  */
 
@@ -81,7 +80,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 				ssc.setCheckDispatchRoutes(true);
 				myEQTypes.removeIf(ac -> filter(ac, rtp, airlineCode));
 				Collection<ScheduleEntry> entries = sdao.search(ssc);
-				Collection<ScheduleEntry> filteredEntries = entries.stream().filter(se -> filter(se, rp.getType())).collect(Collectors.toList());
+				Collection<ScheduleEntry> filteredEntries = entries.stream().filter(se -> filter(se, rp.getType())).toList();
 				results.put(rtp.getAirportA(), filteredEntries.isEmpty() ? entries : filteredEntries);
 			}
 			

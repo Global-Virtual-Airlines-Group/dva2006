@@ -3,7 +3,6 @@ package org.deltava.commands.pirep;
 
 import java.io.*;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.apache.logging.log4j.*;
@@ -22,7 +21,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 3.1
  */
 
@@ -69,7 +68,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 					Compression c = Compression.detect(f);
 					try (InputStream in = c.getStream(new BufferedInputStream(new FileInputStream(f)))) {
 						GetSerializedPosition psdao = new GetSerializedPosition(in);
-						tdEntries = psdao.read().stream().filter(re -> re.isFlagSet(ACARSFlags.TOUCHDOWN)).collect(Collectors.toList());
+						tdEntries = psdao.read().stream().filter(re -> re.isFlagSet(ACARSFlags.TOUCHDOWN)).toList();
 					}
 				} catch (IOException ie) {
 					throw new DAOException(ie);
