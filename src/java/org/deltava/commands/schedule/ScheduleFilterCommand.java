@@ -87,7 +87,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 				TaskTimer tt = new TaskTimer();
 				
 				// Load the entries, assign legs
-				List<RawScheduleEntry> rawEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).collect(Collectors.toList());
+				List<RawScheduleEntry> rawEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).toList();
 				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries); rawEntries.clear();
 				for (RawScheduleEntry rse : legEntries) {
 					String key = rse.createKey();

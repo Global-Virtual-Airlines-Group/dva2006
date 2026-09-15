@@ -1,9 +1,8 @@
-// Copyright 2007, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.navdata.OceanicTrackInfo;
@@ -16,13 +15,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the North Atlantic Track plotting map.
  * @author Luke
- * @version 7.0
+ * @version 12.5
  * @since 1.0
  */
 
 public class NATPlotCommand extends AbstractCommand {
 	
-	private static final Collection<ComboAlias> TYPES = ComboUtils.fromArray(new String[]{"Eastbound", "Westbound", "Concorde"}, 	new String[] {"E", "W", "C"});
+	private static final Collection<ComboAlias> TYPES = ComboUtils.fromArray(new String[]{"Eastbound", "Westbound", "Concorde"}, new String[] {"E", "W", "C"});
 
 	/**
 	 * Executes the command.
@@ -44,7 +43,7 @@ public class NATPlotCommand extends AbstractCommand {
 		}
 		
 		// Save the dates in the request
-		Collection<String> fmtDates = dates.stream().map(dt -> StringUtils.format(dt, ctx.getUser().getDateFormat())).collect(Collectors.toList());
+		Collection<String> fmtDates = dates.stream().map(dt -> StringUtils.format(dt, ctx.getUser().getDateFormat())).toList();
 		ctx.setAttribute("dates", fmtDates, REQUEST);
 		ctx.setAttribute("trackTypes", TYPES, REQUEST);
 

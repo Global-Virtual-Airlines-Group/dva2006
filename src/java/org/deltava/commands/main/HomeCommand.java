@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 11.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -111,7 +111,7 @@ public class HomeCommand extends AbstractCommand {
 			// Get new/active NOTAMs since last login
 			if (ctx.isAuthenticated() && (ctx.getUser().getLastLogin() != null)) {
 				Person usr = ctx.getUser();
-				Collection<?> notams = nwdao.getActiveNOTAMs().stream().filter(n -> n.getDate().isAfter(usr.getLastLogin())).collect(Collectors.toList());
+				Collection<?> notams = nwdao.getActiveNOTAMs().stream().filter(n -> n.getDate().isAfter(usr.getLastLogin())).toList();
 				ctx.setAttribute("notams", notams, REQUEST);
 			}
 			

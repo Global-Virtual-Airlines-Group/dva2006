@@ -1,9 +1,8 @@
-// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.wx.METAR;
 import org.deltava.util.GeoUtils;
@@ -11,7 +10,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A UsageFilter to filter runways based on maximum tailwind component and popularity.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 10.2
  */
 
@@ -59,6 +58,6 @@ public class UsageWindFilter extends UsagePercentFilter {
 
 	@Override
 	public List<RunwayUse> filter(Collection<RunwayUse> data) {
-		return super.filter(data.stream().filter(r -> (calculateHeadWind(r) >= _maxTailwind)).collect(Collectors.toList()));
+		return super.filter(data.stream().filter(r -> (calculateHeadWind(r) >= _maxTailwind)).toList());
 	}
 }

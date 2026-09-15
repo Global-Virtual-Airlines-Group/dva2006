@@ -3,10 +3,9 @@ package org.deltava.service.stats;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
+import java.time.*;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.time.*;
 
 import java.sql.Connection;
 
@@ -29,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Sevice to display a yaer's worth of flight tracks for the Year in Review page.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 12.4
  */
 
@@ -98,9 +97,9 @@ public class YearlyTrackService extends WebService {
 			}
 			
 			// Get this year's flights, split into ACARS and non-ACARS
-			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isAfter(sd) && fr.getDate().isBefore(ed)).collect(Collectors.toList());
+			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isAfter(sd) && fr.getDate().isBefore(ed)).toList();
 			eqCounts.addAll(CollectionUtils.count(flights, FlightReport::getEquipmentType));
-			Collection<ACARSFlightReport> acarsFlights = flights.stream().filter(ACARSFlightReport.class::isInstance).map(ACARSFlightReport.class::cast).collect(Collectors.toList());
+			Collection<ACARSFlightReport> acarsFlights = flights.stream().filter(ACARSFlightReport.class::isInstance).map(ACARSFlightReport.class::cast).toList();
 			flights.removeAll(acarsFlights);
 			
 			// Calculate flight scores
@@ -172,7 +171,7 @@ public class YearlyTrackService extends WebService {
 		eqCounts.stream().map(JSONUtils::format).forEach(ja -> jo.accumulate("eqCounts", ja));
 		
 		// Get landing ratings
-		List<Count<LandingRating>> ratingCount = CollectionUtils.count(landingScores.stream().map(fls -> LandingRating.rate(fls.score)).collect(Collectors.toList()), Function.identity());
+		List<Count<LandingRating>> ratingCount = CollectionUtils.count(landingScores.stream().map(fls -> LandingRating.rate(fls.score)).toList(), Function.identity());
 		ratingCount.sort(Count.labelComparator(LandingRating.class).reversed());
 		ratingCount.stream().map(JSONUtils::format).forEach(ja -> jo.accumulate("lsCounts", ja));
 				

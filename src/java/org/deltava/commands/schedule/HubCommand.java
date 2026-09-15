@@ -3,7 +3,6 @@ package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.AuditLog;
 import org.deltava.beans.schedule.*;
@@ -103,7 +102,7 @@ public class HubCommand extends AbstractAuditFormCommand {
 		}
 		
 		// Get current airlines
-		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(al -> !al.getHistoric()).collect(Collectors.toList()), REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(al -> !al.getHistoric()).toList(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

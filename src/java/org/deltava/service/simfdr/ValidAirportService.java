@@ -1,10 +1,9 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.jdom2.*;
 
@@ -18,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to serve valid Airports to simFDR.
  * @author Luke
- * @version 7.0
+ * @version 12.5
  * @since 7.0
  */
 
@@ -35,7 +34,7 @@ public class ValidAirportService extends SimFDRService {
 		authenticate(ctx);
 		
 		// Get the airports
-		List<Airport> airports = SystemData.getAirports().values().stream().filter(a -> !a.getAirlineCodes().isEmpty()).collect(Collectors.toList());
+		List<Airport> airports = SystemData.getAirports().values().stream().filter(a -> !a.getAirlineCodes().isEmpty()).toList();
 		airports.sort(new AirportComparator(AirportComparator.ICAO));
 		
 		// Create the XML Document
@@ -62,10 +61,6 @@ public class ValidAirportService extends SimFDRService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE always
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

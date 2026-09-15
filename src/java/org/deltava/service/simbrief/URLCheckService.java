@@ -5,7 +5,6 @@ import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.apache.logging.log4j.*;
@@ -24,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to check for a generated SimBrief flight plan.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.3
  */
 
@@ -87,14 +86,14 @@ public class URLCheckService extends WebService {
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();
 				if (!dGates.isEmpty()) {
-					log.info("Departure Gates = {}", dGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+					log.info("Departure Gates = {}", dGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).toList());
 					dfr.setGateD(dGates.getFirst().getName());
 				}	
 				
 				// Load arrival gate
 				List<Gate> aGates = gh.getArrivalGates();
 				if (!aGates.isEmpty()) {
-					log.info("Arrival Gates = {}", aGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+					log.info("Arrival Gates = {}", aGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).toList());
 					dfr.setGateA(aGates.getFirst().getName());
 				}
 			}

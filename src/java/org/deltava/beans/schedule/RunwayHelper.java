@@ -1,4 +1,4 @@
-// Copyright 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.comparators.RunwayComparator;
 /**
  * A helper class to suggest Runway assignments.
  * @author Luke
- * @version 11.6
+ * @version 12.5
  * @since 11.2
  */
 
@@ -128,7 +128,7 @@ public class RunwayHelper implements RoutePair{
 
 		// Get runways based on terminal routes, and optionally filter based on minimum length
 		Collection<RunwayUse> ru = isDeparture ? _rwysD : _rwysA;
-		List<RunwayUse> rwys = ru.stream().filter(r -> filter(r, tRwys)).collect(Collectors.toList());
+		List<RunwayUse> rwys = ru.stream().filter(r -> filter(r, tRwys)).toList();
 		if (rwys.isEmpty()) return rwys;
 		if ((_opts != null) && !rwys.isEmpty()) { // if all runways are too short (ex. KSNA) just use the longest one(s)
 			Airport a = isDeparture ? _aD : _aA;

@@ -2,7 +2,6 @@
 package org.deltava.commands.admin;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -18,7 +17,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -118,7 +117,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			// Load available check ride scripts
 			if (access.getCanAssignRide()) {
 				GetExamProfiles epdao = new GetExamProfiles(con);
-				Collection<EquipmentRideScript> crScripts = epdao.getScripts().stream().filter(rs -> rs.getProgram().equals(newEQ.getName())).collect(Collectors.toList());
+				Collection<EquipmentRideScript> crScripts = epdao.getScripts().stream().filter(rs -> rs.getProgram().equals(newEQ.getName())).toList();
 				ctx.setAttribute("eqScripts", crScripts, REQUEST);
 			}
 			

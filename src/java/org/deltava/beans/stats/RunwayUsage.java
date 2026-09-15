@@ -1,8 +1,7 @@
-// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -10,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store Runway/Gate usage statistics.
  * @author Luke
- * @version 11.1
+ * @version 12.5
  * @since 11.1
  */
 
@@ -56,7 +55,7 @@ public class RunwayUsage extends RunwayGateUsage {
 	 * @return a List of RunwayUse beans
 	 */
 	public List<RunwayUse> apply(Collection<Runway> rwys) {
-		List<RunwayUse> results = rwys.stream().map(RunwayUse::new).collect(Collectors.toList());
+		List<RunwayUse> results = rwys.stream().map(RunwayUse::new).toList();
 		results.forEach(r -> r.setUseCount(getTotalUsage(r.getName()) + getTotalUsage(r.getAlternateCode())));
 		return results;
 	}
