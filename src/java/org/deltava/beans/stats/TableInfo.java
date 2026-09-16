@@ -1,6 +1,8 @@
 // Copyright 2005, 2009, 2016, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
+import org.deltava.beans.EnumDescription;
+
 /**
  * A system bean to store JDBC table data.
  * @author Luke
@@ -16,12 +18,21 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
 	public enum TableCompression {
 		NONE, LZ4, ZLIB
 	}
+	
+	/**
+	 * InnnoDB row formats.
+	 */
+	public enum RowFormat implements EnumDescription {
+		DYNAMIC, COMPRESSED
+	}
 
     private final String _tableName;
     private long _rows;
     private long _dataLength;
     private long _idxLength;
-    private TableCompression _cmp;
+    private TableCompression _cmp = TableCompression.NONE;
+    private RowFormat _rowFmt = RowFormat.DYNAMIC;
+    private long _fileSize;
     private long _diskSize;
     
     /**
@@ -57,7 +68,15 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
      * @return the average bytes per row
      */
     public int getAverageRowLength() {
-        return (_rows == 0) ? 0 : (int) (_dataLength / _rows);
+        return (_rows == 0) ? 0 : (int) (_dataLength * 1024 / _rows);
+    }
+    
+    /**
+     * Returns the compression ratio of this table.
+     * @return the compression ratio from 0 to 1
+     */
+    public double getCompressionRatio() {
+    	return 1d - (((_cmp == TableCompression.NONE) || (_fileSize == 0)) ? 1 : (_diskSize * 1d / _fileSize));
     }
     
     /**
@@ -87,13 +106,31 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     	return _diskSize;
     }
     
-    /**)
+    /**
+     * Returns the size of the on-disk file backing the table.
+     * @return the size of the file in bytes
+     * @see TableInfo#setFileSize(long)
+     */
+    public long getFileSize() {
+    	return _fileSize;
+    }
+    
+    /**
      * Returns the InnoDB table compression for this table.
      * @return a TableCompression enumeration value
      * @see TableInfo#setCompression(TableCompression)
      */
     public TableCompression getCompression() {
     	return _cmp;
+    }
+    
+    /**
+     * Returns the InnoDB row format used for this table.
+     * @return a RowFormat enumeration value
+     * @see TableInfo#setRowFormat(RowFormat)
+     */
+    public RowFormat getRowFormat() {
+    	return _rowFmt;
     }
     
     /**
@@ -124,6 +161,15 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     }
     
     /**
+     * Updates the size of the on-disk file backing the table.
+     * @param size the size of the file in bytes
+     * @see TableInfo#getFileSize()
+     */
+    public void setFileSize(long size) {
+    	_fileSize = size;
+    }
+    
+    /**
      * Updates the size of the table's indices.
      * @param idxSize the size of the indices in bytes
      * @see TableInfo#getIndexSize()
@@ -139,6 +185,15 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
      */
     public void setCompression(TableCompression cmp) {
     	_cmp = cmp;
+    }
+    
+    /**
+     * Updates the InnoDB row format used for this table.
+     * @param fmt a RowFormat enumeration value
+     * @see TableInfo#getRowFormat()
+     */
+    public void setRowFormat(RowFormat fmt) {
+    	_rowFmt = fmt;
     }
     
     @Override
