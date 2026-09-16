@@ -2,6 +2,7 @@
 package org.deltava.beans.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -153,8 +154,8 @@ public class GateHelper {
 	 * Helper method to filter Gates by Zone and Airline.
 	 */
 	private static List<Gate> filter(Collection<Gate> gates, Airline a, GateZone gz) {
-		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).toList();
-		List<Gate> iGates = fdGates.stream().filter(g -> g.getZone().matches(gz)).toList();
+		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).collect(Collectors.toList());
+		List<Gate> iGates = fdGates.stream().filter(g -> g.getZone().matches(gz)).collect(Collectors.toList());
 		return iGates.isEmpty() ? fdGates : iGates;
 	}
 }

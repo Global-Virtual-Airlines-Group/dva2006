@@ -128,13 +128,13 @@ public class RunwayHelper implements RoutePair{
 
 		// Get runways based on terminal routes, and optionally filter based on minimum length
 		Collection<RunwayUse> ru = isDeparture ? _rwysD : _rwysA;
-		List<RunwayUse> rwys = ru.stream().filter(r -> filter(r, tRwys)).toList();
+		List<RunwayUse> rwys = ru.stream().filter(r -> filter(r, tRwys)).collect(Collectors.toList());
 		if (rwys.isEmpty()) return rwys;
 		if ((_opts != null) && !rwys.isEmpty()) { // if all runways are too short (ex. KSNA) just use the longest one(s)
 			Airport a = isDeparture ? _aD : _aA;
 			int minACLength = isDeparture ? _opts.getTakeoffRunwayLength() : _opts.getLandingRunwayLength();
 			if (minACLength < a.getMaximumRunwayLength()) {
-				Collections.sort(rwys, new RunwayLengthComparator());
+				rwys.sort(new RunwayLengthComparator());
 				int maxRwyLength = rwys.getFirst().getLength();
 				rwys.removeIf(r -> r.getLength() < maxRwyLength);
 			} else
