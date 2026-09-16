@@ -9,7 +9,7 @@ INSERT INTO common.TABLE_INFO (SELECT t.TABLE_SCHEMA, t.TABLE_NAME, t.ROW_FORMAT
         WHEN t.ROW_FORMAT = 'Compressed' THEN CONCAT('key_block=', ts.zip_page_size)
         ELSE 'none'
     END AS compression,
-    t.TABLE_ROWS, (t.DATA_LENGTH + t.INDEX_LENGTH) / 1024 AS logical_bytes, ts.file_size / 1024 AS file_bytes,
+    t.TABLE_ROWS, t.DATA_LENGTH / 1024, t.INDEX_LENGTH / 1024, ts.file_size / 1024 AS file_bytes,
     ts.allocated_size / 1024 AS disk_bytes, 
     ROUND(100 * (1 - ts.allocated_size / NULLIF(ts.file_size, 0)), 1) AS page_saved_pct
 FROM information_schema.TABLES t
