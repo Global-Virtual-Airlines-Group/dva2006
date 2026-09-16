@@ -25,15 +25,6 @@
 <script nonce="${contentSecurity.nonce}">
 golgotha.ff.primaryCode = '${primaryALCode}';
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
-golgotha.ff.validate = function(f) {
-	if (!golgotha.form.check()) return false;
-	if (!golgotha.form.comboSet(f.eqType) && !golgotha.form.comboSet(f.airline) && !golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA))
-		throw new golgotha.event.ValidationError('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.', f.airline);
-
-	golgotha.form.submit(f);
-	golgotha.ff.save(f);
-	return true;
-};
 <c:if test="${!empty fafResults}">
 golgotha.ff.buildValidate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -59,7 +50,12 @@ golgotha.onDOMReady(function() {
 	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	golgotha.airportLoad.setText([f.airline,f.airportD,f.airportA]);
 	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
-	<c:if test="${!hasCriteria}">golgotha.ff.load(f);</c:if>
+	<c:if test="${!hasCriteria}">const d = golgotha.ff.getData();
+	if (d) {
+		golgotha.ff.load(f);
+		f.saveSearch.checked = true;
+	}
+	</c:if>
 	f.airportD.updateAirportCode();
 	f.airportA.updateAirportCode();
 	f.airportD.notVisited = f.nVD.checked;
@@ -130,7 +126,8 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label top">Search Options</td>
- <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br>
+ <td class="data top"><el:box name="saveSearch" value="true" label="Save Search Paramters" /><br>
+<el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br>
 <el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" />
 <span id="historicOpts"><br>
 Historic Flights - <el:combo name="historicOnly" options="${inclusionOpts}" value="${fafCriteria.excludeHistoric}" size="1" idx="*" /></span></td>
