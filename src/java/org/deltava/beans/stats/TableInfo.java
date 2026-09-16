@@ -1,19 +1,28 @@
-// Copyright 2005, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 /**
  * A system bean to store JDBC table data.
  * @author Luke
- * @version 11.0
+ * @version 12.5
  * @since 1.0
  */
 
 public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
 
+	/**
+	 * InnoDB table compression types.
+	 */
+	public enum TableCompression {
+		NONE, LZ4, ZLIB
+	}
+
     private final String _tableName;
     private long _rows;
     private long _dataLength;
     private long _idxLength;
+    private TableCompression _cmp;
+    private long _diskSize;
     
     /**
      * Creates a new TableInfo bean for the specified database table.
@@ -23,7 +32,7 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
      */
     public TableInfo(String tableName) {
         super();
-        _tableName = tableName.trim().toUpperCase();
+        _tableName = tableName.toUpperCase();
     }
     
     /**
@@ -70,6 +79,24 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     }
     
     /**
+     * Returns the on-disk size of the table.
+     * @return the size of the table in bytes
+     * @see TableInfo#setDiskSize(long)
+     */
+    public long getDiskSize() {
+    	return _diskSize;
+    }
+    
+    /**)
+     * Returns the InnoDB table compression for this table.
+     * @return a TableCompression enumeration value
+     * @see TableInfo#setCompression(TableCompression)
+     */
+    public TableCompression getCompression() {
+    	return _cmp;
+    }
+    
+    /**
      * Updates the number of rows in the table.
      * @param rows the number of rows
      * @see TableInfo#getRows()
@@ -88,6 +115,15 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     }
     
     /**
+     * Updates the on-disk size of the table.
+     * @param size the size of the table in bytes
+     * @see TableInfo#getDiskSize()
+     */
+    public void setDiskSize(long size) {
+    	_diskSize = size;
+    }
+    
+    /**
      * Updates the size of the table's indices.
      * @param idxSize the size of the indices in bytes
      * @see TableInfo#getIndexSize()
@@ -97,16 +133,24 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     }
     
     /**
-     * Returns the table name's hash code.
+     * Updates the InnoDB table compression used on this table.
+     * @param cmp a TableCompression
+     * @see TableInfo#getCompression()
      */
+    public void setCompression(TableCompression cmp) {
+    	_cmp = cmp;
+    }
+    
     @Override
     public int hashCode() {
        return _tableName.hashCode();
     }
     
-    /**
-     * Compares two TableInfo objects by comparing the table names.
-     */
+    @Override
+	public String toString() {
+    	return _tableName;
+    }
+    
     @Override
     public int compareTo(TableInfo ti2) {
     	return _tableName.compareTo(ti2._tableName);
