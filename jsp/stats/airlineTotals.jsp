@@ -79,10 +79,12 @@
 <!-- Database Information Table -->
 <el:table className="view">
 <tr class="title caps">
- <td style="width:35%">TABLE NAME</td>
- <td style="width:15%">ROWS</td>
- <td style="width:15%">TABLE SIZE</td>
- <td class="nophone" style="width:15%">INDEX SIZE</td>
+ <td style="width:25%">TABLE NAME</td>
+ <td style="width:10%">ROWS</td>
+ <td style="width:10%">TABLE SIZE</td>
+ <td class="nophone" style="width:10%">INDEX SIZE</td>
+ <td class="nophone" style="width:10%">DISK SPACE</td>
+ <td class="nophone" style="width:12%">COMPRESSION</td>
  <td class="nophone">AVG. ROW SIZE</td>
 </tr>
 
@@ -91,15 +93,17 @@
 <tr>
  <td class="pri bld caps">${tableInfo.name}</td>
  <td class="sec bld"><fmt:int value="${tableInfo.rows}" /></td>
- <td class="bld"><fmt:fileSize value="${tableInfo.size}" showBytes="false" /></td>
- <td class="sec bld nophone"><fmt:fileSize value="${tableInfo.indexSize}" showBytes="false" zero="-" /></td>
+ <td class="bld"><fmt:fileSize value="${tableInfo.size * 1024}" showBytes="false" /></td>
+ <td class="sec bld nophone"><fmt:fileSize value="${tableInfo.indexSize * 1024}" showBytes="false" zero="-" /></td>
+ <td class="bld nophone"><fmt:fileSize value="${tableInfo.diskSize * 1024}" showBytes="false" /></td>
+ <td class="sec small bld nophone">${tableInfo.compression}<c:if test="${tableInfo.compression != 'NONE'}">&nbsp;(<fmt:dec value="${tableInfo.compressionRatio}" fmt="##0.0%" />)</c:if></td>
  <td class="nophone"><fmt:int value="${tableInfo.averageRowLength}" /> bytes/row</td>
 </tr>
 </c:forEach>
 
 <!-- Footer Bar -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="7">&nbsp;</td>
 </tr>
 </el:table>
 <br>

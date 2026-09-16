@@ -1,17 +1,19 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2019, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.stats.TableInfo;
+import org.deltava.beans.stats.TableInfo.*;
 
+import org.deltava.util.EnumUtils;
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to load mySQL table status.
  * @author Luke
- * @version 9.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -41,14 +43,19 @@ public class GetTableStatus extends DAO {
     	if (results != null)
     		return results.clone();
     	
-    	try (PreparedStatement ps = prepareWithoutLimits("SHOW TABLE STATUS FROM " + db)) {
-            results = new CacheableList<TableInfo>(db);
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.TABLE_INFO WHERE (DB=?)")) {
+    		ps.setString(1, db);
             try (ResultSet rs = ps.executeQuery()) {
+            	results = new CacheableList<TableInfo>(db);
             	while (rs.next()) {
-            		TableInfo info = new TableInfo(db + "." + rs.getString(1));
+            		TableInfo info = new TableInfo(db + "." + rs.getString(2));
+            		info.setRowFormat(EnumUtils.parse(RowFormat.class, rs.getString(3), RowFormat.DYNAMIC));
+            		info.setCompression(EnumUtils.parse(TableCompression.class, rs.getString(4), TableCompression.NONE));
             		info.setRows(rs.getLong(5));
-            		info.setSize(rs.getLong(7));
-            		info.setIndexSize(rs.getLong(9));
+            		info.setSize(rs.getLong(6));
+            		info.setIndexSize(rs.getLong(7));
+            		info.setFileSize(rs.getLong(8));
+            		info.setDiskSize(rs.getLong(9));
             		results.add(info);
             	}
             }
