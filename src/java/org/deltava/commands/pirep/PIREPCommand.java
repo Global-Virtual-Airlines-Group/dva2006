@@ -517,7 +517,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// List possible tail codes, custom airframes and ETOPS options
 				if ((sbPkg == null) && (acInfo != null) && (acOpts != null)) {
 					int maxETOPS = Math.min(acOpts.getETOPS().ordinal(), ETOPS.ETOPS330.ordinal());
-					List<ETOPS> etopsRange = List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= maxETOPS).toList();
+					List<ETOPS> etopsRange = List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= maxETOPS).collect(Collectors.toList());
 					Collections.reverse(etopsRange);
 					ctx.setAttribute("etopsOV", etopsRange.stream().map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).toList(), REQUEST);
 				}
