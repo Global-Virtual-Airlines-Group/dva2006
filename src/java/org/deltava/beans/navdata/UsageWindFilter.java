@@ -1,10 +1,10 @@
 // Copyright 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import org.deltava.beans.wx.METAR;
+
 import org.deltava.util.GeoUtils;
 
 /**
