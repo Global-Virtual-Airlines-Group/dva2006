@@ -1035,6 +1035,10 @@ pilot Certification.</td>
  <td class="mid"><el:cmd className="bld" url="changelog">Change Log</el:cmd></td>
  <td class="data">You can view the Change Log summarizing modifications to certain common Airline data.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="adminlog">Admin Activity Log</el:cmd></td>
+ <td class="data">You can view an Audit Log summarizing administrative activity by the <content:airline /> Staff.</td>
+</tr>
 </content:filter>
 <content:filter roles="Admin">
 <tr>
