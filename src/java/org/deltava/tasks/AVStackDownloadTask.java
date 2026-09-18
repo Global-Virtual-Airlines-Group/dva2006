@@ -95,7 +95,7 @@ public class AVStackDownloadTask extends Task {
 			PaginatedList<RawScheduleEntry> entries = avdao.get(ap, h.getAirline(), dt, true, 0);
 			log(ctx, Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 			apEntries.addAll(entries);
-			log(ctx, Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
+			log(ctx, Level.DEBUG, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
 			ThreadUtils.sleep(SLEEP_TIME);
 			while ((ofs + entries.getCount()) < entries.getTotal()) {
 				ofs = entries.getOffset() + entries.getCount();
@@ -131,7 +131,7 @@ public class AVStackDownloadTask extends Task {
 			PaginatedList<RawScheduleEntry> entries = avdao.get(ap, h.getAirline(), dt, false, 0);
 			log(ctx, Level.INFO, "Loaded %d/%d flights for %s", Integer.valueOf(entries.getCount()), Integer.valueOf(entries.getTotal()), ap.getIATA());
 			apEntries.addAll(entries);
-			log(ctx, Level.INFO, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
+			log(ctx, Level.DEBUG, "Sleeping for %d ms", Integer.valueOf(SLEEP_TIME));
 			ThreadUtils.sleep(SLEEP_TIME);
 			while ((ofs + entries.getCount()) < entries.getTotal()) {
 				ofs = entries.getOffset() + entries.getCount();
