@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -153,6 +153,11 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
 			mctx.addData("pilot", p);
 			fr.setStatus(op);
+			
+			// Create audit log entry
+			AdminLogEntry le = new AdminLogEntry(fr);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
 
 			// Start a JDBC transaction
 			ctx.startTX();
@@ -247,6 +252,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				fqdao.add(fr.getID(), !doElite, ctx.getDB());
 			} else
 				fqdao.clear(fr.getID());
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
 
 			// Commit and Invalidate the pilot again to reflect the new totals
 			ctx.commitTX();
