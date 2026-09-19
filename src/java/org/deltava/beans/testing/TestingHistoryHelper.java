@@ -2,6 +2,7 @@
 package org.deltava.beans.testing;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -139,7 +140,7 @@ public final class TestingHistoryHelper implements Cacheable {
 	 * @return a Collection of CheckRide beans
 	 */
 	public Collection<CheckRide> getCheckRides(int expirationDays) {
-		List<CheckRide> results = _tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).toList();
+		List<CheckRide> results = _tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).collect(Collectors.toList());
 		if (expirationDays == 0)
 			return results;
 		
@@ -258,7 +259,7 @@ public final class TestingHistoryHelper implements Cacheable {
 	 */
 	public Collection<Simulator> getSimulators(int days) {
 		Instant minDate = Instant.now().minus(days, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS);
-		List<Simulator> sims = _pireps.stream().filter(fr -> (fr.getSimulator() != Simulator.UNKNOWN)).filter(fr -> minDate.isBefore(fr.getDate())).map(FlightReport::getSimulator).toList();
+		List<Simulator> sims = _pireps.stream().filter(fr -> (fr.getSimulator() != Simulator.UNKNOWN)).filter(fr -> minDate.isBefore(fr.getDate())).map(FlightReport::getSimulator).collect(Collectors.toList());
 		Collections.reverse(sims);
 		return new LinkedHashSet<Simulator>(sims);
 	}
