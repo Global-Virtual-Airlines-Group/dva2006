@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -10,15 +10,19 @@ import java.util.stream.Collectors;
 import java.time.Instant;
 
 import org.json.*;
+
 import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
+
 import org.deltava.dao.*;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Service to act as a Reporting API endpoint.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 12.0
  */
 
@@ -39,6 +43,9 @@ public class ReportingService extends WebService {
 		JSONArray ja = null;
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(ctx.getRequest().getInputStream()))) {
 			String json = br.lines().collect(Collectors.joining("\n"));
+			if (StringUtils.isEmpty(json))
+				throw new IOException("Empty Payload");
+			
 			char c = json.charAt(0);
 			if (c == '[')
 				ja = new JSONArray(json);

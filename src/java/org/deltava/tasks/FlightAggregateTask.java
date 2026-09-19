@@ -5,6 +5,7 @@ import static java.util.concurrent.TimeUnit.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.apache.logging.log4j.Level;
@@ -100,7 +101,7 @@ public class FlightAggregateTask extends Task {
 					GetAccomplishment accdao = new GetAccomplishment(con);
 					Collection<Accomplishment> allAccs = accdao.getAll();
 					Collection<Accomplishment> pAccs = accdao.getByPilot(p, ctx.getDB()).stream().map(Accomplishment::new).toList();
-					Collection<Accomplishment> accs = allAccs.stream().filter(a -> !pAccs.contains(a)).toList();
+					Collection<Accomplishment> accs = allAccs.stream().filter(a -> !pAccs.contains(a)).collect(Collectors.toList());
 					
 					// Add the approved PIREP
 					acchelper.add(fr);

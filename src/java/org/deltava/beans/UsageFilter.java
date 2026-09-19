@@ -2,6 +2,7 @@
 package org.deltava.beans;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A utility class to filter beans with usage counts.
@@ -31,6 +32,6 @@ public interface UsageFilter<T extends UseCount> {
 	default List<T> filter(Collection<T> data) {
 		final int max = data.stream().mapToInt(UseCount::getUseCount).max().orElse(0);
 		final int total = data.stream().mapToInt(UseCount::getUseCount).sum();
-		return data.stream().filter(d -> filter(d, max, total)).toList();
+		return data.stream().filter(d -> filter(d, max, total)).collect(Collectors.toList());
 	}
 }

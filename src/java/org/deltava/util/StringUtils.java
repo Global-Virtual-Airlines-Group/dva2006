@@ -2,6 +2,7 @@
 package org.deltava.util;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.text.*;
 import java.time.*;
 import java.time.format.*;
@@ -476,7 +477,7 @@ public final class StringUtils {
 	 * @return a List of Strings
 	 */
 	public static List<String> nullTrim(Collection<String> s) {
-		return (s == null) ? null : s.stream().filter(e -> !isEmpty(e)).toList();
+		return (s == null) ? null : s.stream().filter(e -> !isEmpty(e)).collect(Collectors.toList());
 	}
 	
 	/**
