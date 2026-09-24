@@ -66,6 +66,15 @@ public final class StringUtils {
 	}
 	
 	/**
+	 * Sanitizes a string to avoid newlines and control characters.
+	 * @param s the String
+	 * @return the sanitized String
+	 */
+	public static String sanitizeLog(String s) {
+		return (s == null) ? "" : s.replaceAll("[\\p{Cntrl}]", "?");
+	}
+	
+	/**
 	 * Sanitizes a string to only allow letters and digits.
 	 * @param s the String
 	 * @return the sanitized String
