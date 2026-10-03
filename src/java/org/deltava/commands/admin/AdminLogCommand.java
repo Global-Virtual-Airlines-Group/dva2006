@@ -7,13 +7,14 @@ import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.IPBlock;
+
+import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
- * A Web Site Command to view Admin Log Entries. 
+ * A Web Site Command to view Administrative Log Entries. 
  * @author Luke
  * @version 12.5
  * @since 12.5
@@ -34,9 +35,17 @@ public class AdminLogCommand extends AbstractViewCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get the log entries and aggregated stats
+			// Get the log entries and aggregated statistics
 			GetAuditLog dao = new GetAuditLog(con);
 			vctx.setResults(dao.getAdminEntries());
+			
+			// Load administrative users
+			Collection<Pilot> users = new HashSet<Pilot>();
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			users.addAll(pdao.getByRole("PIREP", ctx.getDB(), true));
+			users.addAll(pdao.getByRole("Examination", ctx.getDB(), true));
+			users.addAll(pdao.getByRole("Operations", ctx.getDB(), true));
+			users.addAll(pdao.getByRole("HR", ctx.getDB(), true));
 			
 			// Load the IP addresses
 			GetIPLocation ipdao = new GetIPLocation(con);
@@ -46,13 +55,17 @@ public class AdminLogCommand extends AbstractViewCommand {
 				ipInfo.put(addr, ipdao.get(addr));
 			
 			// Get the authors
-			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("authors", pdao.getByID(vctx.getResults().stream().map(AuthoredBean::getAuthorID).collect(Collectors.toSet()), "PILOTS"), REQUEST);
+			users.addAll(pdao.getByID(vctx.getResults().stream().map(AuthoredBean::getAuthorID).collect(Collectors.toSet()), "PILOTS").values());
+			ctx.setAttribute("authors", CollectionUtils.createMap(CollectionUtils.sort(users, new PilotComparator(PersonComparator.FIRSTNAME)), Pilot::getID), REQUEST);
+			
+			// Get statistics
+			Map<Integer,Integer> stats = dao.getAdminStats(dayCount);
+			users.stream().map(Pilot::getID).forEach(id -> stats.putIfAbsent(id, Integer.valueOf(0)));
 			
 			// Save request attributes
 			ctx.setAttribute("days", Integer.valueOf(dayCount), REQUEST);
 			ctx.setAttribute("ip", ipInfo, REQUEST);
-			ctx.setAttribute("stats", dao.getAdminStats(dayCount), REQUEST);
+			ctx.setAttribute("stats", stats, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

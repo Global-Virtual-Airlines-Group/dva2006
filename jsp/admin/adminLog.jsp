@@ -31,10 +31,12 @@
 <tr class="title caps">
  <td class="left" colspan="5">ACTIVITY LOG STATISTICS - <fmt:int value="${days}" /> DAYS</td>
 </tr>
-<c:forEach var="authorID" items="${stats.keySet()}">
-<c:set var="author" value="${authors[authorID]}" scope="page" />
+<c:forEach var="author" items="${authors.values()}">
+<tr>
  <td colspan="2" class="pri bld"><el:cmd url="pilot" link="${author}">${author.name}</el:cmd></td>
- <td colspan="3" class="sec bld right"><fmt:int value="${stats[authorID]}" /> actions</td>
+ <td colspan="2" class="bld">${author.rank.name}, ${author.equipmentType}</td>
+ <td class="sec bld right"><fmt:int value="${stats[author.ID]}" /> actions</td>
+</tr>
 </c:forEach>
 
 <!-- Table Header Bar -->
