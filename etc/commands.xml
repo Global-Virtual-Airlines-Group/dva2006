@@ -2119,6 +2119,12 @@
 		<roles>Operations,HR</roles>
 	</command>
 
+	<command id="adminlog">
+		<name>Admin Action Log</name>
+		<class>org.deltava.commands.admin.AdminLogCommand</class>
+		<roles>Operations,HR</roles>
+	</command>
+
 	<command id="permusers">
         <name>Permanent Users</name>
         <class>org.deltava.commands.admin.PermanentUsersCommand</class>

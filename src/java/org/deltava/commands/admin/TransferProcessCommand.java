@@ -23,8 +23,6 @@ import org.deltava.security.command.TransferAccessControl;
 
 public class TransferProcessCommand extends AbstractCommand {
 	
-	private static final Collection<Rank> STAFF_RANKS = List.of(Rank.ACP, Rank.CP);
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -101,7 +99,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			
 			// Get the available ranks
 			Collection<Rank> eqRanks = new LinkedHashSet<Rank>(newEQ.getRanks());
-			eqRanks.removeAll(STAFF_RANKS);
+			eqRanks.removeIf(Rank::isCP);
 			if (!isSC)
 				eqRanks.remove(Rank.SC);
 			if (!hasCaptExam || !hasLegs)

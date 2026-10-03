@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -147,11 +147,15 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			StatusUpdate upd2 = new StatusUpdate(a.getPilotID(), UpdateType.STATUS_CHANGE);
 			upd2.setAuthorID(ctx.getUser().getID());
 			upd2.setDescription("Applicant Approved, Pilot Hired");
+			
+			// Create audit log entry
+			AdminLogEntry le = new AdminLogEntry(a);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
 
 			// Write the status updates
 			SetStatusUpdate updao = new SetStatusUpdate(con);
-			updao.write(upd, ctx.getDB());
-			updao.write(upd2, ctx.getDB());
+			updao.write(List.of(upd, upd2));
 
 			// Write an inactivity purge entry
 			SetInactivity idao = new SetInactivity(con);
@@ -165,6 +169,10 @@ public class ApplicantApproveCommand extends AbstractCommand {
 				p.setACARSRestriction(Restriction.NOMANUAL);
 				pwdao.write(p, ctx.getDB());
 			}
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
 
 			// Get the authenticator and add the user
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {

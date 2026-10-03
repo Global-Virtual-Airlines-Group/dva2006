@@ -2,7 +2,6 @@
 package org.deltava.commands.pirep;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -10,8 +9,6 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.ACARSRouteEntry;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.hr.*;
-import org.deltava.beans.stats.*;
-import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -20,20 +17,18 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.*;
 
-import org.deltava.util.StringUtils;
-import org.deltava.util.cache.*;
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
 public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 	
-	private static final Cache<CacheableCollection<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "Logbook");
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -95,6 +90,13 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			if (isScored)
 				mctx.setTemplate(mtdao.get((scoreAction == CheckRideScoreOptions.PASS) ? "CRPASS" : "CRFAIL"));
+			
+			// Build the audit log entry
+			Collection<AdminLogEntry> logEntries = new ArrayList<AdminLogEntry>();
+			AdminLogEntry le = new AdminLogEntry(fr);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+			logEntries.add(le);
 
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -110,6 +112,12 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				cr.setSubmittedOn(fr.getSubmittedOn());
 				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
 				cr.setStatus(TestStatus.SCORED);
+				
+				// Build the additional log entry
+				AdminLogEntry cle = new AdminLogEntry(cr);
+				cle.setAuthorID(ctx.getUser().getID());
+				cle.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+				logEntries.add(cle);
 			}
 			
 			// Update the flight report
@@ -119,53 +127,10 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				fr.setComments(ctx.getParameter("dComments"));
 			
 			// Figure out what network the flight was flown on and ensure we have an ID
-			OnlineNetwork net = null;
-			try {
-				net = OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase());
-				if (!p.hasNetworkID(net))
-					throw new IllegalStateException("No " + net + " ID");
-			} catch (Exception e) {
-				net = fr.getNetwork();
-			} finally {
-				fr.setNetwork(net);
-			}
-			
-			// Load the flights for accomplishment purposes
-			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
-			if (fr.getStatus() == FlightStatus.OK) {
-				CacheableCollection<FlightReport> flights = _cache.get(p.cacheKey());
-				if (flights == null) {
-					Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
-					rdao.loadCaptEQTypes(p.getID(), pireps, ctx.getDB());
-					flights = new CacheableList<FlightReport>(p.cacheKey(), pireps);
-					_cache.add(flights);
-				}
-				
-				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
-				flights.forEach(acchelper::add);
-			
-				// Load accomplishments and only save the ones we don't meet yet
-				GetAccomplishment accdao = new GetAccomplishment(con);
-				Collection<Accomplishment> accs = accdao.getAll().stream().filter(a -> acchelper.has(a) == Result.NOTYET).collect(Collectors.toSet());
-			
-				// Add the approved PIREP
-				acchelper.add(fr);
-
-				// See if we meet any accomplishments now
-				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
-					Accomplishment a = i.next();
-					if (acchelper.has(a) == Result.MEET) {
-						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RECOGNITION);
-						upd.setAuthorID(ctx.getUser().getID());
-						upd.setDescription("Joined " + a.getName());
-						upds.add(upd);
-					} else
-						i.remove();
-				}
-				
-				// Log Accomplishments
-				if (!accs.isEmpty())
-					ctx.setAttribute("accomplishments", accs, REQUEST);
+			OnlineNetwork newNetwork = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null);
+			if ((newNetwork != fr.getNetwork()) ) {
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, String.format("Updated online network from %s to %s by %s", fr.getNetwork(), ((newNetwork == null) ? "Offline" : newNetwork), ctx.getUser().getName()));
+				fr.setNetwork(newNetwork);
 			}
 			
 			// Start a JDBC transaction
@@ -190,6 +155,11 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				SetExam ewdao = new SetExam(con);
 				ewdao.write(cr);
 			}
+			
+			// Add to post-approval queue
+			SetFlightReportQueue fqdao = new SetFlightReportQueue(con);
+			boolean doElite = (fr.getStatus() == FlightStatus.OK) && SystemData.getBoolean("econ.elite.enabled");
+			fqdao.add(fr.getID(), !doElite, ctx.getDB());
 
 			// If we are approving the checkride, then approve the transfer request
 			if (isScored && (txreq != null)) {
@@ -201,9 +171,10 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				txwdao.update(txreq);
 			}
 
-			// Write the Status Updates
-			SetStatusUpdate swdao = new SetStatusUpdate(con);
-			swdao.write(upds);
+			// Write the log entries
+			SetAuditLog adwdao = new SetAuditLog(con);
+			for (AdminLogEntry ale : logEntries)
+				adwdao.write(ale);
 
 			// Commit the transaction
 			ctx.commitTX();

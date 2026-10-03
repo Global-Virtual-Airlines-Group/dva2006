@@ -3,6 +3,7 @@ package org.deltava.commands.hr;
 
 import java.sql.Connection;
 
+import org.deltava.beans.AdminLogEntry;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
@@ -13,7 +14,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to reset a closed Job Posting.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 3.6
  */
 
@@ -41,6 +42,11 @@ public class JobResetCommand extends AbstractCommand {
 			if (!access.getCanReset())
 				throw securityException("Cannot reset short list for Job Posting " + jp.getID());
 			
+			// Create audit log entry
+			AdminLogEntry le = new AdminLogEntry(jp);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+			
 			// Start transaction
 			ctx.startTX();
 			
@@ -54,6 +60,10 @@ public class JobResetCommand extends AbstractCommand {
 					jwdao.write(a);
 				}
 			}
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
 			
 			ctx.commitTX();
 		} catch (DAOException de) {
