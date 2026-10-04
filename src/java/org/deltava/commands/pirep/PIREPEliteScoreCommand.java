@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate Elite program scoring for a Flight Report.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 11.2
  */
 
@@ -122,10 +122,21 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 			if (!sc.equals(osc)) {
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.ELITE, String.format("Recalculated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 				
+				// Create the audit log entry
+				AdminLogEntry le = new AdminLogEntry(sc);
+				le.setAuthorID(ctx.getUser().getID());
+				le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+				
 				ctx.startTX();
+				
+				// WRite the flight report
 				SetFlightReport frwdao = new SetFlightReport(con);
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
+				
+				// Write the audit log entry
+				SetAuditLog adwdao = new SetAuditLog(con);
+				adwdao.write(le);
 				ctx.commitTX();
 			}
 			
@@ -135,6 +146,7 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 			ctx.setAttribute("oldScore", osc, REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

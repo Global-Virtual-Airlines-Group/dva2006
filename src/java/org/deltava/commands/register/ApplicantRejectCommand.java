@@ -4,6 +4,7 @@ package org.deltava.commands.register;
 import java.sql.Connection;
 import java.time.Instant;
 
+import org.deltava.beans.AdminLogEntry;
 import org.deltava.beans.Applicant;
 import org.deltava.beans.system.*;
 
@@ -16,7 +17,7 @@ import org.deltava.security.command.ApplicantAccessControl;
 /**
  * A Web Site Command to reject Applicants.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -56,6 +57,11 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			mctxt.setTemplate(mtdao.get("APPREJECT"));
 			mctxt.addData("applicant", a);
 			
+			// Create audit log entry
+			AdminLogEntry le = new AdminLogEntry(a);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+			
 			// Start the transaction
 			ctx.startTX();
 			
@@ -87,6 +93,10 @@ public class ApplicantRejectCommand extends AbstractCommand {
 					ctx.setAttribute("blackListAdd", be, REQUEST);
 				}
 			}
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
 
 			// Get the write DAO and reject the applicant
 			SetApplicant wdao = new SetApplicant(con);

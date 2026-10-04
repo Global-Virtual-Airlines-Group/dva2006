@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
+import org.deltava.beans.AdminLogEntry;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.hr.*;
 
@@ -17,7 +18,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to create a Job Posting comment.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 3.4
  */
 
@@ -50,6 +51,11 @@ public class JobCommentCommand extends AbstractCommand {
 			c.setCreatedOn(Instant.now());
 			c.setBody(ctx.getParameter("body"));
 			
+			// Create audit log entry
+			AdminLogEntry le = new AdminLogEntry(jp);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+			
 			// Create the context
 			MessageContext mctxt = new MessageContext();
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -64,14 +70,21 @@ public class JobCommentCommand extends AbstractCommand {
 			pilots.remove(ctx.getUser());
 			
 			// Write the comment
+			ctx.startTX();
 			SetJobs jwdao = new SetJobs(con);
 			jwdao.write(c);
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
+			ctx.commitTX();
 			
             // Create the e-mail message
             Mailer mailer = new Mailer(ctx.getUser());
             mailer.setContext(mctxt);
             mailer.send(pilots);
 		} catch(DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

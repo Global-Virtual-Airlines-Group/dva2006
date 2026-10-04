@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -110,6 +110,11 @@ public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 			cr.setStage(eq.getStage());
 			cr.setType(rt);
 			cr.setComments(comments);
+			
+			// Build the audit log entry
+			AdminLogEntry le = new AdminLogEntry(cr);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
 
 			// Use a SQL Transaction
 			ctx.startTX();
@@ -117,7 +122,7 @@ public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 			// Write the checkride to the database
 			SetExam exwdao = new SetExam(con);
 			exwdao.write(cr);
-
+			
 			// Update the transfer request
 			txreq.addCheckRideID(cr.getID());
 			txreq.setStatus(TransferStatus.ASSIGNED);
@@ -125,6 +130,10 @@ public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 			// Save the transfer request
 			SetTransferRequest txwdao = new SetTransferRequest(con);
 			txwdao.update(txreq);
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
 
 			// Commit the transaction
 			ctx.commitTX();

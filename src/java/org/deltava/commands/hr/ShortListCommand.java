@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.time.Instant;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.AdminLogEntry;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
@@ -19,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to short-list applicants for a Job Posting.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 3.4
  */
 
@@ -47,6 +48,11 @@ public class ShortListCommand extends AbstractCommand {
 			if (!access.getCanShortlist())
 				throw securityException("Cannot shortlist Job Posting " + jp.getID());
 			
+			// Create audit log entry
+			AdminLogEntry le = new AdminLogEntry(jp);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+			
 			// Start transaction
 			ctx.startTX();
 			
@@ -66,10 +72,10 @@ public class ShortListCommand extends AbstractCommand {
 				if (isSL && (a.getStatus() == ApplicantStatus.PENDING)) {
 					a.setStatus(ApplicantStatus.SHORTLIST);
 					SL.add(a);
-					buf.append("Added " + a.getName() + " to shortlist\r\n");
+					buf.append("Added ").append(a.getName()).append(" to shortlist\r\n");
 				} else if (a.getShortlisted() && !isSL) {
 					a.setStatus(ApplicantStatus.PENDING);
-					buf.append("Removed " + a.getName() + " from shortlist\r\n");
+					buf.append("Removed ").append(a.getName()).append(" from shortlist\r\n");
 				} else if (a.getShortlisted())
 					SL.add(a);
 					
@@ -81,6 +87,10 @@ public class ShortListCommand extends AbstractCommand {
 			c.setCreatedOn(Instant.now());
 			c.setBody(buf.toString());
 			jwdao.write(c);
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
 			
 			// Commit
 			ctx.commitTX();

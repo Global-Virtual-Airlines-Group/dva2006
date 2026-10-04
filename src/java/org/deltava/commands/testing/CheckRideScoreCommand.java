@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to score Check Rides.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -76,17 +76,24 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			// Get the message tempate
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get(cr.getPassFail() ? "CRPASS" : "CRFAIL"));
+			
+			// Build the audit log entry
+			AdminLogEntry le = new AdminLogEntry(cr);
+			le.setAuthorID(ctx.getUser().getID());
+			le.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
 
 			// Get the pilot profile and set status
 			ctx.setAttribute("pilot", sendTo, REQUEST);
 			ctx.setAttribute("isScore", Boolean.TRUE, REQUEST);
 
-			// Use a SQL Transaction
+			// Save the check ride in the database
 			ctx.startTX();
-
-			// Save the video in the database
 			SetExam wdao = new SetExam(con);
 			wdao.write(cr);
+			
+			// Write the audit log entry
+			SetAuditLog adwdao = new SetAuditLog(con);
+			adwdao.write(le);
 
 			// Update the transfer request
 			GetTransferRequest txdao = new GetTransferRequest(con);
