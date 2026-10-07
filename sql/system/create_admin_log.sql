@@ -1,6 +1,6 @@
 CREATE TABLE ADMIN_LOG (
  CREATED                DATETIME NOT NULL,
- NAME                   VARCHAR(24) NOT NULL,
+ TYPE                   VARCHAR(24) NOT NULL,
  ID                     VARCHAR(16) NOT NULL,
  AUTHOR_ID              INTEGER UNSIGNED NOT NULL DEFAULT 0,
  REMOTE_ADDR            VARBINARY(16),
