@@ -66,7 +66,7 @@ public class AVStackExtendTask extends Task {
 				// Extend by a day
 				SetSchedule wdao = new SetSchedule(con);
 				for (RawScheduleEntry rse : newEntries) {
-					rse.setLineNumber(srcLine++);
+					rse.setLineNumber(++srcLine);
 					wdao.writeRaw(rse, false);
 				}
 				
