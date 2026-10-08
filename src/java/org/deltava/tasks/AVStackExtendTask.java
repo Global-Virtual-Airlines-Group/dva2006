@@ -1,9 +1,9 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
+import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-import java.time.LocalDate;
-import java.util.Collection;
 
 import org.deltava.beans.schedule.*;
 
@@ -41,22 +41,67 @@ public class AVStackExtendTask extends Task {
 			
 			// See if we have flights for that day
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			Collection<RawScheduleEntry> entries = rsdao.load(ScheduleSource.AVSTACK, effDate);
+			final Collection<RawScheduleEntry> entries = rsdao.load(ScheduleSource.AVSTACK, effDate);
 			if (entries.isEmpty()) {
-				log.warn("No AviationStack fligts found for {}, extending {} by 1 day", StringUtils.format(effDate, "MM/dd/yyyy"), StringUtils.format(effDate.minusDays(1), "MM/dd/yyyy"));
+				log.warn("No AviationStack fligts found for {}", StringUtils.format(effDate, "MM/dd/yyyy"));
+				
+				// Determine what day to load
+				DayOfWeek dw = effDate.getDayOfWeek();
+				LocalDate copyDate = effDate.minusDays((dw == DayOfWeek.SATURDAY) || (dw == DayOfWeek.SUNDAY) || (dw == DayOfWeek.MONDAY) ? 7 : 1);
+				entries.addAll(rsdao.load(ScheduleSource.AVSTACK, copyDate));
+				if (entries.isEmpty()) {
+					log.error("No AviationStack fligts found for {}, aborting", StringUtils.format(copyDate, "MM/dd/yyyy"));
+					ctx.release();
+					return;
+				}
+				
+				// Clone into a new schedule entry object
+				List<RawScheduleEntry> newEntries = entries.stream().map(rse -> clone(rse, copyDate)).toList();
+				
+				// Get max line
+				ctx.startTX();
+				GetRawScheduleInfo rsidao = new GetRawScheduleInfo(con);
+				int srcLine = rsidao.getNextLine(ScheduleSource.AVSTACK);
 				
 				// Extend by a day
-				SetSchedule wdao = new SetSchedule(con);	
-				int entryCount = wdao.extendRaw(ScheduleSource.AVSTACK, effDate.minusDays(1));
-				log.info("Extended {} raw schedule entries to {}", Integer.valueOf(entryCount), StringUtils.format(effDate, "MM/dd/yyyy"));
+				SetSchedule wdao = new SetSchedule(con);
+				for (RawScheduleEntry rse : newEntries) {
+					rse.setLineNumber(srcLine++);
+					wdao.writeRaw(rse, false);
+				}
+				
+				ctx.commitTX();
+				log.info("Wrote {} raw schedule entries for {}", Integer.valueOf(newEntries.size()), StringUtils.format(copyDate, "MM/dd/yyyy"));
 			} else
 				log.info("Found {} AviationStack flights for {}", Integer.valueOf(entries.size()), StringUtils.format(effDate, "MM/dd/yyyy"));
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
 
 		log.info("Complete");
+	}
+	
+	private static RawScheduleEntry clone(RawScheduleEntry se, LocalDate toDate) {
+		RawScheduleEntry rse = new RawScheduleEntry(se.getAirline(), se.getFlightNumber(), se.getLeg());
+		rse.setAirportD(se.getAirportD());
+		rse.setAirportA(se.getAirportA());
+		rse.setEquipmentType(se.getEquipmentType());
+		rse.setStartDate(toDate);
+		rse.setEndDate(toDate.plusDays(1));
+		rse.setIsUTC(se.getIsUTC());
+		rse.setTimeD(se.getTimeD().toLocalDateTime());
+		rse.setTimeA(se.getTimeA().toLocalDateTime());
+		rse.setAcademy(se.getAcademy());
+		rse.setHistoric(se.getHistoric());
+		rse.setForceInclude(se.getForceInclude());
+		rse.setSource(se.getSource());
+		rse.setCodeShare(se.getCodeShare());
+		rse.setComments(se.getComments());
+		rse.setRemarks(se.getRemarks());
+		rse.setDayMap(1 << toDate.getDayOfWeek().ordinal());
+		return rse;
 	}
 }
