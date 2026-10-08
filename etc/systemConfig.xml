@@ -386,6 +386,12 @@
 			<min type="Integer">5</min>
 		</password>
 
+		<!-- Rate Limited for blocking auth failures -->
+		<block>
+			<maxReqs>5</maxReqs>
+			<minTime>3600</minTime>
+		</block>
+
 		<!-- Security cookie settings -->
 		<cookie>
 			<authAge type="Integer">8</authAge> <!-- Hours -->

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
+import org.deltava.beans.system.RateLimiter.Result;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.taglib.ContentHelper;
@@ -30,7 +31,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 12.3
+ * @version 12.5
  * @since 1.0
  */
 
@@ -50,7 +51,9 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	
 	private CommandLogger _logger;
 	private Thread _logThread;
-
+	
+	private RateLimiter _rl;
+	
 	@Override
 	public String getServletInfo() {
 		return "Command Controller Servlet " + VersionInfo.TXT_COPYRIGHT;
@@ -60,10 +63,12 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		
 		private final Logger tlog = LogManager.getLogger(CommandLogger.class);
 		private final int _maxSize;
+		private final String _jedisKey;
 
 		CommandLogger(int maxSize) {
 			super();
 			_maxSize = Math.max(1, maxSize);
+			_jedisKey = String.format("CMDRL-%s", SystemData.get("airline.code"));
 		}
 
 		@Override
@@ -75,6 +80,31 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				} catch (InterruptedException ie) {
 					Thread.currentThread().interrupt();
 					tlog.warn("Interrupted");
+				}
+				
+				// Coalesce rate limiter net blocks
+				List<RequestCounter> ctrs = _rl.getCounters().stream().filter(rc -> (rc.getIPInfo() == null)).map(RequestCounter::new).toList();
+				if (!ctrs.isEmpty()) {
+					ConnectionPool<Connection> pool = SystemData.getJDBCPool();
+					Connection c = null;
+					try {
+						c = pool.getConnection();
+						GetIPLocation ipdao = new GetIPLocation(c);
+						for (RequestCounter rc : ctrs) {
+							IPBlock ip = ipdao.get(rc.getAddress());
+							rc.setIPInfo(ip);
+						}
+					} catch (ConnectionPoolException | DAOException de) {
+						tlog.warn("Error loading netblocks - {}", de.getMessage());
+					} finally {
+						pool.release(c);
+					}
+					
+					// Merge the counters based on netblock and persist to Valkey
+					Collection<RequestCounter> mctrs = _rl.merge();
+					JedisUtils.write(_jedisKey, _rl.getMinTime().toSeconds(), mctrs);
+					if (mctrs.size() < ctrs.size())
+						tlog.info("{} merged {} counters into {}", SystemData.get("airline.code"), Integer.valueOf(ctrs.size()), Integer.valueOf(mctrs.size()));
 				}
 
 				// Check if we need to log
@@ -115,6 +145,11 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		} catch (IOException ie) {
 			throw new ServletException(ie);
 		}
+		
+		// Initialize bot Rate Limiter
+		_rl = new RateLimiter(true, SystemData.getInt("security.block.maxReqs", 0), SystemData.getInt("security.block.minTime", 30));
+		if (_rl.getMinRequests() > 0)
+			log.info("Blocking after {} requests in {}s", Integer.valueOf(_rl.getMinRequests()), Long.valueOf(_rl.getMinTime().getSeconds()));
 
 		// Initialize the redirection command
 		Command cmd = new RedirectCommand();
@@ -153,6 +188,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 			return _cmds.get(cmdName);
 		} catch (Exception e) {
+			log.warn("Error parsing command - {}", rawURL);
 			return _defaultCmd;
 		}
 	}
@@ -216,8 +252,19 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			NewRelic.setUserName(req.getUserPrincipal().getName());
 		try {
 			// Validate command access
-			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles()))
-				throw new CommandException("Not Authorized to execute", false) {{ setForwardURL("/jsp/error/securityViolation.jsp"); setWarning(true); setStatusCode(SC_FORBIDDEN); setSuppressed(!ctxt.isAuthenticated()); }};
+			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles())) {
+				int code = SC_FORBIDDEN;
+				if (!ctxt.isAuthenticated()) {
+					RateLimiter.Result r = _rl.addAddress(req.getRemoteAddr());
+					if (r != Result.PASS) {
+						log.warn("Excessive Requests from {}", req.getRemoteAddr());
+						code = 429;
+					}
+				}
+			
+				final int c = code;
+				throw new CommandException("Not Authorized to execute", false) {{ setForwardURL("/jsp/error/securityViolation.jsp"); setWarning(true); setStatusCode(c); setSuppressed(!ctxt.isAuthenticated()); }};
+			}
 
 			// If we are not executing the redirection command, clear the redirection state data in the session
 			if (!(cmd instanceof RedirectCommand))
