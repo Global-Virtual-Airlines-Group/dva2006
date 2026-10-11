@@ -556,4 +556,12 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	public void setOnTime(OnTime o) {
 		_onTime = o;
 	}
+	
+	/**
+	 * Updates the AI Flight Analysis for this Flight.
+	 * @param msg the analysis
+	 */
+	public void setAnalysis(String msg) {
+		_analysis = msg;
+	}
 }

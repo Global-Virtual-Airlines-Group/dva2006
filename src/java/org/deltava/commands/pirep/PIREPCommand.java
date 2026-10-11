@@ -33,7 +33,7 @@ import org.deltava.comparators.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-
+import org.deltava.dao.http.GetAIAnalysis;
 import org.deltava.security.command.*;
 
 import org.deltava.util.*;
@@ -776,6 +776,26 @@ public class PIREPCommand extends AbstractFormCommand {
 						// Save runway choices
 						ctx.setAttribute("dRunways", dRwys, REQUEST);
 						ctx.setAttribute("aRunways", aRwys, REQUEST);
+					}
+					
+					// Check for AI analysis
+					if (ac.getCanViewScore() && !pkg.getData().isEmpty() && SystemData.has("security.key.claude") && (afr instanceof ACARSFlightReport afr2)) {
+						String msg = dao.getAnalysis(fr.getID());
+						
+						// Load if not present
+						if (StringUtils.isEmpty(msg)) {
+							try {
+								GetAIAnalysis aidao = new GetAIAnalysis(pkg);
+								aidao.setConnectTimeout(3500);
+								aidao.setReadTimeout(27500);
+								msg = aidao.execute();
+							} catch (DAOException de) {
+								log.atWarn().withThrowable(de).log("Error loading AI analysis - {}", de.getMessage());
+								msg = de.getMessage();
+							}
+						}
+						
+						afr2.setAnalysis(msg);
 					}
 					
 					// Save ACARS route, stripping out excessive bits

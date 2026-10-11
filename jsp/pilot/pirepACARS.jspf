@@ -304,9 +304,12 @@
 <c:if test="${(!empty flightScore) && access.canViewScore}">
 <c:set var="warnings" value="${flightScore.warnings}" scope="page" />
 <c:set var="outsideSD" value="${Math.abs(pirep.landingScore - rlStats.averageScore) > rlStats.scoreSD}" scope="page" />
+<tr class="title acarsData">
+ <td class="caps" colspan="${cspan + 1}">FLIGHT ANALYSIS</td>
+</tr>
 <tr class="acarsData">
  <td class="label">Landing Score</td>
- <td class="data"><fmt:landscore value="${pirep.landingScore}" className="bld" />
+ <td class="data" colspan="${cspan}"><fmt:landscore value="${pirep.landingScore}" className="bld" />
 <c:if test="${!empty rlStats}"> - <fmt:landdesc score="${pirep.landingScore}" stats="${rlStats}" className="ita caps bld" /> (<fmt:dec value="${rlStats.averageScore}" /> +/- <fmt:dec value="${rlStats.scoreSD}" />)</c:if></td>
 </tr>
 <tr class="acarsData">
@@ -315,6 +318,12 @@
 <c:if test="${!empty flightScore.messages}">
 <br><span class="small ita"><fmt:list value="${flightScore.messages}" delim="<br>" /></span></c:if></td>
 </tr>
+<c:if test="${!empty pirep.analysis}">
+<tr class="acarsData">
+ <td class="label top">AI Flight Analysis</td>
+ <td class="data" colspan="${cspan}"><fmt:msg value="${pirep.analysis}" /></td>
+</tr>
+</c:if>
 </c:if>
 <c:if test="${!empty checkRide}">
 <tr class="title acarsData">
