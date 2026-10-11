@@ -14,13 +14,14 @@ import org.deltava.beans.servinfo.PositionData;
 import org.deltava.util.JSONUtils;
 
 /**
- * A log book export class to generate JSON-formatted log books.
+ * A log book export class to generate JSON-formatted log books. This class is not package private because certain other
+ * code (like AI APIs) find it useful to create a JSOn representation of a Flight Report. 
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 12.4
  */
 
-class JSONFlightExport {
+public class JSONFlightExport {
 
 	// static class
 	private JSONFlightExport() {
@@ -47,7 +48,7 @@ class JSONFlightExport {
 	 * @param fr a FlightReport
 	 * @return a JSONObject
 	 */
-	static JSONObject format(Aircraft ac, FlightReport fr) {
+	public static JSONObject format(Aircraft ac, FlightReport fr) {
 		
 		// Write core fields
 		JSONObject po = new JSONObject();
@@ -164,7 +165,7 @@ class JSONFlightExport {
 	 * @param re the RouteEntry
 	 * @return a JSONOject
 	 */
-	static JSONObject format(Recorder r, RouteEntry re) {
+	public static JSONObject format(Recorder r, RouteEntry re) {
 
 		// Set core fields
 		JSONObject ro = new JSONObject();
@@ -232,7 +233,7 @@ class JSONFlightExport {
 	 * @param ndb a NavigationDataBean
 	 * @return a JSONObject
 	 */
-	 static JSONObject format(NavigationDataBean ndb) {
+	 public static JSONObject format(NavigationDataBean ndb) {
 		
 		JSONObject jo = new JSONObject();
 		jo.put("type", ndb.getType().toString());
@@ -277,7 +278,6 @@ class JSONFlightExport {
 	  * @return a JSONObject
 	  */
 	 static JSONObject format(PositionData pd) {
-
 		JSONObject jo = new JSONObject();
 		putEpoch(jo, "date", pd.getDate());
 		jo.put("lat", pd.getLatitude());
