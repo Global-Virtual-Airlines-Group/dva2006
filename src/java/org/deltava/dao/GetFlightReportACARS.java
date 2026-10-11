@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020, 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 11.5
+ * @version 12.5
  * @since 1.0
  */
 
@@ -80,6 +80,23 @@ public class GetFlightReportACARS extends GetFlightReports {
 		try (PreparedStatement ps = prepare("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))")) {
 			ps.setTimestamp(1, createTimestamp(dt));
 			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the AI-generated analysis of a Flight.
+	 * @param id the Flight Report ID
+	 * @return the summary, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public String getAnalysis(int id) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT PA.SUMMARY FROM PIREP_ANALYSIS PA WHERE (PA.ID=?)")) {
+			ps.setInt(1, id);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getString(1) : null;
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

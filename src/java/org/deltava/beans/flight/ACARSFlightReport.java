@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 11.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     private long _capabilities;
     private String _acAuthor;
 	private String _acPath;
+	private String _analysis;
     
     private Instant _departureTime;
     private Instant _arrivalTime;
@@ -208,6 +209,14 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	 */
 	public String getAircraftPath() {
 		return _acPath;
+	}
+	
+	/**
+	 * Returns the AI summary of this Flight.
+	 * @return the summary text
+	 */
+	public String getAnalysis() {
+		return _analysis;
 	}
     
     @Override
