@@ -25,8 +25,9 @@ abstract class ClaudeDAO extends DAO {
 
 	private int _maxTokens = 1500;
 	private final SequencedCollection<ClaudeMessage> _msgs = new ArrayList<ClaudeMessage>();
+	private final SequencedCollection<String> _sysPrompts = new ArrayList<String>();
 	private ClaudeModel _model = ClaudeModel.HAIKU55;
-	private String _sysPrompt;
+	private ClaudeCacheTTL _ttl = ClaudeCacheTTL.NONE;
 	
 	private int _inTokens;
 	private int _outTokens;
@@ -34,14 +35,14 @@ abstract class ClaudeDAO extends DAO {
 	private static final String API_V1_URL = "https://api.anthropic.com/v1/messages";
 	
 	/* 
-	 * Claude message type.
+	 * Claude prompt message types.
 	 */
-	enum MessageType {
+	enum PromptType {
 		USER, ASSISTANT
 	}
 	
 	// Claude message
-	private record ClaudeMessage(MessageType type, String message) { }
+	private record ClaudeMessage(PromptType type, String message) { }
 	
 	/**
 	 * Claude API error data encapsulation class.
@@ -63,11 +64,11 @@ abstract class ClaudeDAO extends DAO {
 	
 	/**
 	 * Adds a prompt message.
-	 * @param mt the message type
+	 * @param mt the PromptType
 	 * @param text the message text
 	 * @throws IllegalArgumentException if two of the same types of messages are enqueued in a row
 	 */
-	protected void addMessage(MessageType mt, String text) {
+	protected void addPrompt(PromptType mt, String text) {
 		ClaudeMessage msg = new ClaudeMessage(mt, text);
 		if (!_msgs.isEmpty() && (_msgs.getLast().type == mt))
 			throw new IllegalArgumentException(String.format("Last message in queue is also %s", mt));
@@ -79,16 +80,24 @@ abstract class ClaudeDAO extends DAO {
 	 * Updates the system prompt for this call.
 	 * @param sp the system prompt
 	 */
-	protected void setSystemPrompt(String sp) {
-		_sysPrompt = sp;
+	protected void addSystemPrompt(String sp) {
+		_sysPrompts.add(sp);
 	}
 	
 	/**
-	 * Updates the model to use.
+	 * Updates the model to use for this call.
 	 * @param m a ClaudeModel
 	 */
 	protected void setModel(ClaudeModel m) {
 		_model = m;
+	}
+	
+	/**
+	 * Sets the cache expiration policy to use for this call.
+	 * @param ttl a ClaudeCacheTTL
+	 */
+	protected void setTTL(ClaudeCacheTTL ttl) {
+		_ttl = ttl;
 	}
 	
 	/**
@@ -126,10 +135,18 @@ abstract class ClaudeDAO extends DAO {
 		jo.put("model", _model.getID());
 		jo.put("stream", false);
 		
+		// Add TTL
+		if (_ttl != ClaudeCacheTTL.NONE) {
+			JSONObject co = new JSONObject();
+			co.put("type", "ephemeral");
+			co.put("ttl", _ttl.getValue());
+			jo.put("cache_control", co);
+		}
+		
 		// Add system prompt
-		if (!StringUtils.isEmpty(_sysPrompt)) {
+		for (String sysMsg : _sysPrompts) {
 			JSONObject so = new JSONObject();
-			so.put("text", _sysPrompt);
+			so.put("text", sysMsg);
 			so.put("type", "text");
 			jo.accumulate("system", so);
 		}
