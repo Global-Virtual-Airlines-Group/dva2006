@@ -89,34 +89,38 @@ public class GetAIAnalysis extends ClaudeDAO {
 		// TODO: This needs to be data, not code
 		// Set the prompt
 		setMaxTokens(6500);
-		addMessage(MessageType.USER, "You are a flight data analyst. Analyze some flight data. Scoring rubric (0-100): Safety = 60 pts, Comfort = 40 pts. These may change, so return "
+		addPrompt(PromptType.USER, "You are a flight data analyst. Analyze some flight data. Scoring rubric (0-100): Safety = 60 pts, Comfort = 40 pts. These may change, so return "
 			+ "the maximum score in each category as a field in the JSON response.\n Deduct for: unstabilized approach, hard landing (>1.8g), overspeed/stall warnings, turbulence, high bank angles.\n"
 			+ "Respond with JSON only:\n {\"analysis\": \"<1-2 paragraphs>\", \"safety_score\": <0-60>,\n\"comfort_score\": <0-40>, \"flight_score\": <0-100>,\n\"key_factors\": [\"...\"]}");
-		addMessage(MessageType.ASSISTANT, "Please provide the flight data, in JSON format.");
-		addMessage(MessageType.USER, data.toString());
-		addMessage(MessageType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
-		addMessage(MessageType.USER, format(_pkg.getPilot()).toString());
-		setSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Angles of attack greater than 50 degrees can be ignored.\n"
+		addPrompt(PromptType.ASSISTANT, "Please provide the flight data, in JSON format.");
+		addPrompt(PromptType.USER, data.toString());
+		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
+		addPrompt(PromptType.USER, format(_pkg.getPilot()).toString());
+		addSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Angle of attack on the ground or greater than 50 degrees can be ignored.\n"
 			+ "Dates/times are epoch milliseconds, durations are seconds.");
+		addSystemPrompt("If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
 		
-		// Call claude
+		// Call claude API
 		try {
 			JSONObject ro = send();
 			if (!ro.has("content"))
 				throw new IllegalArgumentException("No content in response");
 			
 			// Check for response
+			System.out.println(ro.toString(1));
 			JSONArray ca = ro.getJSONArray("content");
 			for (int x = 0; x < ca.length(); x++) {
 				JSONObject co = ca.getJSONObject(x);
 				if ("text".equals(co.optString("type"))) {
 					String js = co.getString("text");
-					System.out.println(js);
+
 					JSONObject ao = new JSONObject(new JSONTokener(js));
 					
 					// Create the response object
 					FlightAnalysis fa = new FlightAnalysis(_pkg.getID(), ao.getString("analysis"));
+					fa.setMaxmimums(ao.optInt("safety_max", 60), ao.optInt("comfort_max", 40));
 					fa.setScores(ao.optInt("safety_score"), ao.optInt("comfort_score"));
+					fa.setTokens(getInputTokens(), getOutputTokens());
 					JSONArray kfa = ao.getJSONArray("key_factors");
 					for (int y = 0; y < kfa.length(); y++)
 						fa.addFactor(kfa.getString(y));
