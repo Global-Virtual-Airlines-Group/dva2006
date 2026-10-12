@@ -5,7 +5,6 @@ import java.util.*;
 import java.time.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.ai.FlightAnalysis;
 import org.deltava.beans.schedule.*;
 
 /**

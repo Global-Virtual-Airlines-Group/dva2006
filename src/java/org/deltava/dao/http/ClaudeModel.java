@@ -1,5 +1,5 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.ai;
+package org.deltava.dao.http;
 
 /**
  * An enumeration of Claude AI models.
@@ -8,7 +8,7 @@ package org.deltava.beans.ai;
  * @since 12.5
  */
 
-public enum ClaudeModel {
+enum ClaudeModel {
 	HAIKU55("claude-haiku-5-5"), SONNET55("claude-sonnet-5-5"), SONNET5("claude-sonnet-5"), OPUS5("claude-opus-5");
 	
 	private String _id;

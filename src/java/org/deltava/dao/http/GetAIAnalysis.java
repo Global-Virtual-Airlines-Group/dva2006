@@ -3,8 +3,7 @@ package org.deltava.dao.http;
 
 import org.json.*;
 
-import org.deltava.beans.ai.FlightAnalysis;
-import org.deltava.beans.flight.ScorePackage;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.DAOException;

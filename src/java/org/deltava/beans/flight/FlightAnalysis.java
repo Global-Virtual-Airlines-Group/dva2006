@@ -1,5 +1,5 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.ai;
+package org.deltava.beans.flight;
 
 import java.time.Instant;
 import java.util.*;

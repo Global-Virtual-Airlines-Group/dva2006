@@ -13,7 +13,6 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Status;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.ai.FlightAnalysis;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.econ.FlightEliteScore;
 import org.deltava.beans.event.*;

@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
-import org.deltava.beans.ai.FlightAnalysis;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.RouteOnTime;
