@@ -22,9 +22,9 @@ public class ScorePackage implements IDBean {
 	private final FDRFlightReport _pirep;
 	private final Runway _rD;
 	private final Runway _rA;
+	private final Pilot _p;
 	private Gate _gD;
 	private Gate _gA;
-	private Pilot _p;
 	
 	private final SequencedCollection<ACARSRouteEntry> _data = new ArrayList<ACARSRouteEntry>();
 	
@@ -57,6 +57,7 @@ public class ScorePackage implements IDBean {
 		super();
 		_ac = a;
 		_pirep = fr;
+		_p = p;
 		_rD = rD;
 		_rA = rA;
 		_opts = opts;
