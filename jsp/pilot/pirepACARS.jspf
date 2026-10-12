@@ -333,7 +333,7 @@ ${fct}<c:if test="${!fcStatus.last}"><br></c:if></c:forEach>
 </tr>
 <tr class="analysisData">
  <td class="label">Generated on</td>
- <td class="data" colspan="${cspan}"><fmt:date date="${pa.createdOn}" /> (<fmt:int value="${pa.generationTime}" /> ms)</td>
+ <td class="data" colspan="${cspan}"><fmt:date date="${pa.createdOn}" /> (<fmt:int value="${pa.generationTime}" /> ms) - <span class="small"><fmt:int value="${pa.inputTokens}" /> tokens in, <fmt:int value="${pa.outputTokens}" /> tokens out</span></td>
 </tr>
 </content:filter>
 </c:if>
