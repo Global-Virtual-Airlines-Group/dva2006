@@ -12,15 +12,17 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to format landing scores.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.4
  */
 
 public class LandingScoreFormatTag extends NumberFormatTag {
 	
 	private static final String DEFAULT_PATTERN = "#0.00";
+	private static final int DEFAULT_MAX = 100;
 	
 	private LandingRating _rating;
+	private int _maxValue = DEFAULT_MAX;
 	private String _default;
 	
 	/**
@@ -38,6 +40,14 @@ public class LandingScoreFormatTag extends NumberFormatTag {
 		_default = s;
 	}
 	
+	/**
+	 * Sets the maximum value for this score. Ratings will be normalized from 1 to 100.
+	 * @param max the maximum value
+	 */
+	public void setMax(int max) {
+		_maxValue = max;
+	}
+	
     @Override
 	public void setPageContext(PageContext ctxt) {
         super.setPageContext(ctxt);
@@ -51,6 +61,9 @@ public class LandingScoreFormatTag extends NumberFormatTag {
     @Override
     public int doStartTag() {
     	if (_value == null) _value = Double.valueOf(-1);
+    	if (_maxValue != DEFAULT_MAX)
+    		_value = Double.valueOf(_value.doubleValue() * 100 / _maxValue); // normalize
+    		
     	_rating = LandingRating.rate(_value.doubleValue());
     	setStyle(String.format("color:#%s", _rating.getHexColor()));
     	return SKIP_BODY;
@@ -76,6 +89,7 @@ public class LandingScoreFormatTag extends NumberFormatTag {
 	@Override
 	public void release() {
 		_default = null;
+		_maxValue = DEFAULT_MAX;		
 		super.release(DEFAULT_PATTERN);
 	}
 }

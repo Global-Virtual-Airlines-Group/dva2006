@@ -435,6 +435,12 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>max</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
 			<name>default</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
