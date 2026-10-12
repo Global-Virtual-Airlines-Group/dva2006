@@ -326,10 +326,14 @@
 ${fct}<c:if test="${!fcStatus.last}"><br></c:if></c:forEach> 
 </c:if></td>
 </tr>
-<content:filter roles="HR,PIREP">
+<content:filter roles="HR,PIREP,Developer">
 <tr class="analysisData">
  <td class="label">AI Scores</td>
  <td class="data" colspan="${cspan}">Safety: <fmt:landscore value="${pa.safety}" max="${pa.maxSafety}" className="bld" />, Comfort: <fmt:landscore value="${pa.comfort}" max="${pa.maxComfort}" className="bld" />&nbsp;<span class="small ita">(These scores are highly experimental and shuuld be used for any significant purpose.)</span></td>
+</tr>
+<tr class="analysisData">
+ <td class="label">Generated on</td>
+ <td class="data" colspan="${cspan}"><fmt:date date="${pa.createdOn}" /> (<fmt:int value="${pa.generationTime}" /> ms)</td>
 </tr>
 </content:filter>
 </c:if>
