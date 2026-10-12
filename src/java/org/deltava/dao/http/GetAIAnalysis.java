@@ -2,7 +2,9 @@
 package org.deltava.dao.http;
 
 import org.json.*;
+import org.apache.logging.log4j.*;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 
@@ -20,6 +22,8 @@ import org.deltava.util.JSONUtils;
  */
 
 public class GetAIAnalysis extends ClaudeDAO {
+	
+	private static final Logger log = LogManager.getLogger(GetAIAnalysis.class);
 	
 	private final ScorePackage _pkg;
 
@@ -44,7 +48,27 @@ public class GetAIAnalysis extends ClaudeDAO {
 		go.put("location", JSONUtils.format(g));
 		return go;
 	}
-
+	
+	/*
+	 * Helper method to JSON-format a Pilot.
+	 */
+	private static JSONObject format(Pilot p) {
+		JSONObject po = new JSONObject();
+		po.put("firstName", p.getFirstName());
+		po.put("lastName", p.getLastName());
+		po.put("rank", p.getRank().getName());
+		po.put("equipmentProgram", p.getEquipmentType());
+		po.put("joinedOn", p.getCreatedOn().toEpochMilli());
+		if (p.getLegs() > 0) {
+			po.put("flights", p.getLegs());
+			po.put("hours", p.getHours());
+			po.put("lastFlight", p.getLastFlight().toEpochMilli());
+			po.put("pilotID", p.getPilotCode());
+		}
+		
+		return po;
+	}
+	
 	/**
 	 * Anlayzes the Flight.
 	 * @return a FlightAnalysis bean
@@ -62,20 +86,18 @@ public class GetAIAnalysis extends ClaudeDAO {
 		_pkg.getData().stream().map(afr -> JSONFlightExport.format(_pkg.getFlightReport().getFDR(), afr)).forEach(po -> data.accumulate("positions", po));
 		JSONUtils.ensureArrayPresent(data, "positions");
 		
-		// Format the JSON payload
-		StringBuilder buf = new StringBuilder("<flightdata>");
-		buf.append(data.toString());
-		buf.append("</flightdata>");
-		
 		// TODO: This needs to be data, not code
 		// Set the prompt
+		setMaxTokens(6500);
 		addMessage(MessageType.USER, "You are a flight data analyst. Analyze some flight data. Scoring rubric (0-100): Safety = 60 pts, Comfort = 40 pts. These may change, so return "
-			+ "the maximum score in each category as part of the response.\n Deduct for: unstabilized approach, hard landing (>1.8g), overspeed/stall warnings, turbulence, high bank angles.\n"
+			+ "the maximum score in each category as a field in the JSON response.\n Deduct for: unstabilized approach, hard landing (>1.8g), overspeed/stall warnings, turbulence, high bank angles.\n"
 			+ "Respond with JSON only:\n {\"analysis\": \"<1-2 paragraphs>\", \"safety_score\": <0-60>,\n\"comfort_score\": <0-40>, \"flight_score\": <0-100>,\n\"key_factors\": [\"...\"]}");
 		addMessage(MessageType.ASSISTANT, "Please provide the flight data, in JSON format.");
-		addMessage(MessageType.USER, buf.toString());
-		
-		setSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Angles of attack greater than 50 degrees can be ignored.");
+		addMessage(MessageType.USER, data.toString());
+		addMessage(MessageType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
+		addMessage(MessageType.USER, format(_pkg.getPilot()).toString());
+		setSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Angles of attack greater than 50 degrees can be ignored.\n"
+			+ "Dates/times are epoch milliseconds, durations are seconds.");
 		
 		// Call claude
 		try {
@@ -89,6 +111,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 				JSONObject co = ca.getJSONObject(x);
 				if ("text".equals(co.optString("type"))) {
 					String js = co.getString("text");
+					System.out.println(js);
 					JSONObject ao = new JSONObject(new JSONTokener(js));
 					
 					// Create the response object
@@ -104,9 +127,13 @@ public class GetAIAnalysis extends ClaudeDAO {
 			
 			throw new IllegalArgumentException("No text in response content");
 		} catch (IllegalArgumentException iae) {
+			log.warn("Response Error - {}", iae.getMessage());
 			return new FlightAnalysis(_pkg.getID(), String.format("Response Error - %s", iae.getMessage()));
 		} catch (ClaudeException ce) {
+			log.warn("Claude API Error - {}", ce.getMessage());
 			return new FlightAnalysis(_pkg.getID(), String.format("Claude API Error - %s", ce.getMessage()));
+		} catch (Exception e) {
+			throw new DAOException(e);
 		}
 	}
 }
