@@ -46,6 +46,8 @@ public class GetAIAnalysis extends ClaudeDAO {
 		go.put("name", g.getName());
 		go.put("zone", g.getZone().getDescription());
 		go.put("location", JSONUtils.format(g));
+		go.put("lat", g.getLatitude());
+		go.put("lng", g.getLongitude());
 		return go;
 	}
 	
@@ -54,6 +56,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 	 */
 	private static JSONObject format(Pilot p) {
 		JSONObject po = new JSONObject();
+		po.put("id", p.getID());
 		po.put("firstName", p.getFirstName());
 		po.put("lastName", p.getLastName());
 		po.put("rank", p.getRank().getName());
@@ -91,6 +94,10 @@ public class GetAIAnalysis extends ClaudeDAO {
 		// TODO: This needs to be data, not code
 		// Set the prompt
 		setMaxTokens(6500);
+		addSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Angle of attack on the ground or greater than 50 degrees can be ignored.\n"
+				+ "Dates/times are epoch milliseconds, durations are seconds.");
+		addSystemPrompt("If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
+
 		addPrompt(PromptType.USER, "You are a flight data analyst. Analyze some flight data. Scoring rubric (0-100): Safety = 60 pts, Comfort = 40 pts. These may change, so return "
 			+ "the maximum score in each category as a field in the JSON response.\n Deduct for: unstabilized approach, hard landing (>1.8g), overspeed/stall warnings, turbulence, high bank angles.\n"
 			+ "Respond with JSON only:\n {\"analysis\": \"<1-2 paragraphs>\", \"safety_score\": <0-60>,\n\"comfort_score\": <0-40>, \"flight_score\": <0-100>,\n\"key_factors\": [\"...\"]}");
@@ -98,9 +105,12 @@ public class GetAIAnalysis extends ClaudeDAO {
 		addPrompt(PromptType.USER, data.toString());
 		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
 		addPrompt(PromptType.USER, format(_pkg.getPilot()).toString());
+<<<<<<< HEAD
 		addSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Angle of attack on the ground or greater than 50 degrees can be ignored.\n"
 			+ "Dates/times are epoch milliseconds, durations are seconds. There is no need to mention ignored data in the summary.");
 		addSystemPrompt("If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
+=======
+>>>>>>> branch 'Claude-Analysis' of https://github.com/Global-Virtual-Airlines-Group/dva2006.git
 		
 		// Call claude API
 		try {
