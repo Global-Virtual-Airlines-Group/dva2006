@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 
 abstract class ClaudeDAO extends DAO {
 
-	protected int _maxTokens = 1500;
+	private int _maxTokens = 1500;
 	private final SequencedCollection<ClaudeMessage> _msgs = new ArrayList<ClaudeMessage>();
 	private ClaudeModel _model = ClaudeModel.HAIKU55;
 	private String _sysPrompt;
@@ -92,6 +92,14 @@ abstract class ClaudeDAO extends DAO {
 	}
 	
 	/**
+	 * Updates the maximum number of output tokens to return.
+	 * @param maxTokens the number of tokens
+	 */
+	public void setMaxTokens(int maxTokens) {
+		_maxTokens = Math.max(0, maxTokens);
+	}
+	
+	/**
 	 * Returns the number of input tokens used.
 	 * @return the number of tokens, or zero if the API has not been called yet
 	 */
@@ -134,7 +142,7 @@ abstract class ClaudeDAO extends DAO {
 			jo.accumulate("messages", mo);
 		}
 		
-		JSONUtils.ensureArrayPresent(jo, "messages");
+		JSONUtils.ensureArrayPresent(jo, "messages", "system");
 		return jo;
 	}
 	
@@ -181,6 +189,9 @@ abstract class ClaudeDAO extends DAO {
 				JSONObject jo = new JSONObject(new JSONTokener(in));
 				_inTokens = jo.optInt("input_tokens");
 				_outTokens = jo.optInt("output_tokens");
+				if (_outTokens >= _maxTokens)
+					throw new IllegalArgumentException("Token Limit reached");
+				
 				return jo;
 			}
 		} catch (IOException e) {
