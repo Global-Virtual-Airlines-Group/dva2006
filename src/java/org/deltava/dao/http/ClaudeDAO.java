@@ -204,8 +204,13 @@ abstract class ClaudeDAO extends DAO {
 			// Parse the response, read token counts
 			try (InputStream in = getIn()) {
 				JSONObject jo = new JSONObject(new JSONTokener(in));
-				_inTokens = jo.optInt("input_tokens");
-				_outTokens = jo.optInt("output_tokens");
+				JSONObject uo = jo.optJSONObject("usage");
+				if (uo != null) {
+					_inTokens = uo.getInt("input_tokens");
+					_outTokens = uo.getInt("output_tokens");
+				}
+				
+				// Check for token exhaustion
 				if (_outTokens >= _maxTokens)
 					throw new IllegalArgumentException("Token Limit reached");
 				
