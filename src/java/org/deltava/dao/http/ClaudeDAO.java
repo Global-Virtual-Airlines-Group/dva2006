@@ -44,6 +44,13 @@ abstract class ClaudeDAO extends DAO {
 	// Claude message
 	private record ClaudeMessage(PromptType type, String message) { }
 	
+	// Preserves insertion order of properties
+	private class OrderedJSON extends JSONObject {
+		OrderedJSON() {
+			super(LinkedHashMap.class);
+		}
+	}
+	
 	/**
 	 * Claude API error data encapsulation class.
 	 */
@@ -130,14 +137,14 @@ abstract class ClaudeDAO extends DAO {
 	 */
 	protected JSONObject generatePayload() {
 		
-		JSONObject jo = new JSONObject();
+		JSONObject jo = new OrderedJSON();
 		jo.put("max_tokens", _maxTokens);
 		jo.put("model", _model.getID());
 		jo.put("stream", false);
 		
 		// Add TTL
 		if (_ttl != ClaudeCacheTTL.NONE) {
-			JSONObject co = new JSONObject();
+			JSONObject co = new OrderedJSON();
 			co.put("type", "ephemeral");
 			co.put("ttl", _ttl.getValue());
 			jo.put("cache_control", co);
@@ -145,7 +152,7 @@ abstract class ClaudeDAO extends DAO {
 		
 		// Add system prompt
 		for (String sysMsg : _sysPrompts) {
-			JSONObject so = new JSONObject();
+			JSONObject so = new OrderedJSON();
 			so.put("text", sysMsg);
 			so.put("type", "text");
 			jo.accumulate("system", so);
@@ -153,7 +160,7 @@ abstract class ClaudeDAO extends DAO {
 		
 		// Add user prompts
 		for (ClaudeMessage msg : _msgs) {
-			JSONObject mo = new JSONObject();
+			JSONObject mo = new OrderedJSON();
 			mo.put("content", msg.message);
 			mo.put("role", msg.type.name().toLowerCase());
 			jo.accumulate("messages", mo);
