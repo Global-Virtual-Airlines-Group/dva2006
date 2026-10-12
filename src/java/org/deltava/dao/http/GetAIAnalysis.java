@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 
 import org.deltava.service.logbook.JSONFlightExport;
 
-import org.deltava.util.JSONUtils;
+import org.deltava.util.*;
 
 /**
  * A Data Access Object to use Claude AI to analyze a flight. 
@@ -102,11 +102,13 @@ public class GetAIAnalysis extends ClaudeDAO {
 		
 		// Call claude API
 		try {
+			TaskTimer tt = new TaskTimer();
 			JSONObject ro = send();
 			if (!ro.has("content"))
 				throw new IllegalArgumentException("No content in response");
 			
 			// Check for response
+			long ms = tt.stop();
 			System.out.println(ro.toString(1));
 			JSONArray ca = ro.getJSONArray("content");
 			for (int x = 0; x < ca.length(); x++) {
@@ -117,6 +119,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 					
 					// Create the response object
 					FlightAnalysis fa = new FlightAnalysis(_pkg.getID(), ao.getString("analysis"));
+					fa.setGenerationTime((int) ms);
 					fa.setMaxmimums(ao.optInt("safety_max", 60), ao.optInt("comfort_max", 40));
 					fa.setScores(ao.optInt("safety_score"), ao.optInt("comfort_score"));
 					fa.setTokens(getInputTokens(), getOutputTokens());

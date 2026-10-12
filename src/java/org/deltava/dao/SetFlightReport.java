@@ -294,7 +294,7 @@ public class SetFlightReport extends DAO {
 			startTransaction();
 			
 			// Write summary - this clears factors
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ANALYSIS VALUES (?,?,?,?,?,?,?,?,?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ANALYSIS VALUES (?,?,?,?,?,?,?,?,?,?)")) {
 				ps.setInt(1, fa.getID());
 				ps.setTimestamp(2, createTimestamp(fa.getCreatedOn()));
 				ps.setInt(3, fa.getSafety());
@@ -303,7 +303,8 @@ public class SetFlightReport extends DAO {
 				ps.setInt(6, fa.getMaxComfort());
 				ps.setInt(7, fa.getInputTokens());
 				ps.setInt(8, fa.getOutputTokens());
-				ps.setString(9, fa.getMessage());
+				ps.setInt(9, fa.getGenerationTime());
+				ps.setString(10, fa.getMessage());
 				executeUpdate(ps, 1);
 			}
 			

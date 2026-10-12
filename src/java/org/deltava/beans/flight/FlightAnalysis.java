@@ -17,6 +17,7 @@ public class FlightAnalysis extends DatabaseBean {
 	
 	private final String _msg;
 	private Instant _createdOn = Instant.now();
+	private int _genTime;
 	
 	private int _safety;
 	private int _maxSafety = 100;
@@ -45,6 +46,14 @@ public class FlightAnalysis extends DatabaseBean {
 	 */
 	public Instant getCreatedOn() {
 		return _createdOn;
+	}
+	
+	/**
+	 * Returns the generation time for this Flight Analysis.
+	 * @return the generation time in milliseconds
+	 */
+	public int getGenerationTime() {
+		return _genTime;
 	}
 	
 	/**
@@ -133,6 +142,14 @@ public class FlightAnalysis extends DatabaseBean {
 	 */
 	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
+	}
+
+	/**
+	 * Updates the generation time for this Flight Analysis.
+	 * @param ms the generation time in milliseconds
+	 */
+	public void setGenerationTime(int ms) {
+		_genTime = ms;
 	}
 
 	/**

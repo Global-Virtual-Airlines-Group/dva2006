@@ -99,12 +99,13 @@ public class GetFlightReportACARS extends GetFlightReports {
 			ps.setInt(3, id);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					FlightAnalysis fa = new FlightAnalysis(id, rs.getString(3));
+					FlightAnalysis fa = new FlightAnalysis(id, rs.getString(10));
 					fa.setCreatedOn(toInstant(rs.getTimestamp(2)));
-					fa.setMaxmimums(rs.getInt(6), rs.getInt(7));
-					fa.setScores(rs.getInt(4), rs.getInt(5));
-					fa.setTokens(rs.getInt(8), rs.getInt(9));
-					String msgs = rs.getString(10);
+					fa.setMaxmimums(rs.getInt(5), rs.getInt(6));
+					fa.setScores(rs.getInt(3), rs.getInt(5));
+					fa.setTokens(rs.getInt(7), rs.getInt(8));
+					fa.setGenerationTime(rs.getInt(9));
+					String msgs = rs.getString(11);
 					if (!StringUtils.isEmpty(msgs))
 						StringUtils.split(msgs, "||").forEach(fa::addFactor);
 					
