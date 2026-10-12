@@ -1,5 +1,5 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.http;
+package org.deltava.beans.ai;
 
 /**
  * An enumeration of Claude AI models.

@@ -9,6 +9,8 @@ import java.util.*;
 
 import org.json.*;
 
+import org.deltava.beans.ai.ClaudeModel;
+
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.*;
@@ -123,7 +125,7 @@ abstract class ClaudeDAO extends DAO {
 			JSONObject so = new JSONObject();
 			so.put("text", _sysPrompt);
 			so.put("type", "text");
-			jo.put("system", so);
+			jo.accumulate("system", so);
 		}
 		
 		// Add user prompts
