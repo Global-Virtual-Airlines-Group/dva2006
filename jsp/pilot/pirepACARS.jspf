@@ -304,22 +304,22 @@
 <c:if test="${(!empty flightScore) && access.canViewScore}">
 <c:set var="warnings" value="${flightScore.warnings}" scope="page" />
 <c:set var="outsideSD" value="${Math.abs(pirep.landingScore - rlStats.averageScore) > rlStats.scoreSD}" scope="page" />
-<tr class="title acarsData">
- <td class="caps" colspan="${cspan + 1}">FLIGHT ANALYSIS</td>
+<tr class="title">
+ <td class="caps" colspan="${cspan + 1}">FLIGHT ANALYSIS<span id="analysisToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'analysisData')">COLLAPSE</span></td>
 </tr>
-<tr class="acarsData">
+<tr class="analysisData">
  <td class="label">Landing Score</td>
  <td class="data" colspan="${cspan}"><fmt:landscore value="${pirep.landingScore}" className="bld" />
 <c:if test="${!empty rlStats}"> - <fmt:landdesc score="${pirep.landingScore}" stats="${rlStats}" className="ita caps bld" /> (<fmt:dec value="${rlStats.averageScore}" /> +/- <fmt:dec value="${rlStats.scoreSD}" />)</c:if></td>
 </tr>
-<tr class="acarsData">
+<tr class="analysisData">
  <td class="label top">Flight Score</td>
  <td class="data" colspan="${cspan}"><span style="color:#${flightScore.result.hexColor}" class="bld">${flightScore.result}</span><c:if test="${!empty warnings}"> - Warnings: <span class="warn caps bld"><fmt:list value="${warnings}" delim=", " /></span></c:if>
 <c:if test="${!empty flightScore.messages}">
 <br><span class="small ita"><fmt:list value="${flightScore.messages}" delim="<br>" /></span></c:if></td>
 </tr>
 <c:if test="${!empty pirep.analysis}">
-<tr class="acarsData">
+<tr class="analysisData">
  <td class="label top">AI Flight Analysis</td>
  <td class="data" colspan="${cspan}"><fmt:msg value="${pirep.analysis}" /></td>
 </tr>
@@ -327,9 +327,9 @@
 </c:if>
 <c:if test="${!empty checkRide}">
 <tr class="title acarsData">
- <td class="caps" colspan="${cspan + 1}">CHECK RIDE INFORMATION</td>
+ <td class="caps" colspan="${cspan + 1}">CHECK RIDE INFORMATION<span id="crToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'crData')">COLLAPSE</span></td>
 </tr>
-<tr>
+<tr class="crData">
  <td class="label">Name</td>
  <td class="data pri bld" colspan="${cspan}">${checkRide.name} (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
@@ -337,28 +337,28 @@
 <c:set var="isForm" value="true" scope="request" />
 <content:enum var="crScoreOpts" className="org.deltava.beans.testing.CheckRideScoreOptions" />
 <content:enum var="crFlightOpts" className="org.deltava.beans.testing.CheckFlightScoreOptions" />
-<tr class="acarsData">
+<tr class="crData">
  <td class="label top">Check Ride Instructions</td>
  <td class="data" colspan="${cspan}"><fmt:msg value="${checkRide.comments}" bbCode="true" /></td>
 </tr>
-<tr class="acarsData">
+<tr class="crData">
  <td class="label top">Reviewer Comments</td>
  <td class="data" colspan="${cspan}"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea><el:text name="reviewTime" type="hidden" value="0" /></td>
 </tr>
-<tr class="acarsData">
+<tr class="crData">
  <td class="label">Check Ride Status</td>
  <td class="data bld" colspan="${cspan}"><el:check name="crApprove" type="radio" options="${crScoreOpts}" idx="*" /></td>
 </tr>
-<tr class="acarsData">
+<tr class="crData">
  <td class="label">Flight Report Status</td>
  <td class="data bld" colspan="${cspan}"><el:check name="frApprove" type="radio" options="${crFlightOpts}" idx="*" /></td>
 </tr>
-<tr class="title mid">
+<tr class="title mid crData">
  <td colspan="${cspan + 1}"><el:button type="submit" label="PROCESS FLIGHT REPORT / SCORE CHECK RIDE" /></td>
 </tr>
 </c:if>
 <c:if test="${!scoreCR}">
-<tr>
+<tr class="crData">
  <td class="label top">Check Ride Instructions</td>
  <td class="data" colspan="${cspan}"><fmt:msg value="${checkRide.comments}" /></td>
 </tr>
