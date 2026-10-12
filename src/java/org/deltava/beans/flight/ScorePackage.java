@@ -3,6 +3,7 @@ package org.deltava.beans.flight;
 
 import java.util.*;
 
+import org.deltava.beans.IDBean;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.*;
@@ -14,7 +15,7 @@ import org.deltava.beans.navdata.*;
  * @since 8.0
  */
 
-public class ScorePackage {
+public class ScorePackage implements IDBean {
 	
 	private final Aircraft _ac;
 	private final AircraftPolicyOptions _opts;
@@ -74,6 +75,11 @@ public class ScorePackage {
 	 */
 	public void add(String msg) {
 		_msgs.add(msg);
+	}
+	
+	@Override
+	public int getID() {
+		return _pirep.getID();
 	}
 	
 	/**
@@ -182,5 +188,10 @@ public class ScorePackage {
 	public void setGates(Gate gD, Gate gA) {
 		_gD = gD;
 		_gA = gA;
+	}
+	
+	@Override
+	public String getHexID() {
+		return _pirep.getHexID();
 	}
 }
