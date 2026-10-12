@@ -113,7 +113,6 @@ public class GetAIAnalysis extends ClaudeDAO {
 				JSONObject co = ca.getJSONObject(x);
 				if ("text".equals(co.optString("type"))) {
 					String js = co.getString("text");
-
 					JSONObject ao = new JSONObject(new JSONTokener(js));
 					
 					// Create the response object
