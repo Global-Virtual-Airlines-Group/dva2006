@@ -111,7 +111,7 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 				gdao.populate(info);
 				
 				// Create the package
-				ScorePackage pkg = new ScorePackage(ac, ffr, null, info.getRunwayA(), opts);
+				ScorePackage pkg = new ScorePackage(ac, ffr, p, null, info.getRunwayA(), opts);
 				pkg.setGates(info.getGateD(), info.getGateA());
 				entries.forEach(pkg::add);
 				sc = es.score(pkg, st.getLevel());

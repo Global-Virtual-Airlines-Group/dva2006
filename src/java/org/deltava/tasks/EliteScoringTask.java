@@ -165,7 +165,7 @@ public class EliteScoringTask extends Task {
 						tt.mark("acarsData");
 
 						// Create the package and score
-						ScorePackage pkg = new ScorePackage(ac, ffr, null, info.getRunwayA(), opts);
+						ScorePackage pkg = new ScorePackage(ac, ffr, p, null, info.getRunwayA(), opts);
 						pkg.setGates(info.getGateD(), info.getGateA());
 						entries.forEach(pkg::add);
 						sc = es.score(pkg, st.getLevel());

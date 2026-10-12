@@ -163,7 +163,7 @@ public class ElitePIREPLoader extends TestCase {
 						RunwayDistance rwyA = fidao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
 						
 						// Create the package
-						ScorePackage pkg = new ScorePackage(ac, ffr, null, rwyA, opts);
+						ScorePackage pkg = new ScorePackage(ac, ffr, p, null, rwyA, opts);
 						sc = es.score(pkg, st.getLevel());
 					} else
 						sc = es.score(fr, st.getLevel());

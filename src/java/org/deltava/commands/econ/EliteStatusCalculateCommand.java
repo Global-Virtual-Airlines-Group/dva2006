@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 9.2
  */
 
@@ -158,7 +158,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					
 					// Load the positions
 					if ((fi != null) && fi.getArchived()) {
-						ScorePackage pkg = new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts);
+						ScorePackage pkg = new ScorePackage(a, ffr, p, fi.getRunwayD(), fi.getRunwayA(), opts);
 						pkg.setGates(fi.getGateD(), fi.getGateA());
 						SequencedCollection<? extends RouteEntry> entries = routeData.getOrDefault(Integer.valueOf(fi.getID()), Collections.emptyList());
 						if (entries.isEmpty())
@@ -167,9 +167,9 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 						entries.forEach(pkg::add);
 						sc = es.score(pkg, st.getLevel());
 					} else if (fi != null)
-						sc = es.score(new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts), st.getLevel());
+						sc = es.score(new ScorePackage(a, ffr, p, fi.getRunwayD(), fi.getRunwayA(), opts), st.getLevel());
 					else
-						sc  = es.score(new ScorePackage(a, ffr, null, null, opts), st.getLevel());
+						sc  = es.score(new ScorePackage(a, ffr, p, null, null, opts), st.getLevel());
 				} else
 					sc  = es.score(fr, st.getLevel());
 				

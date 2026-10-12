@@ -3,7 +3,7 @@ package org.deltava.beans.flight;
 
 import java.util.*;
 
-import org.deltava.beans.IDBean;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.*;
@@ -24,6 +24,7 @@ public class ScorePackage implements IDBean {
 	private final Runway _rA;
 	private Gate _gD;
 	private Gate _gA;
+	private Pilot _p;
 	
 	private final SequencedCollection<ACARSRouteEntry> _data = new ArrayList<ACARSRouteEntry>();
 	
@@ -47,11 +48,12 @@ public class ScorePackage implements IDBean {
 	 * Creates a Flight Scoring package.
 	 * @param a the Aircraft used
 	 * @param fr the FDRFlightReport
+	 * @param p the Pilot
 	 * @param rD the departure Runway
 	 * @param rA the arrival Runway
 	 * @param opts the AircraftPolicyOptions to use
 	 */
-	public ScorePackage(Aircraft a, FDRFlightReport fr, Runway rD, Runway rA, AircraftPolicyOptions opts) {
+	public ScorePackage(Aircraft a, FDRFlightReport fr, Pilot p, Runway rD, Runway rA, AircraftPolicyOptions opts) {
 		super();
 		_ac = a;
 		_pirep = fr;
@@ -96,6 +98,14 @@ public class ScorePackage implements IDBean {
 	 */
 	public FDRFlightReport getFlightReport() {
 		return _pirep;
+	}
+	
+	/**
+	 * Returns the Pilot.
+	 * @return a Pilot
+	 */
+	public Pilot getPilot() {
+		return _p;
 	}
 	
 	/**

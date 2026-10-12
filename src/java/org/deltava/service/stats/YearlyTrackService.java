@@ -13,7 +13,7 @@ import org.json.*;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
@@ -86,8 +86,14 @@ public class YearlyTrackService extends WebService {
 		try {
 			Connection con = ctx.getConnection();
 			
+			// Get the Pilot
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.get(userID);
+			if (p == null)
+				throw error(SC_NOT_FOUND, "Invalid Pilot ID", false);
+			
 			// Get the Flight reports
-			CacheableCollection<FlightReport> data = _cache.get(Integer.valueOf(id));
+			CacheableCollection<FlightReport> data = _cache.get(Integer.valueOf(userID));
 			if (data == null) {
 				GetFlightReports rdao = new GetFlightReports(con);
 				List<FlightReport> pireps = rdao.getByPilot(userID, new LogbookSearchCriteria(null, ctx.getDB()));
@@ -122,7 +128,7 @@ public class YearlyTrackService extends WebService {
 				// Calculate flight score
 				Aircraft acInfo = acdao.get(afr.getEquipmentType());
 				AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(code);
-				ScorePackage pkg = new ScorePackage(acInfo, afr, inf.getRunwayD(), inf.getRunwayA(), opts);
+				ScorePackage pkg = new ScorePackage(acInfo, afr, p, inf.getRunwayD(), inf.getRunwayA(), opts);
 				FlightScore fs = FlightScorer.score(pkg);
 				if (fs != FlightScore.INCOMPLETE)
 					scores.add(fs);
