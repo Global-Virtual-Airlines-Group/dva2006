@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to fetch SimBrief packages.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 10.3
  */
 
@@ -25,7 +25,6 @@ public class GetSimBrief extends DAO {
 	 * SimBrief error data encapsulation class.
 	 */
 	public class SimBriefException extends HTTPDAOException {
-		
 		private final String _errorData;
 
 		SimBriefException(String url, String errorData) {
@@ -40,27 +39,12 @@ public class GetSimBrief extends DAO {
 		}
 	}
 	
-	/*
-	 * Downloads the content in the URL.
-	 */
-	private String download() throws IOException, HTTPDAOException {
-		try (InputStream in = getIn(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			byte[] buffer = new byte[16384];
-			int bytesRead = in.read(buffer);
-			while (bytesRead > 0) {
-				out.write(buffer, 0, bytesRead);
-				bytesRead = in.read(buffer);
-			}
-			
-			return new String(out.toByteArray(), UTF_8);
-		}
-	}
-
 	/**
 	 * Loads a SimBrief briefing package.
 	 * @param id the briefing ID
 	 * @return the raw XML string
 	 * @throws DAOException if an I/O error occurs
+	 * @throws SimBriefException if a SimBrief error occurs
 	 */
 	public BriefingPackage load(String id) throws DAOException {
 		String url = String.format("https://www.simbrief.com/ofp/flightplans/xml/%s.xml", id);
@@ -69,11 +53,13 @@ public class GetSimBrief extends DAO {
 			
 			// If we're an error, throw a status code exception
 			int statusCode = getResponseCode();
+			if (statusCode == SC_BAD_REQUEST)
+				throw new SimBriefException(url, downloadStream());
 			if (statusCode >= SC_BAD_REQUEST)
 				throw new HTTPDAOException(url, statusCode);
 			
 			// Parse the data
-			BriefingPackage sbdata = SimBriefParser.parse(download());
+			BriefingPackage sbdata = SimBriefParser.parse(downloadStream());
 			sbdata.setSimBriefID(id);
 			sbdata.setURL(url);
 			return sbdata;
@@ -90,6 +76,7 @@ public class GetSimBrief extends DAO {
 	 * @param staticID the static ID
 	 * @return the raw XML string
 	 * @throws DAOException if an I/O error occurs
+	 * @throws SimBriefException if a SimBrief error occurs
 	 */
 	public String refresh(String userID, String staticID) throws DAOException {
 		
@@ -105,11 +92,11 @@ public class GetSimBrief extends DAO {
 			// If we're an error, throw a status code exception, except a 400 in which case we parse the error
 			int statusCode = getResponseCode();
 			if (statusCode == SC_BAD_REQUEST)
-				throw new SimBriefException(buf.toString(), download());
-			else if (statusCode > SC_BAD_REQUEST)
+				throw new SimBriefException(buf.toString(), downloadStream());
+			if (statusCode > SC_BAD_REQUEST)
 				throw new HTTPDAOException(buf.toString(), statusCode);
 			
-			return download();
+			return downloadStream();
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		} finally {

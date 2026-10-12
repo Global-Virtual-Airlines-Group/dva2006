@@ -1,6 +1,8 @@
 // Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -9,6 +11,7 @@ import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.compress.compressors.brotli.BrotliCompressorInputStream;
+
 import org.deltava.beans.stats.HTTPCompressionInfo;
 import org.deltava.beans.system.VersionInfo;
 
@@ -252,5 +255,22 @@ abstract class DAO {
 		_compression.clear();
 		_urlcon = null;
 		_rawStream = null;
+	}
+	
+	/*
+	 * Downloads the content in the URL into a String. This is usefeul for fetching error streams.
+	 * @return the stream data as a UTF-8 string
+	 */
+	protected String downloadStream() throws IOException, HTTPDAOException {
+		try (InputStream in = getIn(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			byte[] buffer = new byte[16384];
+			int bytesRead = in.read(buffer);
+			while (bytesRead > 0) {
+				out.write(buffer, 0, bytesRead);
+				bytesRead = in.read(buffer);
+			}
+			
+			return new String(out.toByteArray(), UTF_8);
+		}
 	}
 }
