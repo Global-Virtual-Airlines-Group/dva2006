@@ -59,6 +59,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 		po.put("rank", p.getRank().getName());
 		po.put("equipmentProgram", p.getEquipmentType());
 		po.put("joinedOn", p.getCreatedOn().toEpochMilli());
+		p.getRatings().forEach(r -> po.accumulate("ratings", r));
 		if (p.getLegs() > 0) {
 			po.put("flights", p.getLegs());
 			po.put("hours", p.getHours());
@@ -66,6 +67,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 			po.put("pilotID", p.getPilotCode());
 		}
 		
+		JSONUtils.ensureArrayPresent(po, "ratings");
 		return po;
 	}
 	
@@ -97,7 +99,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
 		addPrompt(PromptType.USER, format(_pkg.getPilot()).toString());
 		addSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Angle of attack on the ground or greater than 50 degrees can be ignored.\n"
-			+ "Dates/times are epoch milliseconds, durations are seconds.");
+			+ "Dates/times are epoch milliseconds, durations are seconds. There is no need to mention ignored data in the summary.");
 		addSystemPrompt("If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
 		
 		// Call claude API
