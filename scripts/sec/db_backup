@@ -129,8 +129,9 @@ echo 'Writing DVA database'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --ignore-table=dva.GALLERYSCORE --ignore-table=dva.FLIGHTSTATS_LANDSCORE \
  --ignore-table=dva.FLIGHTSTATS_AIRPORT --ignore-table=dva.FLIGHTSTATS_DATE --ignore-table=dva.FLIGHTSTATS_EQTYPE --ignore-table=dva.FLIGHTSTATS_LANDING \
  --ignore-table=dva.FLIGHTSTATS_PILOT --ignore-table=dva.FLIGHTSTATS_ROUTES --ignore-table=dva.FLIGHTSTATS_NETWORK --ignore-table=dva.FLIGHTSTATS_GATE \
- --ignore-table=dva.PIREPS --ignore-table=dva.ACARS_PIREPS --ignore-table=dva.PIREP_COMMENT --ignore-table=dva.PIREP_ROUTE --ignore-table=dva.PIREP_DRAFT \
- --ignore-table=dva.PIREP_ELITE --ignore-table=dva.PIREP_ELITE_ENTRIES --ignore-table=dva.PROMO_EQ --ignore-table=dva.ACARS_ONTIME --ignore-table=dva.ONLINE_TRACK \
+ --ignore-table=dva.PIREPS --ignore-table=dva.ACARS_PIREPS --ignore-table=dva.PIREP_COMMENT --ignore-table=dva.PIREP_ANALYSIS --ignore-table=dva.PIREP_ANALYSIS_FACTORS \ 
+ --ignore-table=dva.PIREP_ROUTE --ignore-table=dva.PIREP_DRAFT --ignore-table=dva.PIREP_ELITE --ignore-table=dva.PIREP_ELITE_ENTRIES \ 
+ --ignore-table=dva.PROMO_EQ --ignore-table=dva.ACARS_ONTIME --ignore-table=dva.ONLINE_TRACK \
  --ignore-table=dva.PIREP_STATUS_HISTORY --ignore-table=dva.PIREP_SIMBRIEF --ignore-table=dva.ACARS_METADATA --ignore-table=dva.RAW_SCHEDULE \
  --ignore-table=dva.RAW_SCHEDULE_DATES --ignore-table=dva.SCHEDULE_HUBS --ignore-table=dva.RAW_SCHEDULE_AIRLINES --ignore-table=dva.HELPDESK_FILES --ignore-table=dva.HELPDESK \
  --ignore-table=dva.HELPDESK_COMMENTS --ignore-table=dva.FLIGHTSTATS_PILOT_DAY --ignore-table=dva.PIREP_AGGERGATE_QUEUE dva | $arc_util > dva.sql.bz2
@@ -146,8 +147,8 @@ echo 'Writing AFV database'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --ignore-table=afv.GALLERYSCORE --ignore-table=afv.FLIGHTSTATS_LANDSCORE \
  --ignore-table=afv.FLIGHTSTATS_AIRPORT --ignore-table=afv.FLIGHTSTATS_DATE --ignore-table=afv.FLIGHTSTATS_EQTYPE --ignore-table=afv.FLIGHTSTATS_LANDING \
  --ignore-table=afv.FLIGHTSTATS_PILOT --ignore-table=afv.FLIGHTSTATS_ROUTES --ignore-table=afv.FLIGHTSTATS_NETWORK --ignore-table=afv.FLIGHTSTATS_GATE \
- --ignore-table=afv.PIREPS --ignore-table=afv.ACARS_PIREPS --ignore-table=afv.PIREP_COMMENT --ignore-table=afv.PIREP_ROUTE \
- --ignore-table=afv.PIREP_DRAFT --ignore-table=afv.PROMO_EQ --ignore-table=afv.ACARS_ONTIME --ignore-table=afv.ONLINE_TRACK \
+ --ignore-table=afv.PIREPS --ignore-table=afv.ACARS_PIREPS --ignore-table=afv.PIREP_COMMENT --ignore-table=afv.PIREP_ANALYSIS --ignore-table=afv.PIREP_ANALYSIS_FACTORS \
+ --ignore-table=afv.PIREP_ROUTE --ignore-table=afv.PIREP_DRAFT --ignore-table=afv.PROMO_EQ --ignore-table=afv.ACARS_ONTIME --ignore-table=afv.ONLINE_TRACK \
  --ignore-table=afv.PIREP_STATUS_HISTORY --ignore-table=afv.PIREP_SIMBRIEF --ignore-table=afv.ACARS_METADATA --ignore-table=afv.PIREP_AGGERGATE_QUEUE \
  --ignore-table=afv.RAW_SCHEDULE --ignore-table=afv.RAW_SCHEDULE_DATES --ignore-table=afv.RAW_SCHEDULE_AIRLINES --ignore-table=afv.SCHEDULE_HUBS \
  --ignore-table=afv.HELPDESK_FILES --ignore-table=afv.HELPDESK --ignore-table=afv.HELPDESK_COMMENTS \
