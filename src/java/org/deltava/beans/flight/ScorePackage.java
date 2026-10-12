@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A bean to store data used to generate a Flight Score. 
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 8.0
  */
 
@@ -24,7 +24,7 @@ public class ScorePackage {
 	private Gate _gD;
 	private Gate _gA;
 	
-	private final Collection<ACARSRouteEntry> _data = new ArrayList<ACARSRouteEntry>();
+	private final SequencedCollection<ACARSRouteEntry> _data = new ArrayList<ACARSRouteEntry>();
 	
 	private FlightScore _result = FlightScore.INCOMPLETE;
 	
@@ -94,9 +94,9 @@ public class ScorePackage {
 	
 	/**
 	 * Returns the flight data.
-	 * @return a Collection of ACARSRouteEntry beans
+	 * @return a SequencedCollection of ACARSRouteEntry beans
 	 */
-	public Collection<ACARSRouteEntry> getData() {
+	public SequencedCollection<ACARSRouteEntry> getData() {
 		return _data;
 	}
 	
