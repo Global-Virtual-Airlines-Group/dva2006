@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
+import org.deltava.beans.ai.FlightAnalysis;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.RouteOnTime;
@@ -284,27 +285,41 @@ public class SetFlightReport extends DAO {
 
 	/**
 	 * Writes the Flight Report analysis summary.
-	 * @param afr the ACARSFlightReport
+	 * @param fa the FlightAnalysis bean
 	 * @param db the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeAnalysis(ACARSFlightReport afr, String db) throws DAOException {
-		boolean isEmpty = StringUtils.isEmpty(afr.getAnalysis());
+	public void writeAnalysis(FlightAnalysis fa, String db) throws DAOException {
 		try {
 			String dbName = formatDBName(db);
-			if (!isEmpty) {
-				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ANALYSIS VALUES (?, NOW(), ?)")) {
-					ps.setInt(1, afr.getID());
-					ps.setString(2, afr.getAnalysis());
-					executeUpdate(ps, 1);
-				}
-			} else {
-				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".PIREP_ANALYSIS WHERE (ID=?)")) {
-					ps.setInt(1, afr.getID());
-					executeUpdate(ps, 0);
-				}
+			startTransaction();
+			
+			// Write summary - this clears factors
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ANALYSIS VALUES (?,?,?,?,?)")) {
+				ps.setInt(1, fa.getID());
+				ps.setTimestamp(2, createTimestamp(fa.getCreatedOn()));
+				ps.setInt(3, fa.getSafetyScore());
+				ps.setInt(4, fa.getComfortScore());
+				ps.setString(5, fa.getMessage());
+				executeUpdate(ps, 1);
 			}
+			
+			// Write factors
+			int seq = 0;
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".PIREP_ANALYSIS_FACTORS VALUES (?,?,?)")) {
+				ps.setInt(1, fa.getID());
+				for (String factor : fa.getFactors()) {
+					ps.setInt(2, ++seq);
+					ps.setString(3, factor);
+					ps.addBatch();
+				}
+				
+				executeUpdate(ps, 1, fa.getFactors().size());
+			}
+			
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

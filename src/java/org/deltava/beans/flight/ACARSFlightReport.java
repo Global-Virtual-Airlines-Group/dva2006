@@ -5,6 +5,7 @@ import java.util.*;
 import java.time.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.ai.FlightAnalysis;
 import org.deltava.beans.schedule.*;
 
 /**
@@ -34,7 +35,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     private long _capabilities;
     private String _acAuthor;
 	private String _acPath;
-	private String _analysis;
+	private FlightAnalysis _analysis;
     
     private Instant _departureTime;
     private Instant _arrivalTime;
@@ -213,9 +214,9 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	
 	/**
 	 * Returns the AI summary of this Flight.
-	 * @return the summary text
+	 * @return a FlightAnalysis bean
 	 */
-	public String getAnalysis() {
+	public FlightAnalysis getAnalysis() {
 		return _analysis;
 	}
     
@@ -559,9 +560,9 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	
 	/**
 	 * Updates the AI Flight Analysis for this Flight.
-	 * @param msg the analysis
+	 * @param fa a FlightAnalysis bean
 	 */
-	public void setAnalysis(String msg) {
-		_analysis = msg;
+	public void setAnalysis(FlightAnalysis fa) {
+		_analysis = fa;
 	}
 }

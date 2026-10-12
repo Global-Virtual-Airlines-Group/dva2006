@@ -13,6 +13,7 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Status;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.ai.FlightAnalysis;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.econ.FlightEliteScore;
 import org.deltava.beans.event.*;
@@ -22,8 +23,7 @@ import org.deltava.beans.testing.*;
 import org.deltava.beans.servinfo.NetworkOutage;
 import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
-import org.deltava.beans.simbrief.BriefingPackage;
-import org.deltava.beans.simbrief.PackageFormat;
+import org.deltava.beans.simbrief.*;
 import org.deltava.beans.stats.*;
 import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.*;
@@ -780,22 +780,22 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Check for AI analysis
 					if (ac.getCanViewScore() && !pkg.getData().isEmpty() && SystemData.has("security.key.claude") && (afr instanceof ACARSFlightReport afr2)) {
-						String msg = dao.getAnalysis(fr.getID());
+						FlightAnalysis fa = dao.getAnalysis(fr.getID());
 						
 						// Load if not present
-						if (StringUtils.isEmpty(msg)) {
+						if (fa != null) {
 							try {
 								GetAIAnalysis aidao = new GetAIAnalysis(pkg);
 								aidao.setConnectTimeout(3500);
 								aidao.setReadTimeout(27500);
-								msg = aidao.execute();
+								fa = aidao.execute();
 							} catch (DAOException de) {
 								log.atWarn().withThrowable(de).log("Error loading AI analysis - {}", de.getMessage());
-								msg = de.getMessage();
+								fa = new FlightAnalysis(fr.getID(), de.getMessage());
 							}
 						}
 						
-						afr2.setAnalysis(msg);
+						afr2.setAnalysis(fa);
 					}
 					
 					// Save ACARS route, stripping out excessive bits

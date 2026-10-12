@@ -5,8 +5,10 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.ai.FlightAnalysis;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airline;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
@@ -88,15 +90,27 @@ public class GetFlightReportACARS extends GetFlightReports {
 	/**
 	 * Returns the AI-generated analysis of a Flight.
 	 * @param id the Flight Report ID
-	 * @return the summary, or null if not found
+	 * @return a FlightAnalysis bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public String getAnalysis(int id) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT PA.SUMMARY FROM PIREP_ANALYSIS PA WHERE (PA.ID=?)")) {
+	public FlightAnalysis getAnalysis(int id) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT PA.*, GROUP_CONCAT(PAF.FACTOR SEPARATOR ?) AS FCT FROM PIREP_ANALYSIS PA LEFT JOIN PIREP_ANALYSIS_FACTORS PAF ON (PA.ID=PAF.ID) WHERE (PA.ID=?) GROUP BY PA.ID")) {
 			ps.setInt(1, id);
+			ps.setString(2, "||");
 			try (ResultSet rs = ps.executeQuery()) {
-				return rs.next() ? rs.getString(1) : null;
+				if (rs.next()) {
+					FlightAnalysis fa = new FlightAnalysis(id, rs.getString(3));
+					fa.setCreatedOn(toInstant(rs.getTimestamp(2)));
+					fa.setScores(rs.getInt(4), rs.getInt(5));
+					String msgs = rs.getString(6);
+					if (!StringUtils.isEmpty(msgs))
+						StringUtils.split(msgs, "||").forEach(fa::addFactor);
+					
+					return fa;
+				}
 			}
+			
+			return null;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

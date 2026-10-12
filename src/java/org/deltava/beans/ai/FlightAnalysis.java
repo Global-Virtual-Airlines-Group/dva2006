@@ -1,6 +1,7 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ai;
 
+import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.DatabaseBean;
@@ -15,6 +16,7 @@ import org.deltava.beans.DatabaseBean;
 public class FlightAnalysis extends DatabaseBean {
 	
 	private final String _msg;
+	private Instant _createdOn = Instant.now();
 	
 	private int _safetyScore;
 	private int _comfortScore;
@@ -30,6 +32,14 @@ public class FlightAnalysis extends DatabaseBean {
 		super();
 		setID(id);
 		_msg = msg;
+	}
+	
+	/**
+	 * Returns the creation date of this Flight Analysis.
+	 * @return the creation date/time
+	 */
+	public Instant getCreatedOn() {
+		return _createdOn;
 	}
 	
 	/**
@@ -78,6 +88,14 @@ public class FlightAnalysis extends DatabaseBean {
 	 */
 	public void addFactor(String msg) {
 		_factors.add(msg);
+	}
+	
+	/**
+	 * Updates the creation date of this flight analysis.
+	 * @param dt the creation date/time
+	 */
+	public void setCreatedOn(Instant dt) {
+		_createdOn = dt;
 	}
 
 	/**
