@@ -94,8 +94,8 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 */
 	public FlightAnalysis getAnalysis(int id) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT PA.*, GROUP_CONCAT(PAF.FACTOR SEPARATOR ?) AS FCT FROM PIREP_ANALYSIS PA LEFT JOIN PIREP_ANALYSIS_FACTORS PAF ON (PA.ID=PAF.ID) WHERE (PA.ID=?) GROUP BY PA.ID")) {
-			ps.setInt(1, id);
-			ps.setString(2, "||");
+			ps.setString(1, "||");
+			ps.setInt(2, id);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					FlightAnalysis fa = new FlightAnalysis(id, rs.getString(3));
