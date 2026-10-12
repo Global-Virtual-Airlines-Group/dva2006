@@ -319,10 +319,19 @@
 <br><span class="small ita"><fmt:list value="${flightScore.messages}" delim="<br>" /></span></c:if></td>
 </tr>
 <c:if test="${!empty pirep.analysis}">
+<c:set var="pa" value="${pirep.analysis}" scope="page" />
 <tr class="analysisData">
  <td class="label top">AI Flight Analysis</td>
- <td class="data" colspan="${cspan}"><fmt:msg value="${pirep.analysis}" /></td>
+ <td class="data" colspan="${cspan}"><fmt:msg value="${pa.message}" /><c:if test="${!empty pa.factors}"><hr><span class="small ita"><c:forEach var="fct" items="${pa.factors}" varStatus="fcStatus">
+${fct}<c:if test="${!fcStatus.last}"><br></c:if></c:forEach> 
+</c:if></td>
 </tr>
+<content:filter roles="HR,PIREP">
+<tr class="analysisData">
+ <td class="label">AI Scores</td>
+ <td class="data" colspan="${cspan}">Safety: <fmt:landscore value="${pa.safety}" max="${pa.maxSafety}" className="bld" />, Comfort: <fmt:landscore value="${pa.comfort}" max="${pa.maxComfort}" className="bld" />&nbsp;<span class="small ita">(These scores are highly experimental and shuuld be used for any significant purpose.)</span></td>
+</tr>
+</content:filter>
 </c:if>
 </c:if>
 <c:if test="${!empty checkRide}">
