@@ -634,7 +634,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Load position data and scoring package - we use package for online time calculations as well
 					AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(SystemData.get("airline.code"));
-					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA(), opts);
+					ScorePackage pkg = new ScorePackage(acInfo, afr, p, info.getRunwayD(), info.getRunwayA(), opts);
 					pkg.setGates(info.getGateD(), info.getGateA());
 					if ((ac.getCanViewScore() || hasClientOnlineTime) && (afr.getFDR() != Recorder.XACARS)) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
@@ -782,15 +782,23 @@ public class PIREPCommand extends AbstractFormCommand {
 						FlightAnalysis fa = dao.getAnalysis(fr.getID());
 						
 						// Load if not present
-						if (fa != null) {
+						if (fa == null) {
 							try {
 								GetAIAnalysis aidao = new GetAIAnalysis(pkg);
-								aidao.setConnectTimeout(3500);
+								aidao.setConnectTimeout(4500);
 								aidao.setReadTimeout(27500);
 								fa = aidao.execute();
 							} catch (DAOException de) {
 								log.atWarn().withThrowable(de).log("Error loading AI analysis - {}", de.getMessage());
 								fa = new FlightAnalysis(fr.getID(), de.getMessage());
+							}
+							
+							// Save the analysis
+							if (fa.getScore() > 0) {
+								synchronized (this) {
+									SetFlightReport frwdao = new SetFlightReport(con);
+									//frwdao.writeAnalysis(fa, ctx.getDB());
+								}
 							}
 						}
 						
@@ -846,6 +854,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (pd.isEmpty())
 					pd.addAll(tdao.get(fr.getID()));
 				
+				// TODO: Consider moving this into FlightSubmissionHelper
 				hasTrack |= !pd.isEmpty();
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().toEpochMilli()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
