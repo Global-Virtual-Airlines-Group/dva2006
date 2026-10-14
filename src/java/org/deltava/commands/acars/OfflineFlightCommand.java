@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 2.4
  */
 
@@ -243,6 +243,14 @@ public class OfflineFlightCommand extends AbstractCommand {
 					ctx.setMessage("Invalid  ACARS Flight ID - " + inf.getID() + ", cannot submit purged/invalid Flight");
 					return;
 				}
+			}
+			
+			// Validate landing G-force
+			double g = LandingScorer.calculateG(afr.getLandingVSpeed());
+			double deltaG = Math.abs(g - afr.getLandingG());
+			if (deltaG > 0.65) {
+				afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Updated landing vertial decceleration from %.3f to %.3f", Double.valueOf(afr.getLandingG()), Double.valueOf(g)));
+				afr.setLandingG(g);
 			}
 			
 			// Check that we can submit for another user
