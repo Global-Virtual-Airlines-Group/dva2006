@@ -1,6 +1,8 @@
 // Copyright 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
+import java.util.*;
+
 /**
  * A utility class to score FDR flight reports.
  * @author Luke
@@ -30,10 +32,17 @@ public class LandingScorer {
 	 */
 	public static final double OPT_DISTANCE_FACTOR = 0.4;
 	
-	/**
-	 * Strut and tire deflection on touchdown.
+	private static final List<String> SMALL_STRUT_EQTYPES = Arrays.asList("CRJ-", "B737-*", "B717-200", "MD-88", "MD-90", "ERJ-", "A220-", "F70", "F100", "DC-9-", "Caravelle", "ATR-42", "ATR-72");
+	
+	/*
+	 * Small strut and tire deflection on touchdown.
 	 */
-	private static final double STRUT_TIRE_DEFLECTION = 1.4;
+	private static final double SMALL_STRUT_TIRE_DEFLECTION = 1.4;
+	
+	/*
+	 * Large strut and tire deflection on touchdown.
+	 */
+	private static final double LARGE_STRUT_TIRE_DEFLECTION = 1.75;
 	
 	// static class
 	private LandingScorer() {
@@ -73,9 +82,18 @@ public class LandingScorer {
 	/**
 	 * Calculates vertical acceleration at touchdown based on vertical speed only.
 	 * @param vSpeed the vertical speed in feet/minute
+	 * @param eqType the equipment type
 	 * @return the vertical acceleration in G
 	 */
-	public static double calculateG(int vSpeed) {
-		return 1 + ((vSpeed * vSpeed) / (231_700 * STRUT_TIRE_DEFLECTION));
+	public static double calculateG(int vSpeed, String eqType) {
+		double d = LARGE_STRUT_TIRE_DEFLECTION;
+		for (String eq : SMALL_STRUT_EQTYPES) {
+			if (eq.startsWith(eqType)) {
+				d = SMALL_STRUT_TIRE_DEFLECTION;
+				break;
+			}
+		}
+		
+		return 1 + ((vSpeed * vSpeed) / (231_700 * d));
 	}
 }

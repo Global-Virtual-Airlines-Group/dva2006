@@ -246,7 +246,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			}
 			
 			// Validate landing G-force
-			double g = LandingScorer.calculateG(afr.getLandingVSpeed());
+			double g = LandingScorer.calculateG(afr.getLandingVSpeed(), afr.getEquipmentType());
 			double deltaG = Math.abs(g - afr.getLandingG());
 			if (deltaG > 0.65) {
 				afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Updated landing vertial decceleration from %.3f to %.3f", Double.valueOf(afr.getLandingG()), Double.valueOf(g)));
