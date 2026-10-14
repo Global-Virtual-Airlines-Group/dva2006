@@ -1,10 +1,10 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 /**
  * A utility class to score FDR flight reports.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 10.4
  */
 
@@ -29,6 +29,11 @@ public class LandingScorer {
 	 * Runway distance scoring factor.
 	 */
 	public static final double OPT_DISTANCE_FACTOR = 0.4;
+	
+	/**
+	 * Strut and tire deflection on touchdown.
+	 */
+	private static final double STRUT_TIRE_DEFLECTION = 1.4;
 	
 	// static class
 	private LandingScorer() {
@@ -63,5 +68,14 @@ public class LandingScorer {
 		int rawVS = Math.abs(OPT_VSPEED - vSpeed);
 		int rawRD =Math.abs(OPT_DISTANCE - rwyDistance);
 		return Math.max(0, (rawVS  * OPT_VSPEED_FACTOR) + (rawRD * OPT_DISTANCE_FACTOR));
+	}
+	
+	/**
+	 * Calculates vertical acceleration at touchdown based on vertical speed only.
+	 * @param vSpeed the vertical speed in feet/minute
+	 * @return the vertical acceleration in G
+	 */
+	public static double calculateG(int vSpeed) {
+		return 1 + ((vSpeed * vSpeed) / (231_700 * STRUT_TIRE_DEFLECTION));
 	}
 }
