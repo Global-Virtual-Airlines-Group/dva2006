@@ -31,6 +31,9 @@ public class GetAIAnalysis extends ClaudeDAO {
 	private static final int TERMINAL_POS_DELTA = 5750; // takeoff/approach position delta (feet) 
 	private static final int CRUISE_POS_DELTA = 32500; // cruise position delta (feet)
 	
+	// JSON Array legend
+	private static final Collection<String> LEGEND = Arrays.asList("position", "date", "altitude", "radar_altitude", "air_speed", "ground_speed", "mach", "heading", "fuel", "fuel_flow", "aoa", "pitch", "bank", "g", "flaps", "visibility", "wind_speed", "wind_hdg", "warnings", "flags");
+	
 	private final ScorePackage _pkg;
 
 	/**
@@ -43,51 +46,48 @@ public class GetAIAnalysis extends ClaudeDAO {
 	}
 	
 	/*
-	 * Formats an ACARSRouteEntry bean into a JSON object.
+	 * Helper method to format flight data as an array.
 	 */
-	private static JSONObject format(ACARSRouteEntry re) {
-
-		// Set core fields
-		JSONObject ro = new JSONObject();
-		ro.put("position", JSONUtils.toLL(re));
-		ro.put("alt", re.getAltitude());
-		ro.put("agl", re.getRadarAltitude());
-		ro.put("aSpeed", re.getAirSpeed());
-		ro.put("gSpeed", re.getGroundSpeed());
-		ro.put("mach", re.getMach());
-		ro.put("hdg", re.getHeading());
-		ro.put("fuel", re.getFuelRemaining());
-		ro.put("fuel_flow", re.getFuelFlow());
-		ro.put("date", re.getDate().toEpochMilli());
-		if (re.isWarning()) {
-			re.getWarnings().forEach(w -> ro.accumulate("warnings", w.toString()));
-			JSONUtils.ensureArrayPresent(ro, "warnings");
-		}
+	private static JSONArray formatArray(ACARSRouteEntry re) {
 		
+		// Encode core fields
+		JSONArray ra = new JSONArray();
+		ra.put(JSONUtils.toLL(re));
+		ra.put(re.getDate().toEpochMilli());
+		ra.put(re.getAltitude());
+		ra.put(re.getRadarAltitude());
+		ra.put(re.getAirSpeed());
+		ra.put(re.getGroundSpeed());
+		ra.put(re.getMach());
+		ra.put(re.getHeading());
+		ra.put(re.getFuelRemaining());
+		ra.put(re.getFuelFlow());
+		ra.put(re.getAOA());
+		ra.put(re.getPitch());
+		ra.put(re.getBank());
+		ra.put(re.getG());
+		ra.put(re.getFlaps());
+		ra.put(re.getVisibility());
+		ra.put(re.getWindSpeed());
+		ra.put(re.getWindHeading());
+		
+		// Encode warnings
+		JSONArray wa = new JSONArray();
+		re.getWarnings().forEach(w -> wa.put(w.toString()));
+		ra.put(wa);
+		
+		// Encode flags
+		JSONArray fa = new JSONArray();
 		for (int x = 0; x < ACARSFlags.values().length; x++) {
 			ACARSFlags af = ACARSFlags.values()[x];
 			if (re.isFlagSet(af)) {
 				String f = af.toString();
-				ro.accumulate("flags", f.startsWith("AP_") || f.startsWith("AT_") ? f.substring(3) : f);
+				fa.put(f.startsWith("AP_") || f.startsWith("AT_") ? f.substring(3) : f);
 			}
-			
-			if (ro.has("flags")) JSONUtils.ensureArrayPresent(ro, "flags");
 		}
-		
-		// Format ACARS fields
-		ro.put("aoa", re.getAOA());
-		ro.put("pitch", re.getPitch());
-		ro.put("bank", re.getBank());
-		ro.put("g", re.getG());
-		if (re.getFlaps() > 0) ro.put("flaps", re.getFlaps());
-		if (re.getRadarAltitude() < 3000) {
-			ro.put("visibility", re.getVisibility());
-			ro.put("wind_speed", re.getWindSpeed());
-			ro.put("wind_hdg", re.getWindHeading());
-		}
-		
-		JSONUtils.ensureArrayPresent(ro, "flags");
-		return ro;
+
+		ra.put(fa);
+		return ra;
 	}
 	
 	/*
@@ -180,22 +180,28 @@ public class GetAIAnalysis extends ClaudeDAO {
 		data.putOpt("arrival_runway", JSONUtils.format(_pkg.getRunwayA()));
 		data.putOpt("departure_gate", format(_pkg.getGateD()));
 		data.putOpt("arrival_gate", format(_pkg.getGateA()));
-		pdata.stream().map(GetAIAnalysis::format).forEach(po -> data.accumulate("positions", po));
+		
+		// Encode positions and legend
+		JSONArray la = new JSONArray();
+		LEGEND.forEach(la::put);
+		data.accumulate("positions", la);
+		pdata.stream().map(GetAIAnalysis::formatArray).forEach(po -> data.accumulate("positions", po));
 		JSONUtils.ensureArrayPresent(data, "positions");
 		
 		// TODO: This needs to be data, not code
 		// Set the prompt
-		setMaxTokens(6500);
+		setMaxTokens(9500);
 		addSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Weights are in pounds. Dates/times are epoch milliseconds, durations are seconds.");
 		addSystemPrompt("Angle of attack on the ground or greater than 50 degrees can be ignored.\nIgnore discrepancies between touchdown G-Force and telemetry data.");
 		addSystemPrompt("Bank angles of less than 30 degrees are acceptable, when over 2,500 feet above the ground.");
 		addSystemPrompt("There is no need to mention ignored data in the summary or key factors.");
 		addSystemPrompt("If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
+		addSystemPrompt("Position data is an array of JSON arrays. The first record in this array is the field names and is not valid data.");
 
 		addPrompt(PromptType.USER, "You are a flight data analyst. Analyze some flight data. Scoring rubric (0-100): Safety = 60 pts, Comfort = 40 pts. These may change, so return "
 			+ "the maximum score in each category as a field in the JSON response.\n Deduct for: unstabilized approach, hard landing (>1.8g), overspeed/stall warnings, turbulence, high bank angles.\n"
 			+ "Respond with pure JSON only:\n {\"analysis\": \"<1-2 paragraphs>\", \"safety_score\": <0-60>,\n\"comfort_score\": <0-40>, \"flight_score\": <0-100>,\n\"key_factors\": [\"...\"]}");
-		addPrompt(PromptType.ASSISTANT, "Please provide the flight data, in JSON format.");
+		addPrompt(PromptType.ASSISTANT, "Please provide the flight data in JSON format.");
 		addPrompt(PromptType.USER, data.toString());
 		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
 		addPrompt(PromptType.USER, format(_pkg.getPilot()).toString());
