@@ -239,10 +239,10 @@ public class GetAIAnalysis extends ClaudeDAO {
 			throw new IllegalArgumentException("No text in response content");
 		} catch (IllegalArgumentException iae) {
 			log.warn("Response Error - {}", iae.getMessage());
-			return new FlightAnalysis(_pkg.getID(), String.format("Response Error - %s", iae.getMessage()));
+			return new FlightAnalysis(_pkg.getID(), String.format("Response Error - %s", iae.getMessage())) {{ setGenerationTime((int) tt.stop()); setTokens(getInputTokens(), getOutputTokens()); }};
 		} catch (ClaudeException ce) {
 			log.warn("Claude API Error - {}", ce.getMessage());
-			return new FlightAnalysis(_pkg.getID(), String.format("Claude API Error - %s", ce.getMessage()));
+			return new FlightAnalysis(_pkg.getID(), String.format("Claude API Error - %s", ce.getMessage())) {{ setGenerationTime((int) tt.stop()); setTokens(getInputTokens(), getOutputTokens()); }};
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
