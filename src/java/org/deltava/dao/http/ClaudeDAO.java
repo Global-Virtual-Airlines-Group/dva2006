@@ -27,18 +27,27 @@ abstract class ClaudeDAO extends DAO {
 	private final SequencedCollection<ClaudeMessage> _msgs = new ArrayList<ClaudeMessage>();
 	private final SequencedCollection<String> _sysPrompts = new ArrayList<String>();
 	private ClaudeModel _model = ClaudeModel.HAIKU55;
+	private Effort _effort = Effort.MEDIUM;
 	private ClaudeCacheTTL _ttl = ClaudeCacheTTL.NONE;
 	
 	private int _inTokens;
 	private int _outTokens;
+	private int _payloadSize;
 	
 	private static final String API_V1_URL = "https://api.anthropic.com/v1/messages";
 	
-	/* 
+	/** 
 	 * Claude prompt message types.
 	 */
 	enum PromptType {
 		USER, ASSISTANT
+	}
+	
+	/**
+	 * Thinking effort levels.
+	 */
+	enum Effort {
+		LOW, MEDIUM, HIGH, XHIGH, MAX
 	}
 	
 	// Claude message
@@ -93,6 +102,15 @@ abstract class ClaudeDAO extends DAO {
 	}
 	
 	/**
+	 * Updates the thinking effort for this call.
+	 * @param e an Effort level
+	 */
+	protected void setEffort(Effort e) {
+		_effort = e;
+	}
+	
+	
+	/**
 	 * Sets the cache expiration policy to use for this call.
 	 * @param ttl a ClaudeCacheTTL
 	 */
@@ -123,6 +141,14 @@ abstract class ClaudeDAO extends DAO {
 	public int getOutputTokens() {
 		return _outTokens;
 	}
+	
+	/**
+	 * Returns the size of the API request payload.
+	 * @return the request body size in bytes, or zero if the API has not been called yet
+	 */
+	public int getPayloadSize() {
+		return _payloadSize;
+	}
 
 	/**
 	 * Generates the Claude API payload
@@ -134,6 +160,11 @@ abstract class ClaudeDAO extends DAO {
 		jo.put("max_tokens", _maxTokens);
 		jo.put("model", _model.getID());
 		jo.put("stream", false);
+		
+		// Add output configuration
+		JSONObject oco = new JSONObject();
+		oco.put("effort", _effort.name().toLowerCase());
+		jo.put("output_config", oco);
 		
 		// Add TTL
 		if (_ttl != ClaudeCacheTTL.NONE) {
@@ -150,6 +181,8 @@ abstract class ClaudeDAO extends DAO {
 			so.put("type", "text");
 			jo.accumulate("system", so);
 		}
+		
+		System.out.println(jo.toString(2));
 		
 		// Add user prompts
 		for (ClaudeMessage msg : _msgs) {
@@ -180,8 +213,9 @@ abstract class ClaudeDAO extends DAO {
 
 			// Send the POST body
 			try (OutputStream out = getOut()) {
-				System.out.println(generatePayload().toString(2));
-				out.write(generatePayload().toString().getBytes(UTF_8));
+				String js = generatePayload().toString();
+				_payloadSize = js.length();
+				out.write(js.getBytes(UTF_8));
 				out.flush();
 			}
 			
