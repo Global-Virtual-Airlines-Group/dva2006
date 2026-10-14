@@ -785,8 +785,8 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (fa == null) {
 							try {
 								GetAIAnalysis aidao = new GetAIAnalysis(pkg);
-								aidao.setConnectTimeout(4500);
-								aidao.setReadTimeout(27500);
+								aidao.setConnectTimeout(2750);
+								aidao.setReadTimeout(45500);
 								fa = aidao.execute();
 							} catch (DAOException de) {
 								log.atWarn().withThrowable(de).log("Error loading AI analysis - {}", de.getMessage());
