@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2018, 2019, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2018, 2019, 2021, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,11 +8,12 @@ import java.time.Instant;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.EquipmentType;
 import org.deltava.beans.stats.DisposalQueueStats;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to return Flight Report disposal queue information.
  * @author Luke
- * @version 12.2
+ * @version 12.5
  * @since 5.0
  */
 
@@ -43,6 +44,29 @@ public class GetFlightReportQueue extends DAO {
 					if (!rs.getBoolean(6)) a.add(ApprovalOperation.ELITE);
 					results.add(a);
 				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads the Flight summarization queue.
+	 * @return a Collection of Flight Report database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getSummaryQueue() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PIREP_ID FROM acars.SUMMARY_QUEUE WHERE (AIRLINE=?) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) ORDER BY CREATED")) {
+			ps.setString(1, SystemData.get("airline.code"));
+			ps.setInt(2, 15);
+			
+			// Execute the query
+			Collection<Integer> results = new LinkedHashSet<Integer>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
 			return results;
