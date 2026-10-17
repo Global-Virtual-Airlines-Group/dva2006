@@ -797,7 +797,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							if (fa.getScore() > 0) {
 								synchronized (this) {
 									SetFlightReport frwdao = new SetFlightReport(con);
-									//frwdao.writeAnalysis(fa, ctx.getDB());
+									frwdao.writeAnalysis(fa, ctx.getDB());
 								}
 							}
 						}
