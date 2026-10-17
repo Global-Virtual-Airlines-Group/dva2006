@@ -30,6 +30,8 @@ abstract class ClaudeDAO extends DAO {
 	private Effort _effort = Effort.MEDIUM;
 	private ClaudeCacheTTL _ttl = ClaudeCacheTTL.NONE;
 	
+	private String _key;
+	
 	private int _inTokens;
 	private int _outTokens;
 	private int _payloadSize;
@@ -109,6 +111,13 @@ abstract class ClaudeDAO extends DAO {
 		_effort = e;
 	}
 	
+	/**
+	 * Overrides the Claude API key to use.
+	 * @param k the API key
+	 */
+	public void setKey(String k) { 
+		_key = k;
+	}
 	
 	/**
 	 * Sets the cache expiration policy to use for this call.
@@ -202,13 +211,15 @@ abstract class ClaudeDAO extends DAO {
 	 * @throws DAOException if an error occurs
 	 */
 	protected JSONObject send() throws DAOException {
+		
+		String k = StringUtils.isEmpty(_key) ? SystemData.get("security.key.claude") : _key; 
 		try {
 			setReturnErrorStream(true);
 			init(API_V1_URL);
 			setMethod("POST");
 			setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
 			setRequestHeader("Content-Type", "application/json");
-			setRequestHeader("X-Api-Key", SystemData.get("security.key.claude"));
+			setRequestHeader("X-Api-Key", k);
 			setRequestHeader("anthropic-version", "2023-06-01");
 
 			// Send the POST body
