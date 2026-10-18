@@ -40,14 +40,16 @@ public class ScheduleFilterTask extends Task {
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			Collection<ScheduleSourceInfo> srcInfos = rsdao.getSources(true, ctx.getDB());
 			Collection<ScheduleSourceHistory> srcs = srcInfos.stream().map(inf -> new ScheduleSourceHistory(inf)).collect(Collectors.toCollection(ArrayList::new));
-			Map<ScheduleSource, Collection<Airline>> srcAirlines = rsdao.getSourceAirlines(); // TODO: These are the loaded airlines!
+			Map<ScheduleSource, Collection<Airline>> srcAirlines = rsdao.getSourceAirlines();
 			for (ScheduleSourceInfo src : srcs) {
 				Collection<Airline> airlines = srcAirlines.getOrDefault(src.getSource(), Collections.emptyList());
+				boolean hasRemoved = airlines.removeIf(a -> !a.getActive());
+				if (hasRemoved)
+					log.warn("Removed Inactive Airlines from {}", src.getSource().getDescription());
+
 				src.setAirlines(airlines);
 				log.info("Importing {} from {}", src.getAirlines(), src.getSource());
 			}
-			
-			// TODO: Are we ensuring that previously imported airlines are not getting restored?
 			
 			// Start transaction
 			ctx.startTX();
