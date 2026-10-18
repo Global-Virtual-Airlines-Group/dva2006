@@ -99,6 +99,15 @@ table.form td.eliteStatus, .button {
 <c:if test="${!updStatus.isLast()}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
+<c:if test="${!empty summary}">
+<tr class="title caps">
+ <td colspan="3">SUMMARY<span id="summaryToggle" class="toggle nophone" onclick="void golgotha.util.toggleExpand(this, 'summary')">COLLAPSE</span></td>
+</tr>
+<tr class="summary">
+ <td class="label">&nbsp;</td>
+ <td colspan="2" class="data">${summary.text}</td>
+</tr>
+</c:if>
 <tr class="title caps">
  <td colspan="3">FLIGHT EVALUATIONS<span id="evalToggle" class="toggle nophone" onclick="void golgotha.util.toggleExpand(this, 'eval')">COLLAPSE</span></td>
 </tr>

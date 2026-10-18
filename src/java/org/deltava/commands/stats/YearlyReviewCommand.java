@@ -6,16 +6,17 @@ import java.util.stream.Collectors;
 import java.time.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.GetAIYearlyReview;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -25,10 +26,8 @@ import org.deltava.util.system.SystemData;
  * @since 12.4
  */
 
-public class YearlyReviewCommand extends AbstractCommand {
+public class YearlyReviewCommand extends AbstractTestHistoryCommand {
 	
-	private static final Cache<CacheableCollection<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "Logbook");
-
 	/**
 	 * Execute the command.
 	 * @param ctx the Command context
@@ -60,15 +59,9 @@ public class YearlyReviewCommand extends AbstractCommand {
 			if (p == null)
 				throw notFoundException("Invalid Pilot", userID);
 			
-			// Load the log book and add to cache
-			CacheableCollection<FlightReport> data = _cache.get(p.cacheKey());
-			if (data == null) {
-				GetFlightReports rdao = new GetFlightReports(con);
-				List<FlightReport> pireps = rdao.getByPilot(p.getID(), new LogbookSearchCriteria(null, ctx.getDB()));
-				rdao.loadCaptEQTypes(p.getID(), pireps, ctx.getDB());
-				data = new CacheableList<FlightReport>(p.cacheKey(), pireps);
-				_cache.add(data);
-			}
+			// Load tests and populate logbook
+			TestingHistoryHelper th = initTestHistory(p, con);
+			Collection<FlightReport> data = getLogbook(p);
 			
 			// Remove future flights - clone data before you do so since the cache may be local
 			List<Integer> years = data.stream().mapToInt(fr -> LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear()).distinct().boxed().collect(Collectors.toList());
@@ -90,7 +83,7 @@ public class YearlyReviewCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
-
+			
 			// Load elite status
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
@@ -119,9 +112,22 @@ public class YearlyReviewCommand extends AbstractCommand {
 				ctx.setAttribute("hasEliteInYear", Boolean.valueOf(!yrLevels.isEmpty()), REQUEST);
 			}
 			
+			// Calculate AI summary
+			AISummary s = null; 
+			try {
+				GetAIYearlyReview aidao = new GetAIYearlyReview(p, cy);
+				aidao.setConnectTimeout(2500);
+				aidao.setReadTimeout(35500);
+				aidao.addExams(th.getExams().stream().filter(YearlyFilter.filter(year)).collect(Collectors.toList()));
+				s = aidao.execute();
+			} catch (DAOException de) {
+				s = new AISummary(p.getID(), de.getMessage());
+			}
+				
 			// Save in request
 			ctx.setAttribute("current", cy, REQUEST);
 			ctx.setAttribute("previous", py, REQUEST);
+			ctx.setAttribute("summary", s, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

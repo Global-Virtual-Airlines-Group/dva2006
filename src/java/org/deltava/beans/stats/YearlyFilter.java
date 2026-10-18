@@ -3,16 +3,17 @@ package org.deltava.beans.stats;
 
 import java.time.*;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.deltava.beans.Helper;
+import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.FlightReportComparator;
 
 /**
- * 
+ * A helper bean to filter FlightReports and other dated objects by year. 
  * @author Luke
  * @version 12.5
  * @since 12.5
@@ -23,7 +24,30 @@ public class YearlyFilter {
 	
 	private final int _pilotID;
 	private final List<FlightReport> _flights = new ArrayList<FlightReport>();
+	
+	private static class DateFilter implements Predicate<CalendarEntry> {
+		private final int _year;
+		
+		DateFilter(int year) {
+			_year = year;
+		}
+		
+		@Override
+		public boolean test(CalendarEntry t) {
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(t.getDate(), ZoneOffset.UTC);
+			return (zdt.getYear() == _year);
+		}
+	}
 
+	/**
+	 * Creates a Predicate used to filter objects with a date, by year.
+	 * @param year the year to filter for
+	 * @return a Predicate
+	 */
+	public static Predicate<CalendarEntry> filter(int year) {
+		return new DateFilter(year);
+	}
+	
 	/**
 	 * Creates the bean.
 	 * @param pilotID the Pilot's database ID
@@ -36,13 +60,16 @@ public class YearlyFilter {
 		_flights.sort(new FlightReportComparator(FlightReportComparator.DATE));
 	}
 
+	/**
+	 * Generates a yearly flight summary for a particular year.
+	 * @param year the year
+	 * @return a YearlySummary
+	 */
 	public YearlySummary getSummary(int year) {
-		
-		final Instant ed = LocalDate.of(year + 1, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC);
-		final Instant sd = LocalDate.of(year, 1, 1).atStartOfDay().minusSeconds(1).toInstant(ZoneOffset.UTC);
-		
+
+		// Filter the flights by year
 		YearlySummary cy = new YearlySummary(_pilotID, year);
-		_flights.stream().filter(fr -> fr.getDate().isAfter(sd) && fr.getDate().isBefore(ed)).forEach(cy::add);
+		_flights.stream().filter(new DateFilter(year)).forEach(cy::add);
 		
 		// Get previous year data
 		Collection<FlightReport> pyFlights = _flights.stream().filter(fr -> !cy.contains(fr)).toList();
