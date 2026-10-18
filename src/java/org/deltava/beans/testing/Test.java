@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2015, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.time.Instant;
@@ -9,11 +9,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * An class to implement commonalities between user examinations and flight videos.
  * @author Luke
- * @version 8.0
+ * @version 12.5
  * @since 1.0
  */
 
-public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEntry {
+public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEntry, CalendarEntry {
 
     private final String _name;
     private TestStatus _status;
@@ -157,12 +157,8 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
     	return _comments;
     }
     
-    /**
-     * Returns the date this Examination was created/performed on.
-     * @return the creation Date
-     * @see Test#setDate(Instant)
-     */
-    public Instant getDate() {
+    @Override
+	public Instant getDate() {
         return _createdOn;
     }
     
