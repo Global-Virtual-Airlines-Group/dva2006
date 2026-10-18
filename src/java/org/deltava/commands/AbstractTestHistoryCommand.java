@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2021, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -15,10 +15,9 @@ import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
- * examinations/transfers a Pilot is eligible for.
+ * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 11.2
+ * @version 12.5
  * @since 1.0
  */
 
@@ -27,6 +26,17 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 	private static final Cache<TestingHistoryHelper> _cache = CacheManager.get(TestingHistoryHelper.class, "TestingHistory");
 	private static final Cache<CacheableCollection<FlightReport>> _logCache = CacheManager.getCollection(FlightReport.class, "Logbook");
 
+	/**
+	 * Retrieves the cached logbook. This should already be loaded once initTestHistory is called. This cached collection has been
+	 * cloned already so is safe to mutate, and an empty Collection is returned if the cache returns a miss.
+	 * @param p the Pilot
+	 * @return a Collection of FlghtReport beans
+	 */
+	protected static final Collection<FlightReport> getLogbook(Pilot p) {
+		CacheableCollection<FlightReport> pireps = _logCache.get(p.cacheKey());
+		return (pireps == null) ? new ArrayList<FlightReport>() : pireps.clone();
+	}
+	
 	/**
 	 * Populates the Testing History Helper by calling the proper DAOs in the right order.
 	 * @param p the Pilot bean
