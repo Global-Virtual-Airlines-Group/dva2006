@@ -105,8 +105,14 @@ table.form td.eliteStatus, .button {
 </tr>
 <tr class="summary">
  <td class="label">&nbsp;</td>
- <td colspan="2" class="data">${summary.text}</td>
+ <td colspan="2" class="data"><fmt:msg value="${summary.text}" /></td>
 </tr>
+<content:filter roles="HR,Operations,Developer">
+<tr class="summary">
+ <td class="label">Generated on</td>
+ <td class="data" colspan="${cspan}"><fmt:date date="${summary.createdOn}" /> (<fmt:int value="${summary.generationTime}" /> ms) - <span class="small"><fmt:int value="${summary.inputTokens}" /> tokens in, <fmt:int value="${summary.outputTokens}" /> tokens out</span></td>
+</tr>
+</content:filter>
 </c:if>
 <tr class="title caps">
  <td colspan="3">FLIGHT EVALUATIONS<span id="evalToggle" class="toggle nophone" onclick="void golgotha.util.toggleExpand(this, 'eval')">COLLAPSE</span></td>
