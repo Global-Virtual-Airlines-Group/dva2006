@@ -42,7 +42,7 @@ abstract class ClaudeDAO extends DAO {
 	 * Claude prompt message types.
 	 */
 	enum PromptType {
-		USER, ASSISTANT
+		USER, ASSISTANT, SYSTEM
 	}
 	
 	/**
@@ -80,19 +80,16 @@ abstract class ClaudeDAO extends DAO {
 	 * @throws IllegalArgumentException if two of the same types of messages are enqueued in a row
 	 */
 	protected void addPrompt(PromptType mt, String text) {
+		if (mt == PromptType.SYSTEM) {
+			_sysPrompts.add(text);	
+			return;
+		}
+		
 		ClaudeMessage msg = new ClaudeMessage(mt, text);
 		if (!_msgs.isEmpty() && (_msgs.getLast().type == mt))
 			throw new IllegalArgumentException(String.format("Last message in queue is also %s", mt));
 		
 		_msgs.add(msg);
-	}
-	
-	/**
-	 * Updates the system prompt for this call.
-	 * @param sp the system prompt
-	 */
-	protected void addSystemPrompt(String sp) {
-		_sysPrompts.add(sp);
 	}
 	
 	/**

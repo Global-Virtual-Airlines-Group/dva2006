@@ -191,12 +191,12 @@ public class GetAIAnalysis extends ClaudeDAO {
 		// TODO: This needs to be data, not code
 		// Set the prompt
 		setMaxTokens(9500);
-		addSystemPrompt("All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Weights are in pounds. Dates/times are epoch milliseconds, durations are seconds.");
-		addSystemPrompt("Angle of attack on the ground or greater than 50 degrees can be ignored.\nIgnore discrepancies between touchdown G-Force and telemetry data.");
-		addSystemPrompt("Bank angles of less than 30 degrees are acceptable, when over 2,500 feet above the ground.");
-		addSystemPrompt("There is no need to mention ignored data in the summary or key factors.");
-		addSystemPrompt("If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
-		addSystemPrompt("Position data is an array of JSON arrays. The first record in this array is the field names and is not valid data.");
+		addPrompt(PromptType.SYSTEM, "All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Weights are in pounds. Dates/times are epoch milliseconds, durations are seconds.");
+		addPrompt(PromptType.SYSTEM, "Angle of attack on the ground or greater than 50 degrees can be ignored.\nIgnore discrepancies between touchdown G-Force and telemetry data.");
+		addPrompt(PromptType.SYSTEM, "Bank angles of less than 30 degrees are acceptable, when over 2,500 feet above the ground.");
+		addPrompt(PromptType.SYSTEM, "There is no need to mention ignored data in the summary or key factors.");
+		addPrompt(PromptType.SYSTEM, "If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
+		addPrompt(PromptType.SYSTEM, "Position data is an array of JSON arrays. The first record in this array is the field names and is not valid data.");
 
 		addPrompt(PromptType.USER, "You are a flight data analyst. Analyze some flight data. Scoring rubric (0-100): Safety = 60 pts, Comfort = 40 pts. These may change, so return "
 			+ "the maximum score in each category as a field in the JSON response.\n Deduct for: unstabilized approach, hard landing (>1.8g), overspeed/stall warnings, turbulence, high bank angles.\n"
@@ -214,7 +214,6 @@ public class GetAIAnalysis extends ClaudeDAO {
 			
 			// Check for response
 			long ms = tt.stop();
-			System.out.println(ro.toString(1));
 			JSONArray ca = ro.getJSONArray("content");
 			for (int x = 0; x < ca.length(); x++) {
 				JSONObject co = ca.getJSONObject(x);
