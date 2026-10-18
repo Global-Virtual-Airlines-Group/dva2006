@@ -6,7 +6,6 @@ import java.util.*;
 import org.json.*;
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
@@ -106,29 +105,6 @@ public class GetAIAnalysis extends ClaudeDAO {
 	}
 	
 	/*
-	 * Helper method to JSON-format a Pilot.
-	 */
-	private static JSONObject format(Pilot p) {
-		JSONObject po = new JSONObject();
-		po.put("id", p.getID());
-		po.put("firstName", p.getFirstName());
-		po.put("lastName", p.getLastName());
-		po.put("rank", p.getRank().getName());
-		po.put("equipmentProgram", p.getEquipmentType());
-		po.put("joinedOn", p.getCreatedOn().toEpochMilli());
-		p.getRatings().forEach(r -> po.accumulate("ratings", r));
-		if (p.getLegs() > 0) {
-			po.put("flights", p.getLegs());
-			po.put("hours", p.getHours());
-			po.put("lastFlight", p.getLastFlight().toEpochMilli());
-			po.put("pilotID", p.getPilotCode());
-		}
-		
-		JSONUtils.ensureArrayPresent(po, "ratings");
-		return po;
-	}
-	
-	/*
 	 * Filters out a route entry. This keeps all takeoff/touchdown entries, entries with warnings, higher bank/pitch angles, G-force. It will then
 	 * perform a distance comparison, ensuring that an entry is only saved if greater than the position deltas specified in the constants, in feet.
 	 */
@@ -209,39 +185,28 @@ public class GetAIAnalysis extends ClaudeDAO {
 		// Call claude API
 		try {
 			JSONObject ro = send();
-			if (!ro.has("content"))
-				throw new IllegalArgumentException("No content in response");
 			
-			// Check for response
-			long ms = tt.stop();
-			JSONArray ca = ro.getJSONArray("content");
-			for (int x = 0; x < ca.length(); x++) {
-				JSONObject co = ca.getJSONObject(x);
-				if ("text".equals(co.optString("type"))) {
-					String js = co.getString("text");
-					JSONObject ao = new JSONObject(new JSONTokener(js));
+			// Parse response
+			String js = getResponseText(ro);
+			JSONObject ao = new JSONObject(new JSONTokener(js));
 					
-					// Create the response object
-					FlightAnalysis fa = new FlightAnalysis(_pkg.getID(), ao.getString("analysis"));
-					fa.setGenerationTime((int) ms);
-					fa.setMaxmimums(ao.optInt("safety_max", 60), ao.optInt("comfort_max", 40));
-					fa.setScores(ao.optInt("safety_score"), ao.optInt("comfort_score"));
-					fa.setTokens(getInputTokens(), getOutputTokens());
-					JSONArray kfa = ao.getJSONArray("key_factors");
-					for (int y = 0; y < kfa.length(); y++)
-						fa.addFactor(kfa.getString(y));
+			// Create the response data
+			FlightAnalysis fa = new FlightAnalysis(_pkg.getID(), ao.getString("analysis"));
+			fa.setMaxmimums(ao.optInt("safety_max", 60), ao.optInt("comfort_max", 40));
+			fa.setScores(ao.optInt("safety_score"), ao.optInt("comfort_score"));
+			fa.setGenerationTime(tt.stop());
+			fa.setTokens(getInputTokens(), getOutputTokens());
+			JSONArray kfa = ao.getJSONArray("key_factors");
+			for (int y = 0; y < kfa.length(); y++)
+				fa.addFactor(kfa.getString(y));
 					
-					return fa;
-				}
-			}
-			
-			throw new IllegalArgumentException("No text in response content");
+			return fa;
 		} catch (IllegalArgumentException iae) {
 			log.warn("Response Error - {}", iae.getMessage());
-			return new FlightAnalysis(_pkg.getID(), String.format("Response Error - %s", iae.getMessage())) {{ setGenerationTime((int) tt.stop()); setTokens(getInputTokens(), getOutputTokens()); }};
+			return new FlightAnalysis(_pkg.getID(), String.format("Response Error - %s", iae.getMessage())) {{ setGenerationTime(tt.stop()); setTokens(getInputTokens(), getOutputTokens()); }};
 		} catch (ClaudeException ce) {
 			log.warn("Claude API Error - {}", ce.getMessage());
-			return new FlightAnalysis(_pkg.getID(), String.format("Claude API Error - %s", ce.getMessage())) {{ setGenerationTime((int) tt.stop()); setTokens(getInputTokens(), getOutputTokens()); }};
+			return new FlightAnalysis(_pkg.getID(), String.format("Claude API Error - %s", ce.getMessage())) {{ setGenerationTime(tt.stop()); setTokens(getInputTokens(), getOutputTokens()); }};
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
