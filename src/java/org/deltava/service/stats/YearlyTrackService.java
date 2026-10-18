@@ -6,7 +6,7 @@ import static jakarta.servlet.http.HttpServletResponse.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.Function;
-
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.json.*;
@@ -103,7 +103,7 @@ public class YearlyTrackService extends WebService {
 			}
 			
 			// Get this year's flights, split into ACARS and non-ACARS
-			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isAfter(sd) && fr.getDate().isBefore(ed)).toList();
+			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isAfter(sd) && fr.getDate().isBefore(ed)).collect(Collectors.toList());
 			eqCounts.addAll(CollectionUtils.count(flights, FlightReport::getEquipmentType));
 			Collection<ACARSFlightReport> acarsFlights = flights.stream().filter(ACARSFlightReport.class::isInstance).map(ACARSFlightReport.class::cast).toList();
 			flights.removeAll(acarsFlights);
