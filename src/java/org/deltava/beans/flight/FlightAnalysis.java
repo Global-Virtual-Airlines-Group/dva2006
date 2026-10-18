@@ -1,10 +1,9 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
-import java.time.Instant;
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store AI-generated Flight Analysis data.
@@ -13,11 +12,9 @@ import org.deltava.beans.DatabaseBean;
  * @since 12.5
  */
 
-public class FlightAnalysis extends DatabaseBean {
+public class FlightAnalysis extends AIResponse {
 	
 	private final String _msg;
-	private Instant _createdOn = Instant.now();
-	private int _genTime;
 	
 	private int _safety;
 	private int _maxSafety = 100;
@@ -26,34 +23,14 @@ public class FlightAnalysis extends DatabaseBean {
 	
 	private final Collection<String> _factors = new ArrayList<String>();
 	
-	private int _inTokens;
-	private int _outTokens;
-
 	/**
 	 * Creates the bean.
 	 * @param id the Flight Report database ID
 	 * @param msg the flight analysis text
 	 */
 	public FlightAnalysis(int id, String msg) {
-		super();
-		setID(id);
+		super(id);
 		_msg = msg;
-	}
-	
-	/**
-	 * Returns the creation date of this Flight Analysis.
-	 * @return the creation date/time
-	 */
-	public Instant getCreatedOn() {
-		return _createdOn;
-	}
-	
-	/**
-	 * Returns the generation time for this Flight Analysis.
-	 * @return the generation time in milliseconds
-	 */
-	public int getGenerationTime() {
-		return _genTime;
 	}
 	
 	/**
@@ -105,22 +82,6 @@ public class FlightAnalysis extends DatabaseBean {
 	}
 	
 	/**
-	 * Returns the number of input tokens used to generate this analysis.
-	 * @return the number of tokens
-	 */
-	public int getInputTokens() {
-		return _inTokens;
-	}
-
-	/**
-	 * Returns the number of output tokens used to generate this analysis.
-	 * @return the number of tokens
-	 */
-	public int getOutputTokens() {
-		return _outTokens;
-	}
-	
-	/**
 	 * Returns the flight analysis factor messages.
 	 * @return a Colleciton of factor messages
 	 */
@@ -134,22 +95,6 @@ public class FlightAnalysis extends DatabaseBean {
 	 */
 	public void addFactor(String msg) {
 		_factors.add(msg);
-	}
-	
-	/**
-	 * Updates the creation date of this flight analysis.
-	 * @param dt the creation date/time
-	 */
-	public void setCreatedOn(Instant dt) {
-		_createdOn = dt;
-	}
-
-	/**
-	 * Updates the generation time for this Flight Analysis.
-	 * @param ms the generation time in milliseconds
-	 */
-	public void setGenerationTime(int ms) {
-		_genTime = ms;
 	}
 
 	/**
@@ -170,15 +115,5 @@ public class FlightAnalysis extends DatabaseBean {
 	public void setMaxmimums(int safety, int comfort) {
 		_maxSafety = Math.max(0, safety);
 		_maxComfort = Math.max(0, comfort);
-	}
-	
-	/**
-	 * Updates the number of tokens used to generate this analysis.
-	 * @param inTokens the number of input tokens
-	 * @param outTokens the number of output tokens
-	 */
-	public void setTokens(int inTokens, int outTokens) {
-		_inTokens = inTokens;
-		_outTokens = outTokens;
 	}
 }
