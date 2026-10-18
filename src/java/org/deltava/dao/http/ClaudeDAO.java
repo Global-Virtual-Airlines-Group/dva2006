@@ -255,7 +255,7 @@ abstract class ClaudeDAO extends DAO {
 			setReturnErrorStream(true);
 			init(API_V1_URL);
 			setMethod("POST");
-			setCompression(Compression.GZIP, Compression.DEFLATE, Compression.BROTLI);
+			setCompression(Compression.GZIP);
 			setRequestHeader("Content-Type", "application/json");
 			setRequestHeader("X-Api-Key", k);
 			setRequestHeader("anthropic-version", "2023-06-01");
