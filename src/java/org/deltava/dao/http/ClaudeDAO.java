@@ -231,8 +231,6 @@ abstract class ClaudeDAO extends DAO {
 			jo.accumulate("system", so);
 		}
 		
-		System.out.println(jo.toString(2));
-		
 		// Add user prompts
 		for (ClaudeMessage msg : _msgs) {
 			JSONObject mo = new JSONObject();
