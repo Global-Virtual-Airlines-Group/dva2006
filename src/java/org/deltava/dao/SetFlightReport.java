@@ -303,7 +303,7 @@ public class SetFlightReport extends DAO {
 				ps.setInt(6, fa.getMaxComfort());
 				ps.setInt(7, fa.getInputTokens());
 				ps.setInt(8, fa.getOutputTokens());
-				ps.setInt(9, fa.getGenerationTime());
+				ps.setLong(9, fa.getGenerationTime());
 				ps.setString(10, fa.getMessage());
 				executeUpdate(ps, 1);
 			}

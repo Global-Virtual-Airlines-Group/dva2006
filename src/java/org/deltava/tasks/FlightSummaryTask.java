@@ -82,7 +82,7 @@ public class FlightSummaryTask extends Task {
 					sdao.setConnectTimeout(3500);
 					sdao.setReadTimeout(45000);
 					fa = sdao.execute();
-					log.log((fa.getGenerationTime() > 30_000) ? Level.WARN : Level.INFO, "Summary for Flight Report {} loaded in {}ms", id, Integer.valueOf(fa.getGenerationTime()));
+					log.log((fa.getGenerationTime() > 30_000) ? Level.WARN : Level.INFO, "Summary for Flight Report {} loaded in {}ms", id, Long.valueOf(fa.getGenerationTime()));
 				} catch (DAOException de) {
 					log.error("Error loading AI Summary for Flight {} - {}", id, de.getMessage());
 				}
