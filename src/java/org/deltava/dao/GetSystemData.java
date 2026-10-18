@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -43,6 +43,53 @@ public class GetSystemData extends DAO {
 		}
 	}
 
+	/**
+	 * Loads an LLM Prompt from the database.
+	 * @param id the prompt ID
+	 * @return a Prompt, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Prompt getPrompt(String id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM SYS_PROMPTS WHERE (ID=?) LIMIT 1")) {
+			ps.setString(1, id);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					Prompt p = new Prompt(id);
+					p.setSystem(rs.getString(2));
+					p.setUser(rs.getString(3));
+					return p;
+				}
+			}
+			
+			return null;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads all LLM Prompts from the database.
+	 * @return a Collection of Prompts
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Prompt> getPrompts() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM SYS_PROMPTS")) {
+			Collection<Prompt> results = new ArrayList<Prompt>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Prompt p = new Prompt(rs.getString(1));
+					p.setSystem(rs.getString(2));
+					p.setUser(rs.getString(3));
+					results.add(p);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Returns HTTP server statistics.
 	 * @param orderBy the column to sort by
