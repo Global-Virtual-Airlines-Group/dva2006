@@ -115,10 +115,11 @@ public class GetAIYearlyReview extends ClaudeDAO {
 		
 		// Set the prompt
 		setMaxTokens(7500);
-		addPrompt(PromptType.SYSTEM, "All airport codes are in ICAO format. All distances are Statute Miles.");
+		addPrompt(PromptType.SYSTEM, "All airport codes are in ICAO format. All distances are Statute Miles. Do not generate remarks about airports not in real-world use.");
 		addPrompt(PromptType.SYSTEM, "Flight data is an array of JSON arrays. The first record in this array is the field names and is not valid data.");
-		addPrompt(PromptType.USER, "Please provide a 2 to 3 paragraph summary of this list of flights and testing results for a conversational \"Year in Review\" product. Pay close attention to new Airports, "
-			+ "Aircraft Types, Ratings, Check Rides and Examinations passed.\nFeel free to add conversational items about the airports visited or aircraft used.");
+		addPrompt(PromptType.USER, "Create a 2 to 3 paragraph summary of this Pilot's flights and testing results for a conversational \"Year in Review\" product. Pay close attention to new Airports, "
+			+ "Aircraft Types, Ratings, Check Rides and Examinations passed.\nFeel free to add conversational items about the airports visited or aircraft used. The Pilot is the audience, do not refer "
+			+ "to them using the third preson.");
 		addPrompt(PromptType.ASSISTANT, "Please provide the year's flight data, in JSON format.");
 		addPrompt(PromptType.USER, data.toString());
 		addPrompt(PromptType.ASSISTANT, "Please provide information about the Airports, in JSON format.");
