@@ -72,7 +72,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			srcInfo.setImportDate(Instant.now());
 			srcInfo.setAuthorID(ctx.getUser().getID());
 			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList());
-			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).forEach(al -> srcInfo.addLegs(al, 0));
+			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).filter(Airline::getActive).forEach(al -> srcInfo.addLegs(al, 0));
 			sources.add(srcInfo);
 		}
 		

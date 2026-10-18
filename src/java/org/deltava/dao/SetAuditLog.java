@@ -28,7 +28,7 @@ public class SetAuditLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(AuditLog al) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AUDIT_LOG (CREATED, TYPE, ID, APPNAME, AUTHOR_ID, REMOTE_HOST, REMOTE_ADDR, DESCRIPTION) VALUES (NOW(),?,?,?,?,? INET6_ATON(?),?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AUDIT_LOG (CREATED, TYPE, ID, APPNAME, AUTHOR_ID, REMOTE_HOST, REMOTE_ADDR, DESCRIPTION) VALUES (NOW(),?,?,?,?,?,INET6_ATON(?),?)")) {
 			ps.setString(1, al.getAuditType());
 			ps.setString(2, al.getAuditID());
 			ps.setString(3, al.getApplication());

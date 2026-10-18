@@ -19,7 +19,7 @@
 <fmt:jsarray var="golgotha.local.airlines" items="${autoAppCodes}" />
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
-	golgotha.form.validate({f:f.name, l:6, t:'Airline Name'});
+	golgotha.form.validate({f:f.name, l:5, t:'Airline Name'});
 	golgotha.form.validate({f:f.code, l:2, t:'IATA Code'});
 	golgotha.form.validate({f:f.icao, l:3, t:'ICAO Code'});
 	golgotha.form.validate({f:f.color, t:'Airline Google Map Color'});

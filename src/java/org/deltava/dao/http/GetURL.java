@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2018, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2018, 2020, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to download a file via HTTP. 
  * @author Luke
- * @version 11.6
+ * @version 12.5
  * @since 5.0
  */
 
@@ -102,7 +102,7 @@ public class GetURL extends DAO {
 			tmp.renameTo(outF);
 			return outF;
 		} catch (IOException ie) {
-			throw new DAOException(ie);
+			throw new DAOException(ie) {{ setWarning(false); }};
 		} finally {
 			reset();
 			if (tmp != null) tmp.delete();
@@ -143,7 +143,7 @@ public class GetURL extends DAO {
 				return out.toByteArray();
 			}
 		} catch (IOException ie) {
-			throw new DAOException(ie);
+			throw new DAOException(ie) {{ setWarning(false); }};
 		} finally {
 			reset();
 		}
@@ -162,7 +162,7 @@ public class GetURL extends DAO {
 		} catch (FileNotFoundException fne) {
 			return false;
 		} catch (IOException ie) {
-			throw new DAOException(ie);
+			throw new DAOException(ie) {{ setWarning(false); }};
 		} finally {
 			reset();
 		}
