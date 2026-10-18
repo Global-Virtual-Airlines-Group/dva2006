@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.*;
 
 import org.json.*;
-
+import org.deltava.beans.Pilot;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.*;
@@ -155,6 +155,49 @@ abstract class ClaudeDAO extends DAO {
 	public int getPayloadSize() {
 		return _payloadSize;
 	}
+	
+	/**
+	 * Helper method to JSON-format a Pilot.
+	 * @param p the Pilot
+	 * @return a JSONObject
+	 */
+	protected static JSONObject format(Pilot p) {
+		JSONObject po = new JSONObject();
+		po.put("id", p.getID());
+		po.put("firstName", p.getFirstName());
+		po.put("lastName", p.getLastName());
+		po.put("rank", p.getRank().getName());
+		po.put("equipmentProgram", p.getEquipmentType());
+		po.put("joinedOn", p.getCreatedOn().toEpochMilli());
+		p.getRatings().forEach(r -> po.accumulate("ratings", r));
+		if (p.getLegs() > 0) {
+			po.put("flights", p.getLegs());
+			po.put("hours", p.getHours());
+			po.put("lastFlight", p.getLastFlight().toEpochMilli());
+			po.put("pilotID", p.getPilotCode());
+		}
+		
+		JSONUtils.ensureArrayPresent(po, "ratings");
+		return po;
+	}
+	
+	/**
+	 * Helper method to obtain Claude response text.
+	 * @param ro the Calude API response object
+	 * @return the response text
+	 * @throws IllegalArgumentException if no response text found
+	 */
+	protected static String getResponseText(JSONObject ro) {
+		
+		JSONArray ca = ro.getJSONArray("content");
+		for (int x = 0; x < ca.length(); x++) {
+			JSONObject co = ca.getJSONObject(x);
+			if ("text".equals(co.optString("type")))
+				return co.getString("text");
+		}
+		
+		throw new IllegalArgumentException("No text in response content");
+	}
 
 	/**
 	 * Generates the Claude API payload
@@ -254,9 +297,11 @@ abstract class ClaudeDAO extends DAO {
 					_outTokens = uo.getInt("output_tokens");
 				}
 				
-				// Check for token exhaustion
+				// Check for token exhaustion and response content
 				if (_outTokens >= _maxTokens)
 					throw new IllegalArgumentException("Token Limit reached");
+				if (!jo.has("content"))
+					throw new IllegalArgumentException("No content in response");
 				
 				return jo;
 			}
