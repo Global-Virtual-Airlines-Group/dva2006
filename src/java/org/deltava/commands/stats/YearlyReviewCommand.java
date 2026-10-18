@@ -2,14 +2,14 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
-import java.time.*;
 import java.util.stream.Collectors;
+import java.time.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -50,11 +50,6 @@ public class YearlyReviewCommand extends AbstractCommand {
 		if ((year > currentYear) || ((year == currentYear) && (now.getMonth() != Month.DECEMBER)))
 			year = currentYear - 1;
 		
-		// Build date range for flights
-		final Instant ed = LocalDate.of(year + 1, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC);
-		final Instant sd = LocalDate.of(year, 1, 1).atStartOfDay().minusSeconds(1).toInstant(ZoneOffset.UTC);
-		final Instant lsd = LocalDate.of(year - 1, 1, 1).atStartOfDay().minusSeconds(1).toInstant(ZoneOffset.UTC);
-		
 		CommandResult result = ctx.getResult();
 		try {
 			Connection con = ctx.getConnection();
@@ -76,8 +71,7 @@ public class YearlyReviewCommand extends AbstractCommand {
 			}
 			
 			// Remove future flights - clone data before you do so since the cache may be local
-			List<Integer> years = data.stream().mapToInt(fr -> LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear()).distinct().boxed().toList();
-			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isBefore(ed)).toList();
+			List<Integer> years = data.stream().mapToInt(fr -> LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear()).distinct().boxed().collect(Collectors.toList());
 			Collections.sort(years, Comparator.reverseOrder());
 			
 			// Save pilot and years
@@ -85,30 +79,18 @@ public class YearlyReviewCommand extends AbstractCommand {
 			ctx.setAttribute("years", years, REQUEST);
 			ctx.setAttribute("year", Integer.valueOf(year), REQUEST);
 
+			// Load current year and all previous years flights
+			YearlyFilter yf = new YearlyFilter(p.getID(), data);
+			YearlySummary cy = yf.getSummary(year);
+			YearlySummary py = yf.getSummary(year - 1);
+			
 			// Check for no flights
-			if (flights.isEmpty()) {
+			if (cy.size() == 0) {
 				result.setURL("/jsp/stats/yearReviewEmpty.jsp");
 				result.setSuccess(true);
 				return;
 			}
-			
-			// Load current year and all previous years flights
-			Collection<FlightReport> cyFlights = flights.stream().filter(fr -> fr.getDate().isAfter(sd)).toList();
-			Collection<FlightReport> pyFlights = flights.stream().filter(fr -> !cyFlights.contains(fr)).toList();
-			Collection<Airport> cyAP = cyFlights.stream().map(RoutePair::getAirports).flatMap(Collection::stream).collect(Collectors.toCollection(LinkedHashSet::new));
-			Collection<String> cyEQ = cyFlights.stream().map(FlightReport::getEquipmentType).collect(Collectors.toCollection(TreeSet::new));
-			
-			// Get last year's flights
-			Collection<FlightReport> lyFlights = pyFlights.stream().filter(fr -> fr.getDate().isAfter(lsd)).toList();
-			
-			// Load previous airports and equipment
-			Collection<Airport> pyAP = pyFlights.stream().map(RoutePair::getAirports).flatMap(Collection::stream).collect(Collectors.toSet());
-			Collection<String> pyEQ = pyFlights.stream().map(FlightReport::getEquipmentType).collect(Collectors.toSet());
-			Collection<Airport> newAP = cyAP.stream().filter(ap -> !pyAP.contains(ap)).collect(Collectors.toSet());
-			Collection<String> newEQ = cyEQ.stream().filter(eq -> !pyEQ.contains(eq)).collect(Collectors.toSet());
-			Collection<Airport> lyAP = lyFlights.stream().map(RoutePair::getAirports).flatMap(Collection::stream).collect(Collectors.toSet());
-			Collection<String> lyEQ = lyFlights.stream().map(FlightReport::getEquipmentType).collect(Collectors.toSet());
-			
+
 			// Load elite status
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
@@ -120,6 +102,7 @@ public class YearlyReviewCommand extends AbstractCommand {
 				
 				// Check lifetime elite status
 				if (!yrLevels.isEmpty()) {
+					final Instant ed = LocalDate.of(year + 1, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC);
 					List<EliteLifetimeStatus> allELS = eldao.getAllLifetimeStatus(p.getID(), ctx.getDB());
 					allELS.removeIf(els -> els.getEffectiveOn().isBefore(ed));
 					if (!allELS.isEmpty()) {
@@ -137,16 +120,8 @@ public class YearlyReviewCommand extends AbstractCommand {
 			}
 			
 			// Save in request
-			ctx.setAttribute("cyFlights", cyFlights, REQUEST);
-			ctx.setAttribute("lyFlights", lyFlights, REQUEST);
-			ctx.setAttribute("cyAirports", cyAP, REQUEST);
-			ctx.setAttribute("lyAirports", lyAP, REQUEST);
-			ctx.setAttribute("cyEquipment", cyEQ, REQUEST);
-			ctx.setAttribute("lyEquipment", lyEQ, REQUEST);
-			ctx.setAttribute("cyDistance", Integer.valueOf(cyFlights.stream().mapToInt(FlightReport::getDistance).sum()), REQUEST);
-			ctx.setAttribute("lyDistance", Integer.valueOf(lyFlights.stream().mapToInt(FlightReport::getDistance).sum()), REQUEST);
-			ctx.setAttribute("newEQ", newEQ, REQUEST);
-			ctx.setAttribute("newAP", newAP, REQUEST);
+			ctx.setAttribute("current", cy, REQUEST);
+			ctx.setAttribute("previous", py, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -52,25 +52,25 @@ table.form td.eliteStatus, .button {
 </tr>
 <tr>
  <td class="label">${year} Flights</td>
- <td colspan="2" class="data bld"><span class="pri"><fmt:int value="${cyFlights.size()}" /> Legs</span><c:if test="${!empty lyFlights}"> (<fmt:dec value="${(cyFlights.size() - lyFlights.size()) * 1.0 / lyFlights.size()}" fmt="#0.0%" /> from ${year - 1})</c:if>,
- <span class="sec"><fmt:distance value="${cyDistance}" /></span><c:if test="${!empty lyFlights}"> (<fmt:dec value="${(cyDistance - lyDistance) * 1.0 / lyDistance}" fmt="#0.0%" forceSign="true" /> from ${year - 1})</c:if></td>
+ <td colspan="2" class="data bld"><span class="pri"><fmt:int value="${current.size()}" /> Legs</span><c:if test="${!empty previous.flights}"> (<fmt:dec value="${(current.size() - previous.size()) * 1.0 / previous.size()}" fmt="#0.0%" /> from ${year - 1})</c:if>,
+ <span class="sec"><fmt:distance value="${current.distance}" /></span><c:if test="${previous.size() > 0}"> (<fmt:dec value="${(current.distance - previous.distance) * 1.0 / previous.distance}" fmt="#0.0%" forceSign="true" /> from ${year - 1})</c:if></td>
 </tr>
 <tr>
  <td class="label top">Airports Visited</td>
- <td colspan="2" class="data"><fmt:int value="${cyAirports.size()}" className="bld" /> Airports<c:if test="${!empty newAP}">, <span class="sec bld"><fmt:int value="${newAP.size()}"/> New</span></c:if>
-<c:if test="${!empty lyAirports}"> (<fmt:dec value="${(lyAirports.size() - cyAirports.size()) * 1.0 / lyAirports.size()}" fmt="#0.0%" className="bld" forceSign="true" /> from ${year - 1})</c:if><br>
+ <td colspan="2" class="data"><fmt:int value="${current.airports.size()}" className="bld" /> Airports<c:if test="${!empty current.newAirports}">, <span class="sec bld"><fmt:int value="${current.newAirports.size()}"/> New</span></c:if>
+<c:if test="${previous.size() > 0}"> (<fmt:dec value="${(previous.airports.size() - current.airports.size()) * 1.0 / previous.airports.size()}" fmt="#0.0%" className="bld" forceSign="true" /> from ${year - 1})</c:if><br>
 <br>
-<c:forEach var="ap" items="${cyAirports}" varStatus="apStatus">
-<c:set var="isNew" value="${newAP.contains(ap)}" scope="page" />
+<c:forEach var="ap" items="${current.airports}" varStatus="apStatus">
+<c:set var="isNew" value="${current.newAirports.contains(ap)}" scope="page" />
 <span class="${isNew ? 'ter bld' : 'plain'}">${ap.name}</span> (<el:cmd url="airportinfo" target="new" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<c:if test="${!apStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 <tr>
  <td class="label top">Aircraft Used</td>
- <td colspan="2" class="data"><span class="bld"><fmt:int value="${cyEquipment.size()}"/> Aircraft</span><c:if test="${!empty newEQ}">, <span class="sec bld"><fmt:int value="${newEQ.size()}" /> New</span></c:if>
-<c:if test="${!empty lyEquipment}"> (<fmt:dec value="${(lyEquipment.size() - cyEquipment.size()) * 1.0 / lyEquipment.size()}" fmt="#0.0%" className="bld" forceSign="true" /> from ${year - 1})</c:if><br>
+ <td colspan="2" class="data"><span class="bld"><fmt:int value="${current.equipmentTypes.size()}"/> Aircraft</span><c:if test="${!empty current.newEquipment}">, <span class="sec bld"><fmt:int value="${current.newEquipment.size()}" /> New</span></c:if>
+<c:if test="${!empty previous.equipmentTypes}"> (<fmt:dec value="${(previous.equipmentTypes.size() - current.equipmentTypes.size()) * 1.0 / previous.equipmentTypes.size()}" fmt="#0.0%" className="bld" forceSign="true" /> from ${year - 1})</c:if><br>
 <br>
-<c:forEach var="eqType" items="${cyEquipment}" varStatus="eqStatus">
-<c:set var="isNew" value="${newEQ.contains(eqType)}" scope="page" />
+<c:forEach var="eqType" items="${current.equipmentTypes}" varStatus="eqStatus">
+<c:set var="isNew" value="${current.newEquipment.contains(eqType)}" scope="page" />
 <span class="${isNew ? 'ter bld' : 'plain'}">${eqType}</span><c:if test="${!eqStatus.last}">, </c:if></c:forEach></td>
 </tr>
 <c:if test="${eliteEnabled && hasEliteInYear}">
@@ -130,8 +130,8 @@ table.form td.eliteStatus, .button {
 </content:page>
 <script nonce="${contentSecurity.nonce}">
 <map:token />
-<map:markers var="golgotha.local.airports" items="${cyAirports}" />
-<map:bounds var="golgotha.local.bb" items="${cyAirports}" />
+<map:markers var="golgotha.local.airports" items="${current.airports}" />
+<map:bounds var="golgotha.local.bb" items="${current.airports}" />
 
 // Build the map
 const mapOpts = {container:'mapBox', bounds:golgotha.local.bb, minZoom:2, maxZoom:15, projection:'globe', fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12'};
