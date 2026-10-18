@@ -36,17 +36,20 @@ public class YearlyReviewCommand extends AbstractTestHistoryCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
+		// Check for elevated options
+		boolean isAdmin = ctx.isUserInRole("Operations") || ctx.isUserInRole("HR");
+		
 		// Get the user ID
 		int userID = ctx.getUser().getID();
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
-		if ((ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) && (id > 0))
+		if (isAdmin && (id > 0))
 			userID = id;
 		
 		// Get the year - don't allow current year until after 11/30
 		LocalDate now = LocalDate.now();
 		int currentYear = now.getYear();
 		int year = StringUtils.parse(ctx.getParameter("year"), currentYear);
-		if ((year > currentYear) || ((year == currentYear) && (now.getMonth() != Month.DECEMBER)))
+		if ((year > currentYear) || ((year == currentYear)) && (now.getMonth() != Month.DECEMBER) && (!isAdmin && !ctx.isUserInRole("Developer")))
 			year = currentYear - 1;
 		
 		CommandResult result = ctx.getResult();
@@ -113,15 +116,24 @@ public class YearlyReviewCommand extends AbstractTestHistoryCommand {
 			}
 			
 			// Calculate AI summary
-			AISummary s = null; 
-			try {
-				GetAIYearlyReview aidao = new GetAIYearlyReview(p, cy);
-				aidao.setConnectTimeout(2500);
-				aidao.setReadTimeout(35500);
-				aidao.addExams(th.getExams().stream().filter(YearlyFilter.filter(year)).collect(Collectors.toList()));
-				s = aidao.execute();
-			} catch (DAOException de) {
-				s = new AISummary(p.getID(), de.getMessage());
+			GetAISummary sdao = new GetAISummary(con);
+			AISummary s = sdao.getYearlyReview(p.getID(), year);
+			if (s == null) {
+				try {
+					GetAIYearlyReview aidao = new GetAIYearlyReview(p, cy);
+					aidao.setConnectTimeout(2500);
+					aidao.setReadTimeout(35500);
+					aidao.addExams(th.getExams().stream().filter(YearlyFilter.filter(year)).collect(Collectors.toList()));
+					s = aidao.execute();
+				} catch (DAOException de) {
+					s = new AISummary(p.getID(), de.getMessage());
+				}
+				
+				// Save the summary
+				if (s.getGenerationTime() > 0) {
+					SetAISummary swdao = new SetAISummary(con);
+					swdao.writeSummary(year, s);
+				}
 			}
 				
 			// Save in request
