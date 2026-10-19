@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -273,16 +273,6 @@ public class RegisterCommand extends AbstractCommand {
 				}
 				
 				a.addHRComment(buf.toString());
-			}
-			
-			// Check for blacklist
-			GetSystemData sysdao = new GetSystemData(con);
-			BlacklistEntry be = sysdao.getBlacklist(a.getRegisterAddress());
-			if (be != null) {
-				log.warn("Registration blacklist for {} from {}", a.getName(), be);
-				result.setURL("/jsp/register/blackList.jsp");
-				result.setSuccess(true);
-				return;
 			}
 			
 			// Do address uniqueness check

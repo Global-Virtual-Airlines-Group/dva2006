@@ -2,10 +2,8 @@
 package org.deltava.commands.register;
 
 import java.sql.Connection;
-import java.time.Instant;
 
-import org.deltava.beans.AdminLogEntry;
-import org.deltava.beans.Applicant;
+import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -36,7 +34,6 @@ public class ApplicantRejectCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 
 		Applicant a = null;
-		boolean updateBlacklist = Boolean.parseBoolean(ctx.getParameter("updateBlacklist"));
 		try {
 			Connection con = ctx.getConnection();
 
@@ -73,27 +70,6 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			   wavdao.delete(addrValid.getID());
 			}
 			
-			// Update the blacklist
-			if (updateBlacklist) {
-				GetIPLocation ipdao = new GetIPLocation(con);
-				GetSystemData sysdao = new GetSystemData(con);
-				BlacklistEntry be = sysdao.getBlacklist(a.getRegisterAddress());
-				IPBlock ipb = ipdao.get(a.getRegisterAddress());
-				if (ipb == null)
-					ipb = new IPBlock(0, a.getRegisterAddress() + "/24");
-				
-				// Only update the blacklist if we don't already exist
-				if (be == null) {
-					be = new BlacklistEntry(ipb.getAddress(), ipb.getBits());
-					be.setCreated(Instant.now());
-					be.setComments("Created by " + ctx.getUser().getName() + " on applicant rejection");
-					SetSystemData syswdao = new SetSystemData(con);
-					syswdao.write(be);
-					a.setHRComments(a.getHRComments() + "\r\n" + ctx.getUser().getName() + " added " + be + " to blacklist");
-					ctx.setAttribute("blackListAdd", be, REQUEST);
-				}
-			}
-			
 			// Write the audit log entry
 			SetAuditLog adwdao = new SetAuditLog(con);
 			adwdao.write(le);
@@ -113,7 +89,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 		}
 
 		// Send e-mail notification
-		if (!updateBlacklist && a.getHasCAPTCHA()) {
+		if (a.getHasCAPTCHA()) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(a);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 1.0
  */
 
@@ -165,23 +165,6 @@ public class SetSystemData extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SYS_BLACKLIST WHERE (ADDRESS=INET6_ATON(?))")) {
 			ps.setString(1, addr);
 			executeUpdate(ps, 0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Writes a login/registration blacklist entry to the database.
-	 * @param be a BlacklistEntry bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(BlacklistEntry be) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SYS_BLACKLIST (ADDRESS, PREFIXLENGTH, CREATED, COMMENTS) VALUES (INET6_ATON(?), ?, ?, ?)")) {
-			ps.setString(1, be.getCIDR().getNetworkAddress());
-			ps.setInt(2, be.getCIDR().getPrefixLength());
-			ps.setTimestamp(3, createTimestamp(be.getCreated()));
-			ps.setString(4, be.getComments());
-			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
