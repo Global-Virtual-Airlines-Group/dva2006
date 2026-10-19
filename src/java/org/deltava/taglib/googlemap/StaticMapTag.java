@@ -1,4 +1,4 @@
-// Copyright 2015, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2020, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a static Google Map on the page.
  * @author Luke
- * @version 12.0
+ * @version 12.5
  * @since 6.0
  */
 
@@ -105,9 +105,8 @@ public class StaticMapTag extends ElementTag {
 
 	@Override
 	public int doEndTag() throws JspException {
-		APIUsage.track(APIUsage.Type.STATIC, _isAnonymous);
 		
-		// Adjust for scae
+		// Adjust for scale
 		if (_scale > 1) {
 			_h /= _scale;
 			_w /= _scale;

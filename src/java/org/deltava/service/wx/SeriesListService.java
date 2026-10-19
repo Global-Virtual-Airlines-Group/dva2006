@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -10,8 +10,8 @@ import java.util.concurrent.*;
 import org.json.*;
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.system.*;
 import org.deltava.beans.wx.*;
+
 import org.deltava.dao.DAOException;
 import org.deltava.dao.http.GetWeatherTileLayers;
 
@@ -21,9 +21,9 @@ import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
 /**
- * A Web Service to display TWC weather tile data.
+ * A Web Service to display weather tile data.
  * @author Luke
- * @version 12.1
+ * @version 12.5
  * @since 8.0
  */
 
@@ -52,11 +52,9 @@ public class SeriesListService extends WebService {
 		}
 	}
 	
-	private static SeriesList doLoad(boolean isAuth) {
-
+	private static SeriesList doLoad() {
 		SeriesList sl = new SeriesList(30);
 		try {
-			APILogger.add(new APIRequest(API.RainViewer.createName("TILESERIES"), !isAuth));
 			GetWeatherTileLayers dao = new GetWeatherTileLayers();
 			dao.setReadTimeout(15000);
 			TaskTimer tt = new TaskTimer();
@@ -71,10 +69,6 @@ public class SeriesListService extends WebService {
 		return sl;
 	}
 	
-	private Future<SeriesList> load(boolean isAuth) {
-		return _exec.submit(() -> { return doLoad(isAuth); });
-	}
-
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
@@ -88,7 +82,7 @@ public class SeriesListService extends WebService {
 		SeriesList sl = _cache.get(KEY);
 		if ((sl == null) || sl.isSoftExpired()) {
 			if ((_f == null) || _f.isDone())
-				_f = load(ctx.isAuthenticated());
+				_f = _exec.submit(() -> { return doLoad(); });
 
 			if (sl == null) {
 				try {

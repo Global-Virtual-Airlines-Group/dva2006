@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -214,7 +214,6 @@ public class RegisterCommand extends AbstractCommand {
 				try {
 					GetVATSIMData dao = new GetVATSIMData();
 					Certificate c = dao.getInfo(a.getNetworkID(OnlineNetwork.VATSIM));
-					APILogger.add(new APIRequest(API.VATSIM.createName("CERT"), !ctx.isAuthenticated()));
 					if (c != null) {
 						a.addHRComment("VATSIM ID exists");
 						if (!c.isActive())

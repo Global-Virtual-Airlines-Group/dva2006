@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 12.4
+ * @version 12.5
  * @since 1.0
  */
 
@@ -85,7 +85,6 @@ public class ProfileCommand extends AbstractFormCommand {
 					try {
 						GetVATSIMData dao = new GetVATSIMData();
 						Certificate c = dao.getInfo(ctx.getParameter("VATSIM_ID"));
-						APILogger.add(new APIRequest(API.VATSIM.createName("CERT"), !ctx.isAuthenticated()));
 						if (c != null) {
 							Collection<String> msgs = new ArrayList<String>();
 							if (!c.isActive())
