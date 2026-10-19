@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.json.*;
 import org.deltava.beans.Pilot;
+import org.deltava.beans.system.Prompt;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.*;
@@ -31,6 +32,7 @@ abstract class ClaudeDAO extends DAO {
 	private ClaudeCacheTTL _ttl = ClaudeCacheTTL.NONE;
 	
 	private String _key;
+	private Prompt _prompt;
 	
 	private int _inTokens;
 	private int _outTokens;
@@ -133,6 +135,14 @@ abstract class ClaudeDAO extends DAO {
 	}
 	
 	/**
+	 * Updates the prompts to pass to the LLM.
+	 * @param p at Prompt
+	 */
+	public void setPrompt(Prompt p) {
+		_prompt = p;
+	}
+	
+	/**
 	 * Returns the number of input tokens used.
 	 * @return the number of tokens, or zero if the API has not been called yet
 	 */
@@ -188,7 +198,6 @@ abstract class ClaudeDAO extends DAO {
 	 * @throws IllegalArgumentException if no response text found
 	 */
 	protected static String getResponseText(JSONObject ro) {
-		
 		JSONArray ca = ro.getJSONArray("content");
 		for (int x = 0; x < ca.length(); x++) {
 			JSONObject co = ca.getJSONObject(x);
@@ -197,6 +206,17 @@ abstract class ClaudeDAO extends DAO {
 		}
 		
 		throw new IllegalArgumentException("No text in response content");
+	}
+	
+	/**
+	 * Loads the user and system prompts.
+	 */
+	protected void loadPrompt() {
+		if (_prompt == null)
+			throw new IllegalStateException("Prompt not loaded");
+		
+		addPrompt(PromptType.SYSTEM, _prompt.getSystem());
+		addPrompt(PromptType.USER, _prompt.getUser());
 	}
 
 	/**
