@@ -11,6 +11,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.BeanUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to edit LLM prompts. 
@@ -32,6 +33,7 @@ public class PromptCommand extends AbstractAuditFormCommand {
 		// Build the prompot
 		String id = ctx.getParameter("id");
 		Prompt p = new Prompt(id);
+		p.setDescription(ctx.getParameter("desc"));
 		p.setUser(ctx.getParameter("user"));
 		p.setSystem(ctx.getParameter("system"));
 		try {
@@ -39,7 +41,7 @@ public class PromptCommand extends AbstractAuditFormCommand {
 			
 			// Get the existing prompt
 			GetSystemData dao = new GetSystemData(con);
-			Prompt op = dao.getPrompt(id);
+			Prompt op = dao.getPrompt(id, ctx.getDB());
 			
 			// Build the audit log entry
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(op, p);
@@ -78,20 +80,22 @@ public class PromptCommand extends AbstractAuditFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		String id = ctx.getParameter("id");
-		try {
-			Connection con = ctx.getConnection();
-			GetSystemData dao = new GetSystemData(con);
-			Prompt p = dao.getPrompt(id);
-			if (p == null)
-				throw notFoundException("Invalid Prompt ID", id);
+		if (!StringUtils.isEmpty(id)) {
+			try {
+				Connection con = ctx.getConnection();
+				GetSystemData dao = new GetSystemData(con);
+				Prompt p = dao.getPrompt(id, ctx.getDB());
+				if (p == null)
+					throw notFoundException("Invalid Prompt ID", id);
 			
-			// Load audit history and save in reuqest
-			readAuditLog(ctx, p);
-			ctx.setAttribute("prompt", p, REQUEST);
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
+				//Load audit history and save in reuqest
+				readAuditLog(ctx, p);
+				ctx.setAttribute("prompt", p, REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
 		}
 		
 		// Forward to the JSP

@@ -14,6 +14,7 @@ import org.deltava.util.cache.Cacheable;
 public class Prompt implements Cacheable, Auditable {
 	
 	private final String _id;
+	private String _desc;
 	private String _user;
 	private String _system;
 
@@ -51,6 +52,14 @@ public class Prompt implements Cacheable, Auditable {
 	}
 	
 	/**
+	 * Returns the prompt description.
+	 * @return the description
+	 */
+	public String getDescription() {
+		return _desc;
+	}
+	
+	/**
 	 * Updates the system prompt.
 	 * @param p the prompt text
 	 */
@@ -64,6 +73,14 @@ public class Prompt implements Cacheable, Auditable {
 	 */
 	public void setUser(String p) {
 		_user = p;
+	}
+	
+	/**
+	 * Updates the prompt description.
+	 * @param desc the description
+	 */
+	public void setDescription(String desc) {
+		_desc = desc;
 	}
 	
 	@Override

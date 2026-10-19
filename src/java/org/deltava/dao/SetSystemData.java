@@ -59,10 +59,11 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Prompt p) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SYS_PROMPTS VALUES (?,?,?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SYS_PROMPTS VALUES (?,?,?,?)")) {
 			ps.setString(1, p.getID());
-			ps.setString(2, p.getSystem());
-			ps.setString(3, p.getUser());
+			ps.setString(2, p.getDescription());
+			ps.setString(3, p.getSystem());
+			ps.setString(4, p.getUser());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

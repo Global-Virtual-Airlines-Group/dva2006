@@ -20,6 +20,7 @@
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.id, l:4, t:'Prompt ID'});
+    golgotha.form.validate({f:f.desc, l:10, t:'Prompt Description'});
     golgotha.form.validate({f:f.user, l:15, t:'User Prompt'});
     golgotha.form.validate({f:f.system, l:15, t:'System Prompt'});
     golgotha.form.submit(f);
@@ -43,9 +44,13 @@ golgotha.local.validate = function(f) {
 <c:if test="${empty prompt}">
 <tr>
  <td class="label">Prompt ID</td>
- <td class="data"><el:text name="id" className="pri bld" size="10" max="16" required="true" /></td>
+ <td class="data"><el:text name="id" className="pri bld" size="20" max="24" required="true" /></td>
 </tr>
 </c:if>
+<tr>
+ <td class="label">Description</td>
+ <td class="data"><el:text name="desc" size="64" max="96" required="true" value="${prompt.description}" /></td>
+</tr>
 <tr>
  <td class="label top">User Prompt</td>
  <td class="data"><el:textbox name="user" className="small" width="90%" height="5" resize="true" spellcheck="true">${prompt.user}</el:textbox></td>

@@ -20,6 +20,7 @@ import org.deltava.util.CollectionUtils;
 
 public class GetSystemData extends DAO {
 
+	private static final Cache<Prompt> _pCache = CacheManager.get(Prompt.class, "Prompts");
 	private static final Cache<HTTPTotals> _cache = CacheManager.get(HTTPTotals.class, "HTTPTotals");
 
 	/**
@@ -46,17 +47,26 @@ public class GetSystemData extends DAO {
 	/**
 	 * Loads an LLM Prompt from the database.
 	 * @param id the prompt ID
+	 * @param db the database name
 	 * @return a Prompt, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Prompt getPrompt(String id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM SYS_PROMPTS WHERE (ID=?) LIMIT 1")) {
+	public Prompt getPrompt(String id, String db) throws DAOException {
+		
+		// Check the cache
+		Prompt p = _pCache.get(id);
+		if (p != null)
+			return p;
+		
+		String dbName = formatDBName(db);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM " + dbName + ".SYS_PROMPTS WHERE (NAME=?) LIMIT 1")) {
 			ps.setString(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					Prompt p = new Prompt(id);
-					p.setSystem(rs.getString(2));
-					p.setUser(rs.getString(3));
+					p = new Prompt(id);
+					p.setDescription(rs.getString(2));
+					p.setSystem(rs.getString(3));
+					p.setUser(rs.getString(4));
 					return p;
 				}
 			}
@@ -78,8 +88,9 @@ public class GetSystemData extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Prompt p = new Prompt(rs.getString(1));
-					p.setSystem(rs.getString(2));
-					p.setUser(rs.getString(3));
+					p.setDescription(rs.getString(2));
+					p.setSystem(rs.getString(3));
+					p.setUser(rs.getString(4));
 					results.add(p);
 				}
 			}
