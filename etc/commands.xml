@@ -919,6 +919,18 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="prompts">
+		<name>LLM Prompts</name>
+		<class>org.deltava.commands.system.PromptListCommand</class>
+		<roles>Operations,Developer</roles>
+	</command>
+	
+	<command id="prompt">
+		<name>LLM Prompts</name>
+		<class>org.deltava.commands.system.PromptCommand</class>
+		<roles>Operations,Developer</roles>
+	</command>
+
 	<command id="ratelimit">
 		<name>Rate Limiter Status</name>
 		<class>org.deltava.commands.system.RateLimitCommand</class>

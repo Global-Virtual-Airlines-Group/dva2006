@@ -1005,6 +1005,10 @@ pilot Certification.</td>
  <td class="mid"><el:cmd className="bld" url="apistats">External API Usage</el:cmd></td>
  <td class="data">You can view usage statistics and predictions for external API usage.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="prompts">LLM Prompts</el:cmd></td>
+ <td class="data">You can view and edit any LLM prompts used for AI content generation.</td>
+</tr>
 </content:filter>
 <content:filter roles="HR">
 <c:if test="${hasIMAP}">
