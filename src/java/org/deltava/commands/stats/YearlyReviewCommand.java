@@ -10,6 +10,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
+import org.deltava.beans.system.Prompt;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -118,12 +119,16 @@ public class YearlyReviewCommand extends AbstractTestHistoryCommand {
 			// Calculate AI summary
 			GetAISummary sdao = new GetAISummary(con);
 			AISummary s = sdao.getYearlyReview(p.getID(), year);
-			if (s == null) {
+			if ((s == null) && SystemData.has("security.key.claude")) {
+				GetSystemData ptdao = new GetSystemData(con);
+				Prompt pr = ptdao.getPrompt("YEARLYREVIEW", ctx.getDB());
+				
 				try {
 					GetAIYearlyReview aidao = new GetAIYearlyReview(p, cy);
 					aidao.setConnectTimeout(2500);
 					aidao.setReadTimeout(35500);
 					aidao.addExams(th.getExams().stream().filter(YearlyFilter.filter(year)).collect(Collectors.toList()));
+					aidao.setPrompt(pr);
 					s = aidao.execute();
 				} catch (DAOException de) {
 					s = new AISummary(p.getID(), de.getMessage());

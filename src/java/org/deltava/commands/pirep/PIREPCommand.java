@@ -783,10 +783,14 @@ public class PIREPCommand extends AbstractFormCommand {
 						
 						// Load if not present
 						if (fa == null) {
+							GetSystemData ptdao = new GetSystemData(con);
+							Prompt pr = ptdao.getPrompt("FLIGHTSUMMARY", ctx.getDB());
+							
 							try {
 								GetAIAnalysis aidao = new GetAIAnalysis(pkg);
 								aidao.setConnectTimeout(2750);
 								aidao.setReadTimeout(45500);
+								aidao.setPrompt(pr);
 								fa = aidao.execute();
 							} catch (DAOException de) {
 								log.atWarn().withThrowable(de).log("Error loading AI analysis - {}", de.getMessage());

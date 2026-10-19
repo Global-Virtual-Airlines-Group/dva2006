@@ -164,19 +164,9 @@ public class GetAIAnalysis extends ClaudeDAO {
 		pdata.stream().map(GetAIAnalysis::formatArray).forEach(po -> data.accumulate("positions", po));
 		JSONUtils.ensureArrayPresent(data, "positions");
 		
-		// TODO: This needs to be data, not code
-		// Set the prompt
+		// Set the prompts
 		setMaxTokens(9500);
-		addPrompt(PromptType.SYSTEM, "All bank and pitch angles are in degrees. Speeds are in knots, distances in statute miles, altitudes in feet. Weights are in pounds. Dates/times are epoch milliseconds, durations are seconds.");
-		addPrompt(PromptType.SYSTEM, "Angle of attack on the ground or greater than 50 degrees can be ignored.\nIgnore discrepancies between touchdown G-Force and telemetry data.");
-		addPrompt(PromptType.SYSTEM, "Bank angles of less than 30 degrees are acceptable, when over 2,500 feet above the ground.");
-		addPrompt(PromptType.SYSTEM, "There is no need to mention ignored data in the summary or key factors.");
-		addPrompt(PromptType.SYSTEM, "If the Pilot is new, be more conversational and encouraging. After 150 flights, be more anlaytical.");
-		addPrompt(PromptType.SYSTEM, "Position data is an array of JSON arrays. The first record in this array is the field names and is not valid data.");
-
-		addPrompt(PromptType.USER, "You are a flight data analyst. Analyze some flight data. Scoring rubric (0-100): Safety = 60 pts, Comfort = 40 pts. These may change, so return "
-			+ "the maximum score in each category as a field in the JSON response.\n Deduct for: unstabilized approach, hard landing (>1.8g), overspeed/stall warnings, turbulence, high bank angles.\n"
-			+ "Respond with pure JSON only:\n {\"analysis\": \"<1-2 paragraphs>\", \"safety_score\": <0-60>,\n\"comfort_score\": <0-40>, \"flight_score\": <0-100>,\n\"key_factors\": [\"...\"]}");
+		loadPrompt();
 		addPrompt(PromptType.ASSISTANT, "Please provide the flight data in JSON format.");
 		addPrompt(PromptType.USER, data.toString());
 		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
