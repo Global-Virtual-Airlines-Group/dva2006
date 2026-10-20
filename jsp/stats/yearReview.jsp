@@ -86,7 +86,7 @@ table.form td.eliteStatus, .button {
  <td colspan="2" class="data"><fmt:int value="${eliteTotals.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${eliteTotals.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${eliteTotals.points}" />&nbsp;${elitePoints}</span></td>
 </tr>
 <tr class="elite">
- <td class="label eliteStatus">${year} Results</td>
+ <td class="label eliteStatus top">${year} Results</td>
  <td colspan="2" class="data"><c:forEach var="upd" items="${eliteLog}" varStatus="updStatus">
 <fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;
 <c:choose>
