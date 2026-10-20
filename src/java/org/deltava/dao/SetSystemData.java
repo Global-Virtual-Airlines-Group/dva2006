@@ -188,23 +188,6 @@ public class SetSystemData extends DAO {
 	}
 
 	/**
-	 * Writes a login/registration blacklist entry to the database.
-	 * @param be a BlacklistEntry bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(BlacklistEntry be) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SYS_BLACKLIST (ADDRESS, PREFIXLENGTH, CREATED, COMMENTS) VALUES (INET6_ATON(?), ?, ?, ?)")) {
-			ps.setString(1, be.getCIDR().getNetworkAddress());
-			ps.setInt(2, be.getCIDR().getPrefixLength());
-			ps.setTimestamp(3, createTimestamp(be.getCreated()));
-			ps.setString(4, be.getComments());
-			executeUpdate(ps, 1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Writes a new Time Zone entry to the database.
 	 * @param tz the Time Zone bean
 	 * @throws DAOException if a JDBC error occurs

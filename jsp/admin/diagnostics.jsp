@@ -29,8 +29,6 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<map:usage var="s_APIuse" type="static" />
-<map:usage var="d_APIuse" type="dynamic" />
 <c:set var="startedOn" value="${applicationScope.startedOn}" scope="page" />
 <content:duration var="execTime" length="${(systemTime.toEpochMilli() - startedOn.toEpochMilli()) / 1000}" />
 
@@ -131,10 +129,6 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
  <td class="data"><span class="pri bld">BOT ENABLED</span> - <span class="bld ${discordOK ? 'ter' : 'error'}">${discordOK ? 'OPERATIONAL' : 'NOT INITIALIZED'}</span></td>
 </tr>
 </c:if>
-<tr>
- <td class="label">Google Maps API Usage</td>
- <td class="data"><fmt:int value="${d_APIuse}" /> dynamic, <fmt:int value="${s_APIuse}" /> static since application start</td>
-</tr>
 <c:if test="${!empty buildDataCore && !empty buildDataJSP}">
 <tr>
  <td class="label top">Build Information</td>

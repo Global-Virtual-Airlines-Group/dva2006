@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 12.4
+ * @version 13.0
  * @since 1.0
  */
 
@@ -214,7 +214,6 @@ public class RegisterCommand extends AbstractCommand {
 				try {
 					GetVATSIMData dao = new GetVATSIMData();
 					Certificate c = dao.getInfo(a.getNetworkID(OnlineNetwork.VATSIM));
-					APILogger.add(new APIRequest(API.VATSIM.createName("CERT"), !ctx.isAuthenticated()));
 					if (c != null) {
 						a.addHRComment("VATSIM ID exists");
 						if (!c.isActive())
@@ -273,16 +272,6 @@ public class RegisterCommand extends AbstractCommand {
 				}
 				
 				a.addHRComment(buf.toString());
-			}
-			
-			// Check for blacklist
-			GetSystemData sysdao = new GetSystemData(con);
-			BlacklistEntry be = sysdao.getBlacklist(a.getRegisterAddress());
-			if (be != null) {
-				log.warn("Registration blacklist for {} from {}", a.getName(), be);
-				result.setURL("/jsp/register/blackList.jsp");
-				result.setSuccess(true);
-				return;
 			}
 			
 			// Do address uniqueness check
