@@ -15,7 +15,7 @@ import org.deltava.comparators.FlightReportComparator;
 /**
  * A helper bean to filter FlightReports and other dated objects by year. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

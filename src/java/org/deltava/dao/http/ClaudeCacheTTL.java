@@ -4,7 +4,7 @@ package org.deltava.dao.http;
 /**
  * An enumeration of Claude API cache TTLs.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

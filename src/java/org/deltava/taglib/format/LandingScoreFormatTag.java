@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to format landing scores.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 10.4
  */
 

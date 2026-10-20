@@ -7,7 +7,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store an AI prompt. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

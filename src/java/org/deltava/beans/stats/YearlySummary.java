@@ -13,7 +13,7 @@ import org.deltava.comparators.FlightReportComparator;
 /**
  * A bean to store a year's Flights.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
  * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL. This abstract
  * class also supports the injection of an InputStream for unit testing purposes.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 2.4
  */
 

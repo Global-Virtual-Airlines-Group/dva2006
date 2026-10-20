@@ -6,7 +6,7 @@ import java.time.Instant;
 /**
  * A container bean for AI response data.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

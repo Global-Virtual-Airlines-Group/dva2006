@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 9.2
  */
 

@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * An class to implement commonalities between user examinations and flight videos.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 1.0
  */
 

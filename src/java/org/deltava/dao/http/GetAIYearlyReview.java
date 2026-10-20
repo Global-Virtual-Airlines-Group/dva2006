@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to retrieve an AI-generated yearly summary. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

@@ -11,7 +11,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 1.0
  */
 

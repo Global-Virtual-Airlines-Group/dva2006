@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 9.2
  */
 

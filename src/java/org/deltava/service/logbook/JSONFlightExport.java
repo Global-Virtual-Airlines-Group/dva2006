@@ -17,7 +17,7 @@ import org.deltava.util.JSONUtils;
  * A log book export class to generate JSON-formatted log books. This class is not package private because certain other
  * code (like AI APIs) find it useful to create a JSOn representation of a Flight Report. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.4
  */
 

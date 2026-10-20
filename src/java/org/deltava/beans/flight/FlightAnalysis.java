@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store AI-generated Flight Analysis data.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

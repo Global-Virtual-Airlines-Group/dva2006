@@ -11,7 +11,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A bean to store data used to generate a Flight Score. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 8.0
  */
 

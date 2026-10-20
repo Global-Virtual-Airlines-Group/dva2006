@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to generate Flight Summaries.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 

@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate Elite program scoring for a Flight Report.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 11.2
  */
 

@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to fetch SimBrief packages.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 10.3
  */
 

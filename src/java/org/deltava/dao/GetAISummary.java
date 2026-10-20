@@ -8,7 +8,7 @@ import org.deltava.beans.AISummary;
 /**
  * A Data Access Object to load AI-generated summaries from the database. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 12.5
  */
 
