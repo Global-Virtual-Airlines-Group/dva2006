@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 1.0
  */
 
@@ -148,12 +148,6 @@ public class LoginCommand extends AbstractCommand {
 				}
 			} else
 				p = users.get(0);
-			
-			// Check the blacklist
-			GetSystemData sysdao = new GetSystemData(con);
-			BlacklistEntry be = sysdao.getBlacklist(remoteAddr);
-			if (be != null)
-				throw new SecurityException(String.format("Login prohibited from %s", be));
 			
 			// Get the authenticator and try to authenticate
 			try (org.deltava.security.Authenticator auth = (org.deltava.security.Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
