@@ -31,8 +31,8 @@ public class SetAISummary extends DAO {
 	public void writeSummary(int year, AISummary msg) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO YEARLY_SUMMARY VALUES (?,?,?,?,?,?,?)")) {
 			ps.setInt(1, msg.getID());
-			ps.setTimestamp(2, createTimestamp(msg.getCreatedOn()));
-			ps.setInt(3, year);
+			ps.setInt(2, year);
+			ps.setTimestamp(3, createTimestamp(msg.getCreatedOn()));
 			ps.setInt(4, msg.getInputTokens());
 			ps.setInt(5, msg.getOutputTokens());
 			ps.setLong(6, msg.getGenerationTime());
