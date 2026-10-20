@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to validate Google RECAPTCHA tokens.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 9.0
  */
 

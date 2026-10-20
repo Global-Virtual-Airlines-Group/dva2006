@@ -23,7 +23,7 @@ import org.deltava.util.cache.*;
 /**
  * A Web Service to display weather tile data.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 8.0
  */
 

@@ -9,7 +9,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to read system logging tables. 
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 9.0
  */
 

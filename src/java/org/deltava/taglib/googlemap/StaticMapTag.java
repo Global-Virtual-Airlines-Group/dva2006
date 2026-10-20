@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a static Google Map on the page.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 6.0
  */
 

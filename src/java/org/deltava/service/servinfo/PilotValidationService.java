@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to validate VATSIM membership data.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 1.0
  */
 
