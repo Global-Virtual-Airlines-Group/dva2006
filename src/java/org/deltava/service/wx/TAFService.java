@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -9,7 +9,6 @@ import org.json.*;
 
 import org.deltava.beans.wx.TAF;
 import org.deltava.beans.navdata.AirportLocation;
-import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetFAWeather;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch Terminal Area Forecast data.
  * @author Luke
- * @version 11.1
+ * @version 13.0
  * @since 2.3
  */
 
@@ -54,7 +53,6 @@ public class TAFService extends WebService {
 				GetFAWeather wxdao = new GetFAWeather();
 				wxdao.setKey(SystemData.get("schedule.flightaware.flightXML.v4"));				
 				wxdao.setReadTimeout(5000);
-				APILogger.add(new APIRequest(API.FlightAware.createName("WEATHER"), !ctx.isAuthenticated()));
 				data = wxdao.getTAF(al);
 			} else {
 				GetWeather wxdao = new GetWeather(con);

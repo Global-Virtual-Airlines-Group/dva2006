@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2020, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.IOException;
@@ -8,7 +8,6 @@ import static jakarta.servlet.http.HttpServletResponse.*;
 import org.json.*;
 
 import org.deltava.beans.servinfo.Certificate;
-import org.deltava.beans.system.*;
 
 import org.deltava.dao.DAOException;
 import org.deltava.dao.http.*;
@@ -20,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to validate VATSIM membership data.
  * @author Luke
- * @version 10.3
+ * @version 13.0
  * @since 1.0
  */
 
@@ -45,7 +44,6 @@ public class PilotValidationService extends WebService {
 			GetVATSIMData dao = new GetVATSIMData();
 			dao.setCompression(Compression.GZIP);
 			c = dao.getInfo(id);
-			APILogger.add(new APIRequest(API.VATSIM.createName("CERT"), !ctx.isAuthenticated()));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}

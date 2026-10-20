@@ -1,17 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.time.Instant;
 import java.util.*;
 
-import org.deltava.beans.stats.APIUsage;
 import org.deltava.beans.system.*;
 
 /**
  * A Data Access Object to read system logging tables. 
  * @author Luke
- * @version 11.6
+ * @version 13.0
  * @since 9.0
  */
 
@@ -68,74 +66,6 @@ public class GetSystemLog extends DAO {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			return executeCommandLog(ps);
 		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Retrieves today's API request statistics from the database.
-	 * @param api an API enumeration
-	 * @param method the method name
-	 * @return an APIUsage bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public APIUsage getCurrentAPIUsage(API api, String method) throws DAOException {
-		
-		String methodName = api.createName(method);
-		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (API=?) AND (USAGE_DATE>CURDATE()) GROUP BY DT LIMIT 1")) {
-			ps.setString(1, methodName);
-			try (ResultSet rs = ps.executeQuery()) {
-				APIUsage result = new APIUsage(Instant.now(), methodName);
-				if (rs.next()) {
-					result.setTotal(rs.getInt(2));
-					result.setAnonymous(rs.getInt(3));
-					result.setBlocked(rs.getInt(4));
-					return result;
-				}
-			}
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-		
-		return new APIUsage(Instant.now(), methodName);
-	}
-	
-	/**
-	 * Retrtieves external API request statistics from the database.
-	 * @param api the API, or null for all
-	 * @param days the number of days to go back
-	 * @return a List of APIUsage beans 
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<APIUsage> getAPIRequests(API api, int days) throws DAOException {
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT USAGE_DATE, API, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (USAGE_DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) ");
-		if (api != null)
-			sqlBuf.append("AND (LEFT(API,?)=?) ");
-		sqlBuf.append("GROUP BY DATE(USAGE_DATE) ORDER BY USAGE_DATE DESC, API");
-		
-		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, days);
-			if (api != null) {
-				ps.setInt(2, api.name().length() + 1);
-				ps.setString(3, api.createName(""));
-			}
-			
-			// Execute the Query
-			List<APIUsage> results = new ArrayList<APIUsage>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					APIUsage ap = new APIUsage(toInstant(rs.getTimestamp(1)), rs.getString(2));
-					ap.setTotal(rs.getInt(3));
-					ap.setAnonymous(rs.getInt(4));
-					ap.setBlocked(rs.getInt(5));
-					results.add(ap);
-				}
-			}
-			
-			return results;
-		} catch (SQLException se) { 
 			throw new DAOException(se);
 		}
 	}
