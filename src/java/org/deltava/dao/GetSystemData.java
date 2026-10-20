@@ -5,6 +5,8 @@ import java.util.*;
 import java.sql.*;
 
 import org.deltava.beans.stats.*;
+import org.deltava.beans.system.Prompt;
+
 import org.deltava.taskman.TaskLastRun;
 
 import org.deltava.util.cache.*;
