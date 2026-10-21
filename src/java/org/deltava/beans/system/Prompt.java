@@ -24,7 +24,7 @@ public class Prompt implements Cacheable, Auditable {
 	 */
 	public Prompt(String id) {
 		super();
-		_id = id;
+		_id = id.toUpperCase();
 	}
 
 	/**

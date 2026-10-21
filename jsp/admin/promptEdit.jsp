@@ -44,7 +44,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${empty prompt}">
 <tr>
  <td class="label">Prompt ID</td>
- <td class="data"><el:text name="id" className="pri bld" size="20" max="24" required="true" /></td>
+ <td class="data"><el:text name="id" className="pri bld caps" size="20" max="24" required="true" /></td>
 </tr>
 </c:if>
 <tr>
