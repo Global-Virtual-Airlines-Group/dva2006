@@ -10,6 +10,8 @@ import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.system.Prompt;
+import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetAIAnalysis;
@@ -49,6 +51,8 @@ public class FlightSummaryTask extends Task {
 			GetGates gdao = new GetGates(con);
 			GetACARSData fidao = new GetACARSData(con);
 			GetACARSPositions posdao = new GetACARSPositions(con);
+			GetSystemData sysdao = new GetSystemData(con);
+			GetExam exdao = new GetExam(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			SetFlightReport frwdao = new SetFlightReport(con);
 			SetFlightReportQueue frqwao = new SetFlightReportQueue(con);
@@ -58,7 +62,7 @@ public class FlightSummaryTask extends Task {
 				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
 				FlightInfo inf = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
 				if (!(fr instanceof ACARSFlightReport afr) || (inf == null)) {
-					log.warn("Flight {} not an ACARS Flight Report!");
+					log.warn("Flight {} not an ACARS Flight Report!", id);
 					frqwao.clear(id.intValue());
 					break;
 				}
@@ -70,6 +74,17 @@ public class FlightSummaryTask extends Task {
 				AircraftPolicyOptions opts = ac.getOptions(SystemData.get("airline.code"));
 				ScorePackage pkg = new ScorePackage(ac, afr, p, inf.getRunwayD(), inf.getRunwayA(), opts);
 				
+				// Get a check ride
+				CheckRide cr = null;
+				if (afr.hasAttribute(Attribute.CHECKRIDE)) {
+					cr = exdao.getACARSCheckRide(inf.getID());
+					if (cr == null)
+						log.warn("Flight {} marked as Check Ride, but none matches ACARS ID {}", id, Integer.valueOf(inf.getID()));
+				}
+				
+				// Get the Prompt
+				Prompt pt = sysdao.getPrompt((cr == null) ? "FLIGHTSUMMARY" : "CRSUMMARY", ctx.getDB());
+
 				// Load the positions/gates
 				pkg.setGates(inf.getGateD(), inf.getGateA());
 				posdao.getRouteEntries(inf.getID(), inf.getArchived()).forEach(pkg::add);
@@ -81,6 +96,8 @@ public class FlightSummaryTask extends Task {
 					GetAIAnalysis sdao = new GetAIAnalysis(pkg);
 					sdao.setConnectTimeout(3500);
 					sdao.setReadTimeout(45000);
+					sdao.addCheckRide(cr);
+					sdao.setPrompt(pt);
 					fa = sdao.execute();
 					log.log((fa.getGenerationTime() > 30_000) ? Level.WARN : Level.INFO, "Summary for Flight Report {} loaded in {}ms", id, Long.valueOf(fa.getGenerationTime()));
 				} catch (DAOException de) {

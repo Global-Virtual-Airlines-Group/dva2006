@@ -8,7 +8,8 @@ import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.navdata.*;
+import org.deltava.beans.navdata.Gate;
+import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.dao.DAOException;
 
@@ -34,6 +35,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 	private static final Collection<String> LEGEND = Arrays.asList("position", "date", "altitude", "radar_altitude", "air_speed", "ground_speed", "mach", "heading", "fuel", "fuel_flow", "aoa", "pitch", "bank", "g", "flaps", "visibility", "wind_speed", "wind_hdg", "warnings", "flags");
 	
 	private final ScorePackage _pkg;
+	private CheckRide _cr;
 
 	/**
 	 * Creates the DAO.
@@ -42,6 +44,14 @@ public class GetAIAnalysis extends ClaudeDAO {
 	public GetAIAnalysis(ScorePackage pkg) {
 		super();
 		_pkg = pkg;
+	}
+	
+	/**
+	 * Adds an optional Check Ride to evaluate against.
+	 * @param cr a CheckRide
+	 */
+	public void addCheckRide(CheckRide cr) {
+		_cr = cr;
 	}
 	
 	/*
@@ -171,6 +181,10 @@ public class GetAIAnalysis extends ClaudeDAO {
 		addPrompt(PromptType.USER, data.toString());
 		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
 		addPrompt(PromptType.USER, format(_pkg.getPilot()).toString());
+		if (_cr != null) {
+			addPrompt(PromptType.ASSISTANT, "Please provide the Check Ride instructions.");
+			addPrompt(PromptType.USER, _cr.getComments());
+		}
 		
 		// Call claude API
 		try {
