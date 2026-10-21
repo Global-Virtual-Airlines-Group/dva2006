@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html lang="en">
 <head>
-<title>LLM Prompt - ${(empty prompt) ? 'NEW' : p.ID}</title>
+<title>LLM Prompt - ${(empty prompt) ? 'NEW' : prompt.ID}</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
