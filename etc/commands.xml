@@ -2221,12 +2221,6 @@
 		<roles>Operations,Developer</roles>
 	</command>
 
-	<command id="apistats">
-		<name>API Usage Statistics</name>
-		<class>org.deltava.commands.stats.APIStatsCommand</class>
-		<roles>Operations,Developer</roles>
-	</command>
-
 
 	<!-- Help Desk commands -->
 	<command id="helpdesk">
