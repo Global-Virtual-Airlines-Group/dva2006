@@ -998,10 +998,6 @@ pilot Certification.</td>
  <td class="data">You can import MaxMind GeoCity network block and location data files into the database. <span class="ita">Locations should be imported before network blocks</span>.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="apistats">External API Usage</el:cmd></td>
- <td class="data">You can view usage statistics and predictions for external API usage.</td>
-</tr>
-<tr>
  <td class="mid"><el:cmd className="bld" url="prompts">LLM Prompts</el:cmd></td>
  <td class="data">You can view and edit any LLM prompts used for AI content generation.</td>
 </tr>
