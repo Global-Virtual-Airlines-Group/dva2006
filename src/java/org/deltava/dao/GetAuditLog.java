@@ -70,7 +70,7 @@ public class GetAuditLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public SequencedCollection<AdminLogEntry> getAdminEntries() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT CREATED, NAME, ID, AUTHOR_ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST FROM ADMIN_LOG ORDER BY CREATED DESC")) {
+		try (PreparedStatement ps = prepare("SELECT CREATED, TYPE, ID, AUTHOR_ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST FROM ADMIN_LOG ORDER BY CREATED DESC")) {
 			return executeAdmin(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -84,7 +84,7 @@ public class GetAuditLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public SequencedCollection<AdminLogEntry> getAdminEntries(int userID) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM ADMIN_LOG WHERE (AUTHOR_ID=?) ORDER BY CREATED DESC")) {
+		try (PreparedStatement ps = prepare("SELECT CREATED, TYPE, ID, AUTHOR_ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST FROM ADMIN_LOG WHERE (AUTHOR_ID=?) ORDER BY CREATED DESC")) {
 			ps.setInt(userID, userID);
 			return executeAdmin(ps);
 		} catch (SQLException se) {

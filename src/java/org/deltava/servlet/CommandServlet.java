@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -30,7 +30,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 12.3
+ * @version 13.0
  * @since 1.0
  */
 
@@ -88,7 +88,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 						SetSystemData swdao = new SetSystemData(c);
 						swdao.logCommands(entries);
 						tlog.debug("Wrote command statistics");
-						swdao.logAPIRequests(APILogger.drain());
 					} catch (ConnectionPoolException | DAOException de) {
 						tlog.warn("Error writing command result staitistics - {}", de.getMessage());
 					} finally {
