@@ -8,7 +8,7 @@ import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.navdata.Gate;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.dao.DAOException;
@@ -100,6 +100,17 @@ public class GetAIAnalysis extends ClaudeDAO {
 	}
 	
 	/*
+	 * Helper method to JSON-Format format a Runway (and optionally RunwayDistance).
+	 */
+	private static JSONObject format(Runway r, boolean isDeparture) {
+		JSONObject ro =JSONUtils.format(r, false);
+		if (r instanceof RunwayDistance rd)
+			ro.put(String.format("distance_%s", isDeparture ? "remaining" : "used"), rd.getDistance());
+		
+		return ro;
+	}
+	
+	/*
 	 * Helper method to JSON-format a Gate.
 	 */
 	private static JSONObject format(Gate g) {
@@ -162,11 +173,11 @@ public class GetAIAnalysis extends ClaudeDAO {
 		// Convert the Package to JSON
 		JSONObject data = new JSONObject();
 		data.put("flight", JSONFlightExport.format(_pkg.getAircraft(), _pkg.getFlightReport()));
-		data.putOpt("departure_runway", JSONUtils.format(_pkg.getRunwayD()));
-		data.putOpt("arrival_runway", JSONUtils.format(_pkg.getRunwayA()));
+		data.putOpt("departure_runway", format(_pkg.getRunwayD(), true));
+		data.putOpt("arrival_runway", format(_pkg.getRunwayA(), false));
 		data.putOpt("departure_gate", format(_pkg.getGateD()));
 		data.putOpt("arrival_gate", format(_pkg.getGateA()));
-		
+
 		// Encode positions and legend
 		JSONArray la = new JSONArray();
 		LEGEND.forEach(la::put);
