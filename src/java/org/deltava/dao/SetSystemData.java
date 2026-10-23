@@ -54,29 +54,6 @@ public class SetSystemData extends DAO {
 	}
 
 	/**
-	 * Writes external API requests to the database.
-	 * @param reqs a Collection of APIRequest beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void logAPIRequests(Collection<APIRequest> reqs) throws DAOException {
-		Collection<String> cacheKeys = new HashSet<String>();
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_API_USAGE (USAGE_DATE, API, USE_COUNT, ANONYMOUS) VALUES (?, ?, 1, ?) ON DUPLICATE KEY UPDATE USE_COUNT=USE_COUNT+1, ANONYMOUS=ANONYMOUS+?")) {
-			for (APIRequest req : reqs) {
-				cacheKeys.add(req.getName());
-				ps.setTimestamp(1, createTimestamp(req.getTime()));
-				ps.setString(2, req.getName());
-				ps.setInt(3, req.getIsAnonymous() ? 1 : 0);
-				ps.setInt(4, req.getIsAnonymous() ? 1 : 0);
-				ps.addBatch();
-			}
-
-			executeUpdate(ps, 1, reqs.size());
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Logs the execution time of a Scheduled Task.
 	 * @param name the Scheduled Task name
 	 * @param execTime the execution time in milliseconds
