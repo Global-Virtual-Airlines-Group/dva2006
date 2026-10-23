@@ -7,7 +7,6 @@ import jakarta.servlet.jsp.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
-import org.apache.logging.log4j.*;
 
 import org.deltava.beans.MapType;
 import org.deltava.beans.system.*;
@@ -20,14 +19,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 12.4
+ * @version 13.0
  * @since 1.0
  */
 
 public class InsertGoogleAPITag extends CSPNonceTag {
 	
-	private static final Logger log = LogManager.getLogger(API.class);
-
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	private static final List<String> CYCLES = List.of("weekly", "quarterly");
 	
@@ -131,10 +128,7 @@ public class InsertGoogleAPITag extends CSPNonceTag {
 		if (!StringUtils.isEmpty(hreq.getQueryString()))
 			urlBuf.append('?').append(hreq.getQueryString());
 		
-		log.info("{} {} {}", urlBuf, hreq.getRemoteUser(), (_cb != null) ? "async" : "sync");
-		
 		// Translate stable/release v3 to minor version
-		APIUsage.track(APIUsage.Type.DYNAMIC, _isAnonymous);
 		if ((_majorVersion == 3) && (_minorVersion == null) && (_cycle == null))
 			_cycle = DEFAULT_CYCLE;
 		

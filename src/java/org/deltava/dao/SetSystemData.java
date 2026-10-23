@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 12.0
+ * @version 13.0
  * @since 1.0
  */
 
@@ -48,29 +48,6 @@ public class SetSystemData extends DAO {
 			}
 
 			executeUpdate(ps, 1, entries.size());
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Writes external API requests to the database.
-	 * @param reqs a Collection of APIRequest beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void logAPIRequests(Collection<APIRequest> reqs) throws DAOException {
-		Collection<String> cacheKeys = new HashSet<String>();
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_API_USAGE (USAGE_DATE, API, USE_COUNT, ANONYMOUS) VALUES (?, ?, 1, ?) ON DUPLICATE KEY UPDATE USE_COUNT=USE_COUNT+1, ANONYMOUS=ANONYMOUS+?")) {
-			for (APIRequest req : reqs) {
-				cacheKeys.add(req.getName());
-				ps.setTimestamp(1, createTimestamp(req.getTime()));
-				ps.setString(2, req.getName());
-				ps.setInt(3, req.getIsAnonymous() ? 1 : 0);
-				ps.setInt(4, req.getIsAnonymous() ? 1 : 0);
-				ps.addBatch();
-			}
-
-			executeUpdate(ps, 1, reqs.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -165,23 +142,6 @@ public class SetSystemData extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SYS_BLACKLIST WHERE (ADDRESS=INET6_ATON(?))")) {
 			ps.setString(1, addr);
 			executeUpdate(ps, 0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Writes a login/registration blacklist entry to the database.
-	 * @param be a BlacklistEntry bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(BlacklistEntry be) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SYS_BLACKLIST (ADDRESS, PREFIXLENGTH, CREATED, COMMENTS) VALUES (INET6_ATON(?), ?, ?, ?)")) {
-			ps.setString(1, be.getCIDR().getNetworkAddress());
-			ps.setInt(2, be.getCIDR().getPrefixLength());
-			ps.setTimestamp(3, createTimestamp(be.getCreated()));
-			ps.setString(4, be.getComments());
-			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

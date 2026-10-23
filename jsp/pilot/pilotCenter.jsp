@@ -812,10 +812,6 @@ pilot Certification.</td>
  <td class="mid"><el:cmd className="bld" url="loginaddrs">Login Addresses</el:cmd></td>
  <td class="data">You can search the system logs to determine which user accounts have been access from a particular IP address, host name or address range.</td> 
 </tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="blacklist">Login / Registration Blacklist</el:cmd></td>
- <td class="data">You can view and update the list of IP Address Blocks that have been blocked from logging in or registration at <content:airline />.</td>
-</tr>
 </content:filter> 
 <content:filter roles="HR,Examination,TestAdmin,Operations">
 <tr class="title caps">
@@ -1000,10 +996,6 @@ pilot Certification.</td>
  <td class="mid"><el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd><br>
 <el:cmd className="bld" url="ipimport">IP Network Block Import</el:cmd></td>
  <td class="data">You can import MaxMind GeoCity network block and location data files into the database. <span class="ita">Locations should be imported before network blocks</span>.</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="apistats">External API Usage</el:cmd></td>
- <td class="data">You can view usage statistics and predictions for external API usage.</td>
 </tr>
 </content:filter>
 <content:filter roles="HR">

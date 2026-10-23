@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2017, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2017, 2020, 2021, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -11,7 +11,6 @@ import org.json.*;
 import org.deltava.beans.UseCount;
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -22,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 11.2
+ * @version 13.0
  * @since 2.2
  */
 
@@ -73,10 +72,8 @@ public class DispatchRouteListService extends WebService {
 			helper.loadCachedRoutes();
 			
 			// Load flight aware routes
-			if (forceFAReload || (doFA && hasFARole && !helper.hasRoutes())) {
-				APILogger.add(new APIRequest(API.FlightAware.createName("ROUTES"), !ctx.isAuthenticated()));
+			if (forceFAReload || (doFA && hasFARole && !helper.hasRoutes()))
 				helper.loadFlightAwareRoutes(true);
-			}
 			
 			// Load PIREP routes
 			if (!helper.hasRoutes())

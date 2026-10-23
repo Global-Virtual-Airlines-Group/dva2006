@@ -350,21 +350,4 @@
             <rtexprvalue>true</rtexprvalue>
 	    </attribute>
 	</tag>
-
-	<tag>
-		<description>Map Usage tag, to display the number of times the Google Maps API has been used</description>
-		<name>usage</name>
-		<tag-class>org.deltava.taglib.googlemap.APIUsageTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>type</name>
-			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-	</tag>
 </taglib>

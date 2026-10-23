@@ -30,7 +30,7 @@ import org.gvagroup.pool.*;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 12.5
+ * @version 13.0
  * @since 1.0
  */
 
@@ -88,7 +88,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 						SetSystemData swdao = new SetSystemData(c);
 						swdao.logCommands(entries);
 						tlog.debug("Wrote command statistics");
-						swdao.logAPIRequests(APILogger.drain());
 					} catch (ConnectionPoolException | DAOException de) {
 						tlog.warn("Error writing command result staitistics - {}", de.getMessage());
 					} finally {

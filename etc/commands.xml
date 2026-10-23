@@ -225,18 +225,6 @@
 		<roles>HR</roles>
 	</command>
 	
-	<command id="blacklist">
-		<name>Blacklist View</name>
-		<class>org.deltava.commands.hr.BlacklistCommand</class>
-		<roles>HR</roles>
-	</command>
-	
-	<command id="blacklistdelete">
-		<name>Blacklist Delete</name>
-		<class>org.deltava.commands.hr.BlacklistDeleteCommand</class>
-		<roles>HR</roles>
-	</command>
-
 	<command id="dupesearch">
 		<name>Duplicate Pilot Search</name>
 		<class>org.deltava.commands.admin.DuplicatePilotSearchCommand</class>
@@ -2230,12 +2218,6 @@
 	<command id="ipgeoimport">
 		<name>IP Netblock Location Import</name>	
 		<class>org.deltava.commands.system.IPGeoImportCommand</class>
-		<roles>Operations,Developer</roles>
-	</command>
-
-	<command id="apistats">
-		<name>API Usage Statistics</name>
-		<class>org.deltava.commands.stats.APIStatsCommand</class>
 		<roles>Operations,Developer</roles>
 	</command>
 
