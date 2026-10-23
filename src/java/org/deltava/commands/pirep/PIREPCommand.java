@@ -621,7 +621,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Check if we can track online time from client
 				final long ocMask = Capabilities.IVAP.getMask() | Capabilities.VPILOT.getMask() | Capabilities.XIVAP.getMask();
 				boolean hasClientOnlineTime = ((ocMask & afr.getCapabilities()) != 0);
-
+				
 				// Get the route data from the DAFIF database
 				GetACARSLog ardao = new GetACARSLog(con);
 				FlightInfo info = ardao.getInfo(flightID);
@@ -677,6 +677,14 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (acfr.getOnTime() != OnTime.UNKNOWN) {
 							GetACARSOnTime aotdao = new GetACARSOnTime(con);
 							ctx.setAttribute("onTimeEntry", aotdao.getOnTime(acfr), REQUEST);
+						}
+						
+						// Validate landing G-force
+						double g = LandingScorer.calculateG(afr.getLandingVSpeed(), afr.getEquipmentType());
+						double deltaG = Math.abs(g - acfr.getLandingG());
+						if (deltaG > 0.65) {
+							acfr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Updated landing vertial decceleration from %.3f to %.3f", Double.valueOf(acfr.getLandingG()), Double.valueOf(g)));
+							acfr.setLandingG(g);
 						}
 					}
 					
