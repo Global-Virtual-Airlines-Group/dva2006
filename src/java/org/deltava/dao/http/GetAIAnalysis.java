@@ -104,8 +104,9 @@ public class GetAIAnalysis extends ClaudeDAO {
 	 */
 	private static JSONObject format(Runway r, boolean isDeparture) {
 		JSONObject ro =JSONUtils.format(r, false);
+		ro.remove("label");
 		if (r instanceof RunwayDistance rd)
-			ro.put(String.format("distance_%s", isDeparture ? "remaining" : "used"), rd.getDistance());
+			ro.put(String.format("distance_%s", isDeparture ? "remaining" : "used"), isDeparture ? (r.getLength() - rd.getDistance()) : rd.getDistance());
 		
 		return ro;
 	}
@@ -120,8 +121,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 		go.put("name", g.getName());
 		go.put("zone", g.getZone().getDescription());
 		go.put("location", JSONUtils.format(g));
-		go.put("lat", g.getLatitude());
-		go.put("lng", g.getLongitude());
+		go.put("position", JSONUtils.toLL(g));
 		return go;
 	}
 	
@@ -177,6 +177,7 @@ public class GetAIAnalysis extends ClaudeDAO {
 		data.putOpt("arrival_runway", format(_pkg.getRunwayA(), false));
 		data.putOpt("departure_gate", format(_pkg.getGateD()));
 		data.putOpt("arrival_gate", format(_pkg.getGateA()));
+		System.out.println(data.toString(1));
 
 		// Encode positions and legend
 		JSONArray la = new JSONArray();
