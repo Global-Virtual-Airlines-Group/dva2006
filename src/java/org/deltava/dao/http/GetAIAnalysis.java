@@ -1,6 +1,7 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
+import java.math.*;
 import java.util.*;
 
 import org.json.*;
@@ -55,6 +56,15 @@ public class GetAIAnalysis extends ClaudeDAO {
 	}
 	
 	/*
+	 * Helper method to round a double value to a set number of decimal places.
+	 */
+	private static double round(double d, int places) {
+		BigDecimal bd = BigDecimal.valueOf(d);
+		bd = bd.setScale(places, RoundingMode.HALF_UP);
+		return bd.doubleValue();
+	}
+	
+	/*
 	 * Helper method to format flight data as an array.
 	 */
 	private static JSONArray formatArray(ACARSRouteEntry re) {
@@ -72,9 +82,9 @@ public class GetAIAnalysis extends ClaudeDAO {
 		ra.put(re.getFuelRemaining());
 		ra.put(re.getFuelFlow());
 		ra.put(re.getAOA());
-		ra.put(re.getPitch());
-		ra.put(re.getBank());
-		ra.put(re.getG());
+		ra.put(round(re.getPitch(), 2));
+		ra.put(round(re.getBank(), 2));
+		ra.put(round(re.getG(), 3));
 		ra.put(re.getFlaps());
 		ra.put(re.getVisibility());
 		ra.put(re.getWindSpeed());
@@ -117,11 +127,10 @@ public class GetAIAnalysis extends ClaudeDAO {
 	private static JSONObject format(Gate g) {
 		if (g == null) return null;
 		JSONObject go = new JSONObject();
+		go.put("position", JSONUtils.toLL(g));
 		go.put("airport", g.getCode());
 		go.put("name", g.getName());
 		go.put("zone", g.getZone().getDescription());
-		go.put("location", JSONUtils.format(g));
-		go.put("position", JSONUtils.toLL(g));
 		return go;
 	}
 	
@@ -177,6 +186,10 @@ public class GetAIAnalysis extends ClaudeDAO {
 		data.putOpt("arrival_runway", format(_pkg.getRunwayA(), false));
 		data.putOpt("departure_gate", format(_pkg.getGateD()));
 		data.putOpt("arrival_gate", format(_pkg.getGateA()));
+		
+		// Calculate max G force to avoid hallucination
+		double maxG = _pkg.getData().stream().mapToDouble(ACARSRouteEntry::getG).map(Math::abs).max().orElse(1);
+		data.put("max_g", maxG);
 
 		// Encode positions and legend
 		JSONArray la = new JSONArray();
@@ -186,11 +199,11 @@ public class GetAIAnalysis extends ClaudeDAO {
 		JSONUtils.ensureArrayPresent(data, "positions");
 		
 		// Set the prompts
-		setMaxTokens(9500);
+		setMaxTokens(12500);
 		loadPrompt();
 		addPrompt(PromptType.ASSISTANT, "Please provide the flight data in JSON format.");
 		addPrompt(PromptType.USER, data.toString());
-		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot, in JSON format.");
+		addPrompt(PromptType.ASSISTANT, "Please provide information about the Pilot in JSON format.");
 		addPrompt(PromptType.USER, format(_pkg.getPilot()).toString());
 		if (_cr != null) {
 			addPrompt(PromptType.ASSISTANT, "Please provide the Check Ride instructions.");
