@@ -177,7 +177,6 @@ public class GetAIAnalysis extends ClaudeDAO {
 		data.putOpt("arrival_runway", format(_pkg.getRunwayA(), false));
 		data.putOpt("departure_gate", format(_pkg.getGateD()));
 		data.putOpt("arrival_gate", format(_pkg.getGateA()));
-		System.out.println(data.toString(1));
 
 		// Encode positions and legend
 		JSONArray la = new JSONArray();
