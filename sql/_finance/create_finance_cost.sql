@@ -1,4 +1,4 @@
-CREATE TABLE finance.CATEGORY (
+CREATE TABLE finance.COSTS (
  DATE               DATE NOT NULL,
  TYPE               VARCHAR(32) NOT NULL,
  AMOUNT             DECIMAR (5,2) UNSIGNED NOT NULL,
