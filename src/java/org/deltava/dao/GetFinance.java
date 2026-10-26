@@ -22,6 +22,25 @@ public class GetFinance extends DAO {
 	public GetFinance(Connection c) {
 		super(c);
 	}
+	
+	/**
+	 * Retrieves the cost categories.
+	 * @return a Collection of category names
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Category> getCategories() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM finance.CATEGORIES")) {
+			Collection<Category> results = new ArrayList<Category>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(new Category(rs.getString(1), rs.getBoolean(2)));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all cost leder entries for a given fiscal year.
