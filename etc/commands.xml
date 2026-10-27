@@ -2678,4 +2678,30 @@
 		<class>org.deltava.commands.academy.VideoDeleteCommand</class>
 		<roles>AcademyAdmin,HR</roles>
 	</command>
+
+
+	<!-- Finance commands -->
+	<command id="costledger">
+		<name>Cost Ledger</name>
+		<class>org.deltava.commands.finance.CostLedgerCommand</class>
+		<class>Finance</class>
+	</command>
+
+	<command id="awsledger">
+		<name>AWS Cost Ledger</name>
+		<class>org.deltava.commands.finance.AWSLedgerCommand</class>
+		<class>Finance</class>
+	</command>
+
+	<command id="costentry">
+		<name>Cost Entry</name>
+		<class>org.deltava.commands.finance.CostEntryCommand</class>
+		<class>Finance</class>
+	</command>
+
+	<command id="shareledger">
+		<name>Shareholder Ledger</name>
+		<class>org.deltava.commands.finance.ShareLedgerCommand</class>
+		<class>Finance</class>
+	</command>
 </commands>
