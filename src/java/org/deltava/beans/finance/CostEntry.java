@@ -4,6 +4,8 @@ package org.deltava.beans.finance;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import org.deltava.beans.*;
+
 /**
  * A bean to track costs.
  * @author Luke
@@ -11,12 +13,13 @@ import java.time.temporal.ChronoUnit;
  * @since 13.1
  */
 
-public class CostEntry implements Comparable<CostEntry> {
+public class CostEntry implements AuthoredBean, Comparable<CostEntry> {
 	
 	private final String _category;
 	private final Instant _date;
 	private final int _amount;
 	private String _desc;
+	private int _authorID;
 
 	/**
 	 * Creates the bean.
@@ -61,6 +64,16 @@ public class CostEntry implements Comparable<CostEntry> {
 	 */
 	public String getDescription() {
 		return _desc;
+	}
+	
+	@Override
+	public int getAuthorID() {
+		return _authorID;
+	}
+	
+	@Override
+	public void setAuthorID(int id) {
+		DatabaseBean.validateID(_authorID, id, true);
 	}
 	
 	/**
