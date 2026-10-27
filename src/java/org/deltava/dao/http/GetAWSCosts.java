@@ -32,10 +32,6 @@ public class GetAWSCosts extends DAO {
 	public Collection<AWSCostEntry> getCosts(int daysBack) throws DAOException {
 		
 		String url = String.format("%s?days=%d", SystemData.get("finance.aws.url"), Integer.valueOf(daysBack));
-		setConnectTimeout(1000);
-		setReadTimeout(5000);
-		setCompression(Compression.GZIP);
-		
 		try {
 			init(url);
 			int rspCode = getResponseCode();
