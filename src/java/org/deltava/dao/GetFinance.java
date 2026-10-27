@@ -24,6 +24,38 @@ public class GetFinance extends DAO {
 	}
 	
 	/**
+	 * Reads a cost ledger entry from the database.
+	 * @param id the database ID
+	 * @return a CostEntry, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public CostEntry getEntry(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM finance.COSTS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			List<CostEntry> results = executeLedger(ps);
+			return results.isEmpty() ? null : results.getFirst();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Reads an AWS cost ledger entry from the database.
+	 * @param id the database ID
+	 * @return an AWSCostEntry, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public AWSCostEntry getAWSEntry(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM finance.AWS_COSTS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			List<AWSCostEntry> results = executeAWSLedger(ps);
+			return results.isEmpty() ? null : results.getFirst();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Retrieves the cost categories.
 	 * @return a Collection of category names
 	 * @throws DAOException if a JDBC error occurs
@@ -51,18 +83,7 @@ public class GetFinance extends DAO {
 	public List<CostEntry> getCostLedger(int year) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT * FROM finance.COSTS WHERE (YEAR(DATE)=?) ORDER BY DATE DESC")) {
 			ps.setInt(1, year);
-			
-			// Execute the query
-			List<CostEntry> results = new ArrayList<CostEntry>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					CostEntry ce = new CostEntry(rs.getString(2), toInstant(rs.getTimestamp(1)), rs.getInt(3));
-					ce.setDescription(rs.getString(4));
-					results.add(ce);
-				}
-			}
-
-			return results;
+			return executeLedger(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -79,19 +100,7 @@ public class GetFinance extends DAO {
 		try (PreparedStatement ps = prepare("SELECT * FROM finance.AWS_COSTS WHERE (YEAR(DATE)=?) AND (MONTH(DATE)=?) ORDER BY DATE DESC")) {
 			ps.setInt(1, year);
 			ps.setInt(2, month);
-
-			// Execute the query
-			List<AWSCostEntry> results = new ArrayList<AWSCostEntry>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					AWSCostEntry ce = new AWSCostEntry(toInstant(rs.getTimestamp(1)), rs.getInt(3));
-					ce.setService(rs.getString(2));
-					ce.setDescription(rs.getString(4));
-					results.add(ce);
-				}
-			}
-
-			return results;
+			return executeAWSLedger(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -147,6 +156,41 @@ public class GetFinance extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/*
+	 * Helper method to parse AWS ledger result sets.
+	 */
+	private static List<CostEntry> executeLedger(PreparedStatement ps) throws SQLException {
+		List<CostEntry> results = new ArrayList<CostEntry>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				CostEntry ce = new CostEntry(rs.getString(3), toInstant(rs.getTimestamp(2)), rs.getInt(4));
+				ce.setID(rs.getInt(1));
+				ce.setDescription(rs.getString(5));
+				results.add(ce);
+			}
+		}
+
+		return results;
+	}
+	
+	/*
+	 * Helper method to parse AWS cost ledger result sets.
+	 */
+	private static List<AWSCostEntry> executeAWSLedger(PreparedStatement ps) throws SQLException {
+		List<AWSCostEntry> results = new ArrayList<AWSCostEntry>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				AWSCostEntry ce = new AWSCostEntry(toInstant(rs.getTimestamp(2)), rs.getInt(4));
+				ce.setID(rs.getInt(1));
+				ce.setService(rs.getString(3));
+				ce.setDescription(rs.getString(5));
+				results.add(ce);
+			}
+		}
+
+		return results;
 	}
 
 	/*

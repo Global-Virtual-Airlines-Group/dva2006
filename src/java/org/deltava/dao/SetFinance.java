@@ -28,11 +28,12 @@ public class SetFinance extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(CostEntry ce) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.COSTS VALUES (?,?,?,?)")) {
-			ps.setTimestamp(1, createTimestamp(ce.getDate()));
-			ps.setString(2, ce.getCategory());
-			ps.setInt(3, ce.getAmount());
-			ps.setString(4, ce.getDescription());
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.COSTS VALUES (?,?,?,?,?)")) {
+			ps.setInt(1, ce.getID());
+			ps.setTimestamp(2, createTimestamp(ce.getDate()));
+			ps.setString(3, ce.getCategory());
+			ps.setInt(4, ce.getAmount());
+			ps.setString(5, ce.getDescription());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -45,11 +46,12 @@ public class SetFinance extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(AWSCostEntry ce) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.AWS_COSTS VALUES (?,?,?,?)")) {
-			ps.setTimestamp(1, createTimestamp(ce.getDate()));
-			ps.setString(2, ce.getService());
-			ps.setInt(3, ce.getAmount());
-			ps.setString(4, ce.getDescription());
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.AWS_COSTS VALUES (?,?,?,?,?,?)")) {
+			ps.setInt(1, ce.getID());
+			ps.setTimestamp(2, createTimestamp(ce.getDate()));
+			ps.setString(3, ce.getService());
+			ps.setInt(4, ce.getAmount());
+			ps.setString(5, ce.getDescription());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -80,7 +82,7 @@ public class SetFinance extends DAO {
 	public void write(SharePurchase sp) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.SHARES VALUES (?,?,?)")) {
 			ps.setInt(1, sp.getYear());
-			ps.setInt(2, sp.getID());
+			ps.setInt(2, sp.getAuthorID());
 			ps.setInt(3, sp.getCount());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {

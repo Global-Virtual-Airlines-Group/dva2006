@@ -38,12 +38,4 @@ public class AWSCostEntry extends CostEntry {
 	public void setService(String svc) {
 		_svcName = svc;
 	}
-	
-	@Override
-	public int compareTo(CostEntry c2) {
-		int tmpResult = getDate().compareTo(c2.getDate());
-		if (tmpResult == 0) tmpResult = getCategory().compareTo(c2.getCategory());
-		if ((tmpResult == 0) && (c2 instanceof AWSCostEntry ac2)) tmpResult = _svcName.compareTo(ac2._svcName);
-		return (tmpResult == 0) ? Integer.compare(getAmount(), c2.getAmount()) : tmpResult;
-	}
 }

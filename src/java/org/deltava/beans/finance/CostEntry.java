@@ -13,7 +13,7 @@ import org.deltava.beans.*;
  * @since 13.1
  */
 
-public class CostEntry implements AuthoredBean, Comparable<CostEntry> {
+public class CostEntry extends DatabaseBean implements AuthoredBean {
 	
 	private final String _category;
 	private final Instant _date;
@@ -82,12 +82,5 @@ public class CostEntry implements AuthoredBean, Comparable<CostEntry> {
 	 */
 	public void setDescription(String desc) {
 		_desc = desc;
-	}
-
-	@Override
-	public int compareTo(CostEntry c2) {
-		int tmpResult = _date.compareTo(c2._date);
-		if (tmpResult == 0) tmpResult = _category.compareTo(c2._category);
-		return (tmpResult == 0) ? Integer.compare(_amount, c2._amount) : tmpResult;
 	}
 }
