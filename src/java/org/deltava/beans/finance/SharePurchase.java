@@ -1,7 +1,8 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.finance;
 
-import org.deltava.beans.IDBean;
+import org.deltava.beans.AuthoredBean;
+import org.deltava.beans.DatabaseBean;
 
 /**
  * A bean to store share purhcase information.
@@ -10,9 +11,9 @@ import org.deltava.beans.IDBean;
  * @since 13.1	
  */
 
-public class SharePurchase implements IDBean, Comparable<SharePurchase> {
+public class SharePurchase implements AuthoredBean, Comparable<SharePurchase> {
 	
-	private final int _ownerID;
+	private int _ownerID;
 	private final int _year;
 	private final int _count;
 
@@ -25,7 +26,7 @@ public class SharePurchase implements IDBean, Comparable<SharePurchase> {
 	public SharePurchase(int year, int ownerID, int cnt) {
 		super();
 		_year = year;
-		_ownerID = ownerID;
+		setAuthorID(ownerID);
 		_count = Math.max(0, cnt);
 	}
 
@@ -38,13 +39,8 @@ public class SharePurchase implements IDBean, Comparable<SharePurchase> {
 	}
 	
 	@Override
-	public int getID() {
+	public int getAuthorID() {
 		return _ownerID;
-	}
-	
-	@Override
-	public String getHexID() {
-		return Integer.toHexString(_ownerID);
 	}
 	
 	/**
@@ -53,6 +49,12 @@ public class SharePurchase implements IDBean, Comparable<SharePurchase> {
 	 */
 	public int getCount() {
 		return _count;
+	}
+	
+	@Override
+	public void setAuthorID(int id) {
+		DatabaseBean.validateID(_ownerID, id);
+		_ownerID = id;
 	}
 	
 	@Override
