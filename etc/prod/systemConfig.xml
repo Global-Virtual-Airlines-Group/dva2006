@@ -755,6 +755,14 @@
 		</role>
 	</discord>
 
+	<!-- Cost/Finance data -->
+	<finance>
+		<enabled type="Boolean">true</enabled>
+		<aws>
+			<url>https://ctuz14oo1m-vpce-0ba355cb31db892fe.execute-api.us-east-2.amazonaws.com/prod/costs</url>
+		</aws>
+	</finance>
+
 	<!-- Simulated economy data -->
 	<econ>
 		<targetLoad type="Double">0.885</targetLoad>
