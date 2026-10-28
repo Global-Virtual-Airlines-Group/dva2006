@@ -118,6 +118,7 @@ public class GetFinance extends DAO {
 				while (rs.next()) {
 					SharePrice sp = new SharePrice(rs.getInt(1), rs.getInt(2));
 					sp.setCount(rs.getInt(3));
+					sp.setActive(rs.getBoolean(4));
 					results.add(sp);
 				}
 			}

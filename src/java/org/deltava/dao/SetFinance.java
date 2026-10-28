@@ -64,10 +64,11 @@ public class SetFinance extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(SharePrice sp) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.SHARE_PRICE VALUES (?,?,?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.SHARE_PRICE VALUES (?,?,?,?)")) {
 			ps.setInt(1, sp.getYear());
 			ps.setInt(2, sp.getPrice());
 			ps.setInt(3, sp.getCount());
+			ps.setBoolean(4, sp.getActive());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
