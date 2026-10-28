@@ -733,7 +733,7 @@
 	<finance>
 		<enabled type="Boolean">true</enabled>
 		<aws>
-			<url>https://dev.deltava.org/awscosts.json</url>
+			<url>https://dev.deltava.org/awsCosts.json</url>
 		</aws>
 	</finance>
 	
