@@ -1,6 +1,8 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.finance;
 
+import org.deltava.beans.Auditable;
+
 /**
  * A bean to track share prices and amounts. 
  * @author Luke
@@ -8,7 +10,7 @@ package org.deltava.beans.finance;
  * @since 13.1	
  */
 
-public class SharePrice implements Comparable<SharePrice>  {
+public class SharePrice implements Auditable, Comparable<SharePrice>  {
 	
 	private final int _year;
 	private final int _price;
@@ -82,5 +84,10 @@ public class SharePrice implements Comparable<SharePrice>  {
 	@Override
 	public int compareTo(SharePrice sp2) {
 		return Integer.compare(_year, sp2._year);
+	}
+
+	@Override
+	public String getAuditID() {
+		return String.valueOf(_year);
 	}
 }
