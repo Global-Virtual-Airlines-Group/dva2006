@@ -417,6 +417,7 @@
 			<role>Examination</role>
 			<role>ExamUpdate</role>
 			<role>Event</role>
+			<role>Finance</role>
 			<role>Fleet</role>
 			<role>HelpDesk</role>
 			<role>HireMgr</role>
