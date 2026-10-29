@@ -1,5 +1,389 @@
 [
     {
+        "date": "2026-09-28",
+        "currency": "USD",
+        "total": 5.63,
+        "estimated": false,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.2,
+            "EC2 - Other": 0.81,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.07,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-09-29",
+        "currency": "USD",
+        "total": 5.64,
+        "estimated": false,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.19,
+            "EC2 - Other": 0.81,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.08,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-09-30",
+        "currency": "USD",
+        "total": 5.8,
+        "estimated": false,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.34,
+            "EC2 - Other": 0.81,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.09,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-01",
+        "currency": "USD",
+        "total": 7.13,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "Amazon Route 53": 2.08,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-02",
+        "currency": "USD",
+        "total": 5.12,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.07,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-03",
+        "currency": "USD",
+        "total": 5.13,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.08,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-04",
+        "currency": "USD",
+        "total": 5.13,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.78,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.08,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-05",
+        "currency": "USD",
+        "total": 5.15,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.78,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.1,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-06",
+        "currency": "USD",
+        "total": 5.17,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.13,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.01,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-07",
+        "currency": "USD",
+        "total": 5.18,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.12,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.03,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-08",
+        "currency": "USD",
+        "total": 5.16,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.11,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-09",
+        "currency": "USD",
+        "total": 5.15,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.1,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-10",
+        "currency": "USD",
+        "total": 5.15,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.09,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-11",
+        "currency": "USD",
+        "total": 5.15,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.1,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-12",
+        "currency": "USD",
+        "total": 5.15,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.1,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-13",
+        "currency": "USD",
+        "total": 5.15,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.1,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-14",
+        "currency": "USD",
+        "total": 5.14,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 3.72,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.09,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-15",
+        "currency": "USD",
+        "total": 5.84,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.42,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.09,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-16",
+        "currency": "USD",
+        "total": 6.4,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.97,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.08,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-17",
+        "currency": "USD",
+        "total": 6.28,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.84,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.09,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.03,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-18",
+        "currency": "USD",
+        "total": 6.2,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.76,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.1,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-19",
+        "currency": "USD",
+        "total": 6.11,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.67,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.1,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-20",
+        "currency": "USD",
+        "total": 6.07,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.65,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.08,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-21",
+        "currency": "USD",
+        "total": 5.71,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.28,
+            "EC2 - Other": 0.78,
+            "Amazon Virtual Private Cloud": 0.48,
+            "Amazon Route 53": 0.09,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
         "date": "2026-10-22",
         "currency": "USD",
         "total": 5.98,
@@ -41,6 +425,56 @@
             "EC2 - Other": 0.79,
             "Amazon Virtual Private Cloud": 0.48,
             "Amazon Route 53": 0.14,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.02,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-25",
+        "currency": "USD",
+        "total": 6.4,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.67,
+            "EC2 - Other": 0.79,
+            "Amazon Virtual Private Cloud": 0.66,
+            "Amazon Route 53": 0.14,
+            "AWS Cost Explorer": 0.06,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.03,
+            "AWS Secrets Manager": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-26",
+        "currency": "USD",
+        "total": 6.55,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.57,
+            "Amazon Virtual Private Cloud": 0.96,
+            "EC2 - Other": 0.79,
+            "Amazon Route 53": 0.14,
+            "AWS Key Management Service": 0.03,
+            "Amazon Simple Email Service": 0.03,
+            "AWS Secrets Manager": 0.01,
+            "AWS Cost Explorer": 0.01,
+            "Amazon Simple Storage Service": 0.01
+        }
+    },
+    {
+        "date": "2026-10-27",
+        "currency": "USD",
+        "total": 6.42,
+        "estimated": true,
+        "services": {
+            "Amazon Elastic Compute Cloud - Compute": 4.49,
+            "Amazon Virtual Private Cloud": 0.96,
+            "EC2 - Other": 0.79,
+            "Amazon Route 53": 0.11,
             "AWS Key Management Service": 0.03,
             "Amazon Simple Email Service": 0.02,
             "AWS Secrets Manager": 0.01,
