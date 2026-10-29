@@ -105,6 +105,16 @@ public class GetFinance extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Retrieves the Share price for a given fiscal year.
+	 * @param year the year
+	 * @return a SharePrice, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public SharePrice getSharePrice(int year) throws DAOException {
+		return getSharePrices().stream().filter(sp -> (sp.getYear() == year)).findAny().orElse(null);
+	}
 
 	/**
 	 * Returns a list of Share prices.
