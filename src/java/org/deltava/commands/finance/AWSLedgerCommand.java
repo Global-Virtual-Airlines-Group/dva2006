@@ -47,6 +47,7 @@ public class AWSLedgerCommand extends AbstractViewCommand {
 		// Get options
 		ctx.setAttribute("years", List.of(Integer.valueOf(ld.getYear()), Integer.valueOf(ld.getYear() - 1)), REQUEST);
 		ctx.setAttribute("months", ComboUtils.properCase(Month.values()), REQUEST);
+		ctx.setAttribute("isAWS", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

@@ -1,8 +1,7 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.finance;
 
-import org.deltava.beans.AuthoredBean;
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store share purhcase information.
@@ -11,7 +10,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 13.1	
  */
 
-public class SharePurchase implements AuthoredBean, Comparable<SharePurchase> {
+public class SharePurchase implements AuthoredBean, Auditable, Comparable<SharePurchase> {
 	
 	private int _ownerID;
 	private final int _year;
@@ -62,5 +61,10 @@ public class SharePurchase implements AuthoredBean, Comparable<SharePurchase> {
 		int tmpResult = Integer.compare(_year, sp2._year);
 		if (tmpResult == 0) tmpResult = Integer.compare(_ownerID, sp2._ownerID);
 		return (tmpResult == 0) ? Integer.compare(_count, sp2._count) : tmpResult;
+	}
+
+	@Override
+	public String getAuditID() {
+		return String.format("%d-%d", Integer.valueOf(_year), Integer.valueOf(_ownerID));
 	}
 }

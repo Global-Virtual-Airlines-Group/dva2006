@@ -55,6 +55,7 @@ golgotha.onDOMReady(function() {
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="videoEnabled" name="airline.video.enabled" />
 <content:sysdata var="resourceEnabled" name="airline.resources.enabled" />
+<content:sysdata var="financeEnabled" name="finance.enabled" />
 <content:sysdata var="toursEnabled" name="online.tours" />
 <content:sysdata var="newsletterCats" name="airline.newsletters.categories" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
@@ -910,6 +911,30 @@ pilot Certification.</td>
 </tr>
 </c:if>
 </content:filter>
+<c:if test="${financeEnabled}">
+<content:filter roles="Finance">
+<!-- Financials -->
+<tr class="title caps">
+ <td colspan="2">FINANCIAL REPORTING AND OPERATIONS</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="costledger">Cost Ledger</el:cmd></td>
+ <td class="data">You can view a consolidated Expense Ledger, replicted from Stripe.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="awsledger">AWS Cost Ledger</el:cmd></td>
+ <td class="data">You can view a daily import of Amazon Web Services cost broken down by AWS Service, pulled in daily from AWS.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="shareledger">Shareholder Donations</el:cmd></td>
+ <td class="data">You can view a list of all shareholder donations for the current and previous fiscal years.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="shareprices">Share Prices / Counts</el:cmd></td>
+ <td class="data">You can view share prices and amounts to be solicited for current and previous fiscal years.</td>
+</tr>
+</content:filter>
+</c:if>
 <c:if test="${acarsEnabled}">
 <content:filter roles="HR,Route,Dispatch,PIREP">
 <!-- ACARS Dispatch Section -->

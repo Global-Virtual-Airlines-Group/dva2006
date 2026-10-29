@@ -2704,4 +2704,16 @@
 		<class>org.deltava.commands.finance.ShareLedgerCommand</class>
 		<class>Finance</class>
 	</command>
+
+	<command id="shareprice">
+		<name>Share Price</name>
+		<class>org.deltava.commands.finance.SharePriceCommand</class>
+		<class>Finance</class>
+	</command>
+
+	<command id="shareprices">
+		<name>Share Price</name>
+		<class>org.deltava.commands.finance.SharePricesCommand</class>
+		<class>Finance</class>
+	</command>
 </commands>

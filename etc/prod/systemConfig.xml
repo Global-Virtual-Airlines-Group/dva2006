@@ -417,6 +417,7 @@
 			<role>Examination</role>
 			<role>ExamUpdate</role>
 			<role>Event</role>
+			<role>Finance</role>
 			<role>Fleet</role>
 			<role>HelpDesk</role>
 			<role>HireMgr</role>
@@ -754,6 +755,14 @@
 			<default>Pilot</default>
 		</role>
 	</discord>
+
+	<!-- Cost/Finance data -->
+	<finance>
+		<enabled type="Boolean">true</enabled>
+		<aws>
+			<url>https://ctuz14oo1m-vpce-0ba355cb31db892fe.execute-api.us-east-2.amazonaws.com/prod/costs</url>
+		</aws>
+	</finance>
 
 	<!-- Simulated economy data -->
 	<econ>

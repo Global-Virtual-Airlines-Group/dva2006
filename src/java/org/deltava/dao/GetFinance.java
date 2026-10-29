@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.finance.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load financial data from the database.
@@ -45,6 +46,7 @@ public class GetFinance extends DAO {
 	 * @return an AWSCostEntry, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Deprecated
 	public AWSCostEntry getAWSEntry(int id) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM finance.AWS_COSTS WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, id);
@@ -105,6 +107,38 @@ public class GetFinance extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns daily AWS hosting costs.
+	 * @return a List of AWSCostEntry beans, aggregated by date in reverse date order
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<AWSCostEntry> getDailyAWSCosts() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT DATE, SUM(AMOUNT) FROM finance.AWS_COSTS GROUP BY DATE ORDER BY DATE DESC")) {
+			List<AWSCostEntry> results = new ArrayList<AWSCostEntry>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					AWSCostEntry ce = new AWSCostEntry(toInstant(rs.getTimestamp(1)), rs.getInt(2));
+					ce.setDescription(String.format("Aggregated Costs for %s", StringUtils.format(ce.getDate(), "MM/dd/yyyy")));
+					results.add(ce);
+				}
+			}
+
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retrieves the Share price for a given fiscal year.
+	 * @param year the year
+	 * @return a SharePrice, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public SharePrice getSharePrice(int year) throws DAOException {
+		return getSharePrices().stream().filter(sp -> (sp.getYear() == year)).findAny().orElse(null);
+	}
 
 	/**
 	 * Returns a list of Share prices.
@@ -118,6 +152,7 @@ public class GetFinance extends DAO {
 				while (rs.next()) {
 					SharePrice sp = new SharePrice(rs.getInt(1), rs.getInt(2));
 					sp.setCount(rs.getInt(3));
+					sp.setActive(rs.getBoolean(4));
 					results.add(sp);
 				}
 			}

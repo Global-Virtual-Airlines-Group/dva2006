@@ -44,6 +44,7 @@ $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` online > onli
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` exams > exams.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` dva > dva.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` afv > afv.sql
+$mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` finance > finance.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` stats > stats.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` geoip > geoip.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` weather > weather.sql
@@ -106,6 +107,10 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acar
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars POSITIONS POSITION_ATC | $arc_util > acars_positions.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars TAXI_TIMES | $arc_util > acars_taxi.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars FLIGHTS ARCHIVE DISPATCH_LOG FLIGHT_DISPATCH FLIGHT_DISPATCH_LOG FLIGHT_DISPATCHER FLIGHT_LOAD FLIGHT_SIDSTAR FLIGHT_SIDSTAR_WP GATEDATA ROUTES ROUTE_WP RWYDATA TOLAND PERFINFO FRAMERATES | $arc_util > acars_flights.sql.bz2
+
+# Dump finance data
+echo 'Writing Finance data'
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` finance | $arc_util > finance.sql.bz2
 
 # Write help desk
 echo 'Writing help desk'
