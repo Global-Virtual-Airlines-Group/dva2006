@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.finance.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load financial data from the database.
@@ -45,6 +46,7 @@ public class GetFinance extends DAO {
 	 * @return an AWSCostEntry, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Deprecated
 	public AWSCostEntry getAWSEntry(int id) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM finance.AWS_COSTS WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, id);
@@ -101,6 +103,28 @@ public class GetFinance extends DAO {
 			ps.setInt(1, year);
 			ps.setInt(2, month);
 			return executeAWSLedger(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns daily AWS hosting costs.
+	 * @return a List of AWSCostEntry beans, aggregated by date in reverse date order
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<AWSCostEntry> getDailyAWSCosts() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT DATE, SUM(AMOUNT) FROM finance.AWS_COSTS GROUP BY DATE ORDER BY DATE DESC")) {
+			List<AWSCostEntry> results = new ArrayList<AWSCostEntry>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					AWSCostEntry ce = new AWSCostEntry(toInstant(rs.getTimestamp(1)), rs.getInt(2));
+					ce.setDescription(String.format("Aggregated Costs for %s", StringUtils.format(ce.getDate(), "MM/dd/yyyy")));
+					results.add(ce);
+				}
+			}
+
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
