@@ -13,6 +13,7 @@ import org.deltava.dao.http.Compression;
 import org.deltava.dao.http.GetAWSCosts;
 
 import org.deltava.taskman.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Scheduled Task to download AWS cost data.
@@ -22,6 +23,8 @@ import org.deltava.taskman.*;
  */
 
 public class AWSCostTask extends Task {
+	
+	private static final int MAX_DAYS = 14;
 
 	/**
 	 * Creates the Task.
@@ -33,25 +36,42 @@ public class AWSCostTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		
-		// Get yesterday's costs
-		LocalDate ld = LocalDate.now().minusDays(1);
-
+		LocalDate today = LocalDate.now();
+		LocalDate ld = today.minusDays(1);
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Check for yesterday's cost data
 			GetFinance fdao = new GetFinance(con);
 			Collection<AWSCostEntry> entries = fdao.getAWSCosts(ld.getYear(), ld.getMonthValue());
-			Collection<Instant> days = entries.stream().map(AWSCostEntry::getDate).collect(Collectors.toSet());
-			
-			// TODO Figure out how many days to pull to get missing data
+			Collection<LocalDate> days = entries.stream().map(AWSCostEntry::getDate).map(i -> LocalDate.ofInstant(i, ZoneOffset.UTC)).collect(Collectors.toSet());
+			log.info("Loaded data for {}", days);
+
+			// Figure out how many days to pull to get missing data
+			int daysBack = 0;
+			for (int x = 1; x <= MAX_DAYS; x++) {
+				LocalDate ld2 = today.minusDays(x);
+				if (!days.contains(ld2)) {
+					log.info("No data for {}", ld2);
+					daysBack = x;
+					if (x > 1)
+						log.warn("Fetching AWS Costs for {}", StringUtils.format(ld2, "MM/dd/yyyy"));
+				}
+			}
 			
 			// Get the data
+			log.info("Retrieving {} days of AWS costs", Integer.valueOf(daysBack));
+			if (daysBack == 0) return;
+			
 			GetAWSCosts cdao = new GetAWSCosts();
 			cdao.setConnectTimeout(1000);
 			cdao.setReadTimeout(5000);
 			cdao.setCompression(Compression.GZIP);
-			Collection<AWSCostEntry> data = cdao.getCosts(1);
+			Collection<AWSCostEntry> data = cdao.getCosts(daysBack);
+			
+			// Filter out costs for days we already have
+			data.removeIf(ce -> days.contains(LocalDate.ofInstant(ce.getDate(), ZoneOffset.UTC)));
+			data.stream().filter(ce -> StringUtils.isEmpty(ce.getDescription())).forEach(ce -> ce.setDescription(String.format("Imported on %s", StringUtils.format(today, "MM/dd/yyyy"))));
 			
 			// Save the data
 			ctx.startTX();
@@ -60,7 +80,7 @@ public class AWSCostTask extends Task {
 				fwdao.write(ce);
 			
 			ctx.commitTX();
-			log.info("Write {} AWS cost entries", Integer.valueOf(data.size()));
+			log.info("Wrote {} AWS cost entries", Integer.valueOf(data.size()));
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			log.atError().withThrowable(de).log(de.getMessage());
