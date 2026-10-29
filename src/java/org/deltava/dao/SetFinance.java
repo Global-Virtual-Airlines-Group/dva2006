@@ -46,7 +46,7 @@ public class SetFinance extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(AWSCostEntry ce) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.AWS_COSTS VALUES (?,?,?,?,?,?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO finance.AWS_COSTS VALUES (?,?,?,?,?)")) {
 			ps.setInt(1, ce.getID());
 			ps.setTimestamp(2, createTimestamp(ce.getDate()));
 			ps.setString(3, ce.getService());
