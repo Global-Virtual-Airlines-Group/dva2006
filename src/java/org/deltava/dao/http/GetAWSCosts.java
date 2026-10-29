@@ -46,7 +46,8 @@ public class GetAWSCosts extends DAO {
 					Instant dt = StringUtils.parseInstant(dco.getString("date"), "yyyy-MM-dd");
 					JSONObject so = dco.getJSONObject("services");
 					for (String svc : so.keySet()) {
-						AWSCostEntry ce = new AWSCostEntry(dt, so.getInt(svc));
+						double cost = so.optDouble(svc);
+						AWSCostEntry ce = new AWSCostEntry(dt, (int)(cost * 100));
 						ce.setService(svc);
 						results.add(ce);
 					}
