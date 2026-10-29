@@ -387,4 +387,15 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<task id="awscosts" enabled="false">
+		<class>org.deltava.tasks.AWSCostTask</class>	
+		<time>
+			<min>45</min>
+			<hour>10</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>	
+	</task>
 </tasks>
