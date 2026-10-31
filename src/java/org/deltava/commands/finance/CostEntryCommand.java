@@ -35,10 +35,11 @@ public class CostEntryCommand extends AbstractFormCommand {
 		ce.setID(ctx.getID());
 		ce.setDescription(ctx.getParameter("desc"));
 		
+		boolean isNew = (ctx.getID() == 0);
 		try {
 			Connection con = ctx.getConnection();
 			GetFinance fdao = new GetFinance(con);
-			if (ce.getID() != 0) {
+			if (!isNew) {
 				CostEntry c2 = fdao.getEntry(ctx.getID());
 				if (c2 == null)
 					throw notFoundException("Invalid Cost Ledger Entry", ctx.getID());
@@ -55,7 +56,8 @@ public class CostEntryCommand extends AbstractFormCommand {
 		
 		// Set status attributes
 		ctx.setAttribute("entry", ce, REQUEST);
-		ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("isCreated", Boolean.valueOf(isNew), REQUEST);
+		ctx.setAttribute("isUpdated", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

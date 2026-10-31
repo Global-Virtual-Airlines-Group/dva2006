@@ -37,15 +37,17 @@ golgotha.local.validate = function(f) {
 <el:form action="${cmdName}.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="${cmdName}">
 <tr class="title caps">
- <td colspan="5" class="left"><c:if test="${isAWS}">AWS&nbsp;</c:if>COST LEDGER</td>
+ <td colspan="6" class="left"><c:if test="${isAWS}">AWS&nbsp;</c:if>COST LEDGER</td>
 </tr>
+
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:15%">DATE</td>
  <td style="width:30%">${isAWS ? 'SERVICE' : 'CATEGORY'}</td>
  <td style="width:25%">AUTHOR</td>
  <td style="width:15%">AMOUNT</td>
- <td>DESCRIPTION</td>
+ <td class="left">DESCRIPTION</td>
+ <td><el:cmd url="cost">NEW COST ENTRY</el:cmd></td>
 </tr>
 
 <!-- Table Ledger Data -->
@@ -56,13 +58,13 @@ golgotha.local.validate = function(f) {
  <td>${isAWS ? ce.service : ce.category}</td>
  <td class="sec bld">${(ce.authorID == 0) ? 'SYSTEM' : author.name}</td>
  <td class="pri bld"><fmt:dec value="${ce.amount / 100.0}" fmt="$##0.00" /></td>
- <td class="left">${ce.description}</td>
+ <td colspan="2" class="left">${ce.description}</td>
 </view:row>
 </c:forEach>
 
 <!-- Table Scroll Bar -->
 <tr class="title">
- <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 </el:form>
