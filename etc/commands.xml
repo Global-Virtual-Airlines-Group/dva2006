@@ -2716,4 +2716,10 @@
 		<class>org.deltava.commands.finance.SharePricesCommand</class>
 		<class>Finance</class>
 	</command>
+	
+	<command id="donate">
+		<name>Donate</name>
+		<class>org.deltava.commands.finance.DonateCommand</class>
+		<class>Pilot</class>
+	</command>
 </commands>
