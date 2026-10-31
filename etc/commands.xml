@@ -2693,7 +2693,7 @@
 		<class>Finance</class>
 	</command>
 
-	<command id="costentry">
+	<command id="cost">
 		<name>Cost Entry</name>
 		<class>org.deltava.commands.finance.CostEntryCommand</class>
 		<class>Finance</class>
@@ -2712,7 +2712,7 @@
 	</command>
 
 	<command id="shareprices">
-		<name>Share Price</name>
+		<name>Share Prices</name>
 		<class>org.deltava.commands.finance.SharePricesCommand</class>
 		<class>Finance</class>
 	</command>
