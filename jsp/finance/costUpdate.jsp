@@ -30,6 +30,12 @@
 <br>
 A new entry has been added to the <content:airline /> Cost Ledger and saved to the database.<br>
 </c:when>
+<c:when test="${isSharePrice}">
+<div class="updateHdr">Share Price Updated</div>
+<br>
+The Share Price for <span class="pri bld">${sp.year}</span> has been updated and saved to the database. This will not affect any previous 
+share purchases or historical transaction data.<br>
+</c:when>
 <c:otherwise>
 <div class="updateHdr">Cost Ledger Updated</div>
 <br>

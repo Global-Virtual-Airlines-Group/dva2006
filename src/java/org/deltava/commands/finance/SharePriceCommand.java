@@ -67,7 +67,7 @@ public class SharePriceCommand extends AbstractAuditFormCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/finance/finUpdate.jsp");
+		result.setURL("/jsp/finance/costUpdate.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
