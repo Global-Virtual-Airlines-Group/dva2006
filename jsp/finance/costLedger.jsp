@@ -42,12 +42,12 @@ golgotha.local.validate = function(f) {
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td style="width:15%">DATE</td>
- <td style="width:30%">${isAWS ? 'SERVICE' : 'CATEGORY'}</td>
- <td style="width:25%">AUTHOR</td>
- <td style="width:15%">AMOUNT</td>
- <td class="left">DESCRIPTION</td>
- <td><el:cmd url="cost">NEW COST ENTRY</el:cmd></td>
+ <td style="width:10%">DATE</td>
+ <td style="width:25%">${isAWS ? 'SERVICE' : 'CATEGORY'}</td>
+ <td style="width:15%">AUTHOR</td>
+ <td style="width:10%">AMOUNT</td>
+ <td class="left" colspan="${isAWS ? 1 : 2}">DESCRIPTION</td>
+<c:if test="${!isAWS}"> <td><el:cmdbutton url="cost" op="edit" label="NEW COST ENTRY" /></td></c:if>
 </tr>
 
 <!-- Table Ledger Data -->
