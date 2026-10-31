@@ -38,6 +38,11 @@ public class DonateCommand extends AbstractCommand {
 			Collection<SharePurchase> purchases = fdao.getSharePurchases(ctx.getUser().getID());
 			if (purchases.stream().anyMatch(s -> (s.getYear() == sp.getYear())))
 				throw new CommandException(String.format("%s has already donated for %d", ctx.getUser().getName(), Integer.valueOf(sp.getYear())), false);
+			
+			// Get this year's total to date
+			int totalYTD = fdao.getShares(sp.getYear()).stream().mapToInt(SharePurchase::getCount).sum();
+			ctx.setAttribute("sp", sp, REQUEST);
+			ctx.setAttribute("sharesYTD", Integer.valueOf(totalYTD), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
