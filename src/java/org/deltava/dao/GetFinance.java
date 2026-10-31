@@ -2,9 +2,11 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 
 import org.deltava.beans.finance.*;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -41,23 +43,6 @@ public class GetFinance extends DAO {
 	}
 	
 	/**
-	 * Reads an AWS cost ledger entry from the database.
-	 * @param id the database ID
-	 * @return an AWSCostEntry, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public AWSCostEntry getAWSEntry(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM finance.AWS_COSTS WHERE (ID=?) LIMIT 1")) {
-			ps.setInt(1, id);
-			List<AWSCostEntry> results = executeAWSLedger(ps);
-			return results.isEmpty() ? null : results.getFirst();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Retrieves the cost categories.
 	 * @return a Collection of category names
 	 * @throws DAOException if a JDBC error occurs
@@ -77,7 +62,7 @@ public class GetFinance extends DAO {
 	}
 
 	/**
-	 * Returns all cost leder entries for a given fiscal year.
+	 * Returns all cost ledger entries for a given fiscal year.
 	 * @param year the year
 	 * @return a List of CostEntries, in reverse date order
 	 * @throws DAOException if a JDBC error occurs
@@ -124,6 +109,32 @@ public class GetFinance extends DAO {
 				}
 			}
 
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns monthly AWS cost totals, aggregated by service.
+	 * @return a List of AWSCostEntry beans per month/service
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<AWSCostEntry> getAWSMonthlyCosts() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT (YEAR(DATE)*100 + MONTH(DATE)) AS DT, CATEGORY, SUM(AMOUNT) FROM finance.AWS_COSTS GROUP BY DT, CATEGORY "
+			+ " ORDER BY DATE DESC")) {
+			List<AWSCostEntry> results = new ArrayList<AWSCostEntry>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					int ym = rs.getInt(1);
+					LocalDate dt = LocalDate.of(ym / 100, ym % 100, 1);
+					AWSCostEntry ce = new AWSCostEntry(dt.atStartOfDay().toInstant(ZoneOffset.UTC), rs.getInt(3));
+					ce.setService(rs.getString(2));
+					ce.setDescription(String.format("Aggregated Costs for %s", StringUtils.format(dt, "MMMM yyyy")));
+					results.add(ce);
+				}
+			}
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
