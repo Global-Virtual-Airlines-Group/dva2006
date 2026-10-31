@@ -46,6 +46,7 @@ An entry has been updated in the <content:airline /> Cost Ledger and saved to th
 To view this <content:airline /> Cost Ledger entry, <el:cmd url="cost" link="${entry}" className="sec bld">Click Here</el:cmd>.<br>
 To view the <content:airline /> Cost Ledger, <el:cmd url="costledger" className="sec bld">Click Here</el:cmd>.<br>
 To view the <content:airline /> AWS Cost Ledger, <el:cmd url="awsledger" className="sec bld">Click Here</el:cmd>.<br>
+<c:if test="${isSharePrice}">To view the <content:airline /> Share Prices, <el:cmd url="shareprices" className="sec bld">Click Here</el:cmd>.<br></c:if>
 <br>
 <content:copyright />
 </content:region>

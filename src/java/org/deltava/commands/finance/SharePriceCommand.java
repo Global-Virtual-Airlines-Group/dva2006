@@ -27,6 +27,11 @@ public class SharePriceCommand extends AbstractAuditFormCommand {
 	 */
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
+		
+		int y = StringUtils.parse(ctx.getParameter("year"), ctx.getID());
+		if (y < 2000)
+			throw notFoundException("Invalid Share Price Year", y);
+		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -37,7 +42,7 @@ public class SharePriceCommand extends AbstractAuditFormCommand {
 				
 			// Build from parameters
 			double price = StringUtils.parse(ctx.getParameter("price"), 0.0d);
-			sp = new SharePrice(ctx.getID(), (int)(price * 100));
+			sp = new SharePrice(y, (int)(price * 100));
 			sp.setCount(StringUtils.parse(ctx.getParameter("count"), 0));
 			sp.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 				

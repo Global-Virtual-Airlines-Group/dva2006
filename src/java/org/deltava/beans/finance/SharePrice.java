@@ -1,7 +1,7 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.finance;
 
-import org.deltava.beans.Auditable;
+import org.deltava.beans.*;
 
 /**
  * A bean to track share prices and amounts. 
@@ -10,7 +10,7 @@ import org.deltava.beans.Auditable;
  * @since 13.1	
  */
 
-public class SharePrice implements Auditable, Comparable<SharePrice>  {
+public class SharePrice implements Auditable, ViewEntry, Comparable<SharePrice>  {
 	
 	private final int _year;
 	private final int _price;
@@ -45,7 +45,7 @@ public class SharePrice implements Auditable, Comparable<SharePrice>  {
 	}
 	
 	/**
-	 * Returns the numebr of shares issued in this fiscal year.
+	 * Returns the number of shares issued in this fiscal year.
 	 * @return the share count
 	 */
 	public int getCount() {
@@ -53,7 +53,7 @@ public class SharePrice implements Auditable, Comparable<SharePrice>  {
 	}
 	
 	/**
-	 * Returns whether fundraising is active for this fiscal year.
+	 * Returns whether fund raising is active for this fiscal year.
 	 * @return TRUE if active, otherwise FALSE
 	 */
 	public boolean getActive() {
@@ -69,11 +69,16 @@ public class SharePrice implements Auditable, Comparable<SharePrice>  {
 	}
 
 	/**
-	 * Updates whether fundraising is active for this fiscal year.
+	 * Updates whether fund raising is active for this fiscal year.
 	 * @param isActive TRUE if active, otherwise FALSE
 	 */
 	public void setActive(boolean isActive) {
 		_active = isActive;
+	}
+	
+	@Override
+	public String getRowClassName() {
+		return _active ? null : "opt1";
 	}
 	
 	@Override
